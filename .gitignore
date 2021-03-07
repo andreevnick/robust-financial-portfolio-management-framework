@@ -112,3 +112,28 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# TeX
+
+.texpadmp/
+*.pdf
+*.dvi
+*.aux
+*.log
+*.out
+*.loc
+*.soc
+*.synctex.*
+*.fdb*
+*.fls
+
+# Python compilation output
+
+.DS_Store
+**/.ipynb_checkpoints/
+*.pyc
+
+# Data files
+
+*.pickle
+*.pckl
