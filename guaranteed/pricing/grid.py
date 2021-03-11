@@ -6,6 +6,9 @@
 # copied, modified, or distributed except according to those terms.
 r""" This submodule implements a Grid class for working with n-dimensional grids on :math:`\mathbb{R}^{n}`
 
+The rationale behind such grid is that it is much easier to work with integer coordinates than with real ones.
+:class:`Grid` incapsulates such a uniform grid.
+
 """
 
 import numpy as np
@@ -33,6 +36,8 @@ class Grid:
     dtype_p : numeric np.dtype
         Type for grid coordinates. Default is np.int64.
 
+
+
     Notes
     ------
     The class upholds the following notation: 'x' means points from :math:`\mathbb{R}^{n}`,
@@ -48,7 +53,7 @@ class Grid:
         self.logscale = logscale
         self.center = np.asarray(coalesce(center, self.delta * 0), dtype=self.dtype)
 
-    def x_trans(self, x):
+    def _x_trans(self, x):
         """ Utility function for reducing logscale grid logic to uniform grid.
 
         Parameters
@@ -65,21 +70,20 @@ class Grid:
 
         return x if self.logscale == False else np.log(x)
 
-    def x_trans_inv(self, x):
-        """ Inverse transform to :meth:`x_trans()`.
+    def _x_trans_inv(self, x):
+        """ Inverse transform to :meth:`_x_trans()`.
 
         """
 
         return x if self.logscale == False else np.exp(x)
 
-    def get_projection(self, obj, **kwargs):
+    def get_projection(self, obj):
         r""" Projects a point or :math:`\mathbb{R}^{n}`, an array of points or a predefined set to grid coordinates.
 
         Parameters
         ----------
         obj : array_like, size = (n,) or (m,n), or ISetHandler
             A set of points from :math:`\mathbb{R}^{n}`.
-        kwargs : deprecated
 
         Returns
         -------
@@ -96,9 +100,9 @@ class Grid:
 
         else:  # obj is an array of coordinates
 
-            return self.get_point(obj)
+            return self._get_point(obj)
 
-    def get_point(self, x):
+    def _get_point(self, x):
         """ Returns grid coordinates of the array of points from :math:`\mathbb{R}^{n}`.
 
         Parameters
@@ -113,14 +117,14 @@ class Grid:
 
         """
 
-        x = self.x_trans(np.asarray(x, dtype=self.dtype))
+        x = self._x_trans(np.asarray(x, dtype=self.dtype))
 
         return np.rint((x - self.center) / self.delta).astype(self.dtype_p)
 
     def map2x(self, point):
         """ Maps the array of grid coordinates to points in :math:`\mathbb{R}^{n}`.
 
-        This function acts as a sort of inverse to :meth:`get_point()`.
+        This function acts as a sort of inverse to :meth:`get_projection()`.
 
         Parameters
         ----------
@@ -134,10 +138,10 @@ class Grid:
 
         Notes
         -----
-        get_point(map2x(`point`) = `point`, but map2x(get_point(`x`)) in general is not equal to `x` (due to mapping accuracy).
+        get_projection(map2x(`point`) = `point`, but map2x(get_projection(`x`)) in general is not equal to `x` (due to mapping accuracy).
         """
 
-        return self.x_trans_inv(point * self.delta + self.center)
+        return self._x_trans_inv(point * self.delta + self.center)
 
     def xrectangle_points(self, x_from, x_to):
         """ Returns projection to the grid for the parallelotope specified
@@ -161,7 +165,7 @@ class Grid:
 
         """
 
-        p_from = self.get_point(x_from)
-        p_to = self.get_point(x_to)
+        p_from = self._get_point(x_from)
+        p_to = self._get_point(x_to)
 
         return cartesian_product(*[np.arange(p[0], p[1] + 1) for p in zip(np.atleast_1d(p_from), np.atleast_1d(p_to))])

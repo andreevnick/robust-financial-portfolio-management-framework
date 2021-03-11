@@ -127,7 +127,7 @@ class RectangularHandler(ISetHandler):
         
     def project(self, grid):
 
-        bnd = np.vstack((grid.get_point(self.bounds.T[0]), grid.get_point(self.bounds.T[1]))).T
+        bnd = np.vstack((grid.project(self.bounds.T[0]), grid.project(self.bounds.T[1]))).T
 
         return cartesian_product(*[np.arange(lb, ub+1) for lb, ub in bnd])
     
