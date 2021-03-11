@@ -59,3 +59,8 @@ html_theme = 'alabaster'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# configure sorting in autodoc
+# the default is 'alphabetical'
+
+autodoc_member_order = 'bysource' # to sort in the same order as members are listed in source code
