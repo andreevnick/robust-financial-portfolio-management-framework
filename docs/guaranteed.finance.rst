@@ -13,3 +13,4 @@ Submodules
    :maxdepth: 4
 
    guaranteed.finance.derivatives
+   guaranteed.finance.payoffs
