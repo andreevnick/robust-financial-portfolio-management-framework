@@ -513,21 +513,24 @@ class ConvhullSolver(ISolver):
         with PTimer(header='__precalc', silent=True, profiler_data=self.profiler_data) as tm:
             self.__precalc(x0=x0, grid=grid)
 
-        with Timer('Основной расчет evaluate()', flush=False, silent=self.silent_timer_) as tm_total:
+        with Timer('Solving the problem', flush=False, silent=self.silent_timer_) as tm_total:
 
             pdata = self.profiler_data.data[tm_total.header]
 
-            with Timer('Предрасчет точек, где будет вычисляться функция цены', silent=self.silent_timer_) as tm:
+            with Timer('Precalculating points for value function evaluation', silent=self.silent_timer_) as tm:
                 Vp, Vf = generate_evaluation_point_lists(p0=self.p0_, grid=grid, price_dynamics=price_dynamics,
                                                          N=max_time, profiler_data=pdata.data[tm.header])
+            # price check (negative prices)
+            if np.any([np.any(grid.map2x(Vp[i]) < 0) for i in range(max_time)]):
+                return TypeError('Prices can become negative! The problem is badly stated.')
 
-            with PTimer('Вычисление функции цены в конечный момент времени', silent=self.silent_timer_,
+            with PTimer('Computing value function in the last point', silent=self.silent_timer_,
                         profiler_data=pdata) as tm:
 
                 x = grid.map2x(Vp[-1])
                 Vf[-1] = option.payoff(x, max_time)
 
-            with Timer('Вычисление функции цены в промежуточные моменты', silent=self.silent_timer_) as tm:
+            with Timer('Computing value function in intermediate points in time', silent=self.silent_timer_) as tm:
 
                 pdata2 = pdata.data[tm.header]
 
@@ -569,7 +572,7 @@ class ConvhullSolver(ISolver):
                     #                             for c1, c2 in zip(self.grid.map2x(Vp[t+1][tf]), Vf[t+1][tf]):
                     #                                 print(c1, c2)
 
-                    Vf[t] = res
+                    Vf[t] = np.maximum(res, option.payoff(x=grid.map2x(Vp[t]), t=t))
 
         gc.collect()
 

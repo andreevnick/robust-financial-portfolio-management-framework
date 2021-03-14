@@ -8,10 +8,11 @@
 """ Utility functions for pricing module"""
 import numpy as np
 from .multival_map import PIDynamics
-from ..util import minkprod_points,minksum_points,unique_points_union, PTimer
+from ..util import minkprod_points, minksum_points, unique_points_union, PTimer
 
 __all__ = ['get_support_set',
            'generate_evaluation_point_lists']
+
 
 def get_support_set(curr_set, price_dynamics, grid, t):
     """ Based on the set of price scenarios at :math:`K_{t-1}` and the increment :math:`dK_t`,

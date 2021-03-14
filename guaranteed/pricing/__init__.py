@@ -10,3 +10,4 @@ from .set_handler import *
 from .option_pricer_RU import *
 from .multival_map import *
 from .problem import *
+from .util import *
