@@ -12,7 +12,7 @@ from scipy.spatial import ConvexHull
 from sklearn.utils import check_random_state
 
 from ..finance import IOption
-from .set_handler import ISetHandler, SetHandler
+from .set_handler import ISetHandler
 from .grid import Grid
 from ..util import coalesce, ProfilerData, Timer, PTimer, minksum_points, isin_points
 from guaranteed.cxhull import get_max_coordinates

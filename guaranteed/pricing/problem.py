@@ -21,7 +21,8 @@ from sklearn.utils import check_random_state
 from .multival_map import PriceDynamics, IMultivalMap
 from ..finance import IOption
 from ..pricing import Grid
-from ..util import Timer, PTimer, ProfilerData, coalesce, isin_points, generate_evaluation_point_lists, get_support_set
+from ..util import Timer, PTimer, ProfilerData, coalesce, isin_points
+from .util import get_support_set, generate_evaluation_point_lists
 from ..cxhull import get_max_coordinates, in_hull
 
 __all__ = ['Problem',
