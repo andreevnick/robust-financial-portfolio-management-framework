@@ -5,8 +5,10 @@
 # http://opensource.org/licenses/MIT>, at your option. This file may not be
 # copied, modified, or distributed except according to those terms.
 
-from .grid import *
-from .set_handler import *
-from .option_pricer_RU import *
-from .multival_map import *
-from .problem import *
+""" This submodule implements a Problem class, incapsulating a problem of pricing and hedging an option via a guaranteed approach."""
+
+__all__ = ['Problem']
+
+
+class Problem:
+    pass
