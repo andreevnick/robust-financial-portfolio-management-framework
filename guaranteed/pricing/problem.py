@@ -522,7 +522,7 @@ class ConvhullSolver(ISolver):
                                                          N=max_time, profiler_data=pdata.data[tm.header])
             # price check (negative prices)
             if np.any([np.any(grid.map2x(Vp[i]) < 0) for i in range(max_time)]):
-                return TypeError('Prices can become negative! The problem is badly stated.')
+                raise TypeError('Prices can become negative! The problem is badly stated.')
 
             with PTimer('Computing value function in the last point', silent=self.silent_timer_,
                         profiler_data=pdata) as tm:
