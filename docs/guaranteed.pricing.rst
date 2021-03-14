@@ -16,3 +16,4 @@ Submodules
    guaranteed.pricing.option_pricer
    guaranteed.pricing.option_pricer_RU
    guaranteed.pricing.set_handler
+   guaranteed.pricing.multival_map
