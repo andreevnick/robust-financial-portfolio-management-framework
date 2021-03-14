@@ -207,7 +207,7 @@ class ConvhullSolver(ISolver):
             pricer_options = {}
 
         self.pricer_options = {
-            'convex_hull_filter': pricer_options.get('convex_hull_filter', None),
+            'convex_hull_filter': pricer_options.get('convex_hull_filter', 'qhull'),
             'convex_hull_prune_fail_count': pricer_options.get('convex_hull_prune_fail_count', 0),
             'convex_hull_prune_success_count': pricer_options.get('convex_hull_prune_success_count', 0),
             'convex_hull_prune_corner_n': pricer_options.get('convex_hull_prune_corner_n', 3),
