@@ -6,7 +6,7 @@
 # copied, modified, or distributed except according to those terms.
 
 """This submodule implements IOption interface class, European, American, and Bermudan styled option classes.
-Also provides option-generating method Option for seamless construction of different options.
+Also provides option-generating method :func:`make_option` for seamless construction of different options.
 """
 
 import numpy as np
@@ -19,7 +19,7 @@ __all__ = [
     'EuropeanOption',
     'AmericanOption',
     'BermudanOption',
-    'option'
+    'make_option'
 ]
 
 
@@ -105,7 +105,7 @@ class BermudanOption(IOption):
     -----
     Bermudan and Canary options are very much alike, so we put both styles in the same class.
 
-    The payoff function is assumed to be independent of time, meaning that for all :math:`t\in payoff_dates` the payoff function is the same.
+    The payoff function is assumed to be independent of time, meaning that for all `t` in `payoff_dates` the payoff function is the same.
     """
 
     def __init__(self, payoff_dates, payoff_fcn: Callable):
@@ -122,7 +122,7 @@ class BermudanOption(IOption):
         return np.full((np.atleast_2d(prices).shape[0],), -np.inf)
 
 
-def option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None):
+def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None):
     """ Create a new option
 
     You must either give a specific `type` and `strike` or provide an option `payoff_fcn`.
@@ -160,7 +160,7 @@ def option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None):
     >>> import numpy as np
     >>> def call_10(x):
     ...     return np.array(np.maximum((x - 10), np.zeros_like(x)), float).squeeze()
-    >>> call = option(payoff_fcn = call_10, payoff_dates=4)
+    >>> call = make_option(payoff_fcn = call_10, payoff_dates=4)
     >>> isinstance(call, IOption)
     True
     >>> isinstance(call, EuropeanOption)
@@ -176,10 +176,25 @@ def option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None):
     >>> call.payoff([9, 11], 4)
     array([0., 1.])
 
+    Do the same with wrapper-function
+
+    >>> from guaranteed.finance import *
+    >>> import numpy as np
+    >>> def call_payoff(strike):
+    ...     def call_with_strike(x):
+    ...         return np.array(np.maximum((x - strike), np.zeros_like(x)), float).squeeze()
+    ...     return call_with_strike
+    >>> call = make_option(payoff_fcn = call_payoff, strike=10, payoff_dates=4)
+    >>> call.payoff([[9],[11]], 4)
+    array([0., 1.])
+    >>> call_5 = make_option(payoff_fcn = call_payoff, strike=5, payoff_dates=4)
+    >>> call_5.payoff([4,6,10], 4)
+    array([0., 1., 5.])
+
     Alternatively, create the same option as call on max with 1 asset.
 
     >>> from guaranteed.finance import *
-    >>> call = option(option_type='callonmax',strike=10, payoff_dates=4)
+    >>> call = make_option(option_type='callonmax',strike=10, payoff_dates=4)
     >>> isinstance(call, IOption)
     True
     >>> isinstance(call, EuropeanOption)
@@ -194,8 +209,8 @@ def option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None):
     In the same manner, create a Bermudan and American put2call1 option.
 
     >>> from guaranteed.finance import *
-    >>> Option1 = option(option_type='put2call1',payoff_dates=[1,3,5])
-    >>> Option2 = option(option_type='put2call1')
+    >>> Option1 = make_option(option_type='put2call1',payoff_dates=[1,3,5])
+    >>> Option2 = make_option(option_type='put2call1')
     >>> isinstance(Option1, BermudanOption)
     True
     >>> isinstance(Option2, AmericanOption)
