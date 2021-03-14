@@ -46,7 +46,7 @@ class IMultivalMap(ABC):
 class IdenticalMap(IMultivalMap):
     """ Identical mapping: always returns the same set (its support)
 
-    Attributes
+    Parameters
     ----------
     support: ISetHandler
         The underlying set to return
@@ -121,7 +121,7 @@ class TIMIDynamics(PriceDynamics):
     where :math:`C^* \subseteq \mathbb{R}^n` is constant.
     In other words, it is essentially a multiplicative dynamics where multipliers don't depend both on previous prices and time.
 
-    Attributes
+    Parameters
     ----------
     support: ISetHandler
         Set of multipliers (or increments, if model is additive)
