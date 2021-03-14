@@ -22,8 +22,8 @@ __all__ = ['tic',
            'generate_evaluation_point_lists'
           ]
 
-from guaranteed.pricing import PIDynamics
-from guaranteed.util import minksum_points, minkprod_points, PTimer
+from ..pricing import PIDynamics
+from ..util import minksum_points, minkprod_points, PTimer, unique_points_union
 
 __timestamp = None;
 
@@ -189,7 +189,19 @@ def get_support_set(curr_set, price_dynamics, grid, t):
         else:
             return minkprod_points(grid, curr_set, increment, pos=True)
     else:
-        raise ValueError('This algorithm only works for price-independent dynamics!')
+        if price_dynamics_type == 'add':
+            res = np.array([])
+            for pt in curr_set:
+                increment = price_dynamics(x=grid.map2x(pt), t=t)
+                # res = unique_points_union(res, minksum_points(pt, increment.project(grid), recur_max_level=None))
+                res = unique_points_union(res, increment.add(grid.map2x(pt)).project(grid))
+            return res
+        else:
+            res = np.array([])
+            for pt in curr_set:
+                increment = price_dynamics(x=grid.map2x(pt), t=t)
+                res = unique_points_union(res, increment.multiply(grid.map2x(pt)).project(grid))
+            return res
 
 
 def generate_evaluation_point_lists(p0, grid, price_dynamics, N, profiler_data=None):

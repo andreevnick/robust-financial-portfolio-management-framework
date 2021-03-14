@@ -87,6 +87,8 @@ class PriceDynamics(IMultivalMap):
             For multiplicative dynamics, returns multipliers :math:`C_t(x)`.
         """
 
+        raise NotImplementedError('The method must be defined in a subclass')
+
     @property
     @abstractmethod
     def type(self):

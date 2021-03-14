@@ -44,6 +44,12 @@ class IOption(ABC):
 
         raise Exception("The method must be defined in a subclass")
 
+    @property
+    @abstractmethod
+    def expiry(self):
+        """ Expiration date"""
+        raise Exception("The method must be defined in a subclass")
+
 
 class EuropeanOption(IOption):
     """ Generic european-style option class
@@ -58,7 +64,7 @@ class EuropeanOption(IOption):
 
     def __init__(self, expiry: int, payoff_fcn: Callable):
         assert expiry > 0, 'Expiration date must be greater than zero!'
-        self.expiry = expiry
+        self._expiry = expiry
         self.payoff_fcn = payoff_fcn
 
     def payoff(self, prices, t=None):
@@ -66,6 +72,10 @@ class EuropeanOption(IOption):
         if t == self.expiry:
             return self.payoff_fcn(prices)
         return np.full((np.atleast_2d(prices).shape[0],), -np.inf)
+
+    @property
+    def expiry(self):
+        return self._expiry
 
 
 class AmericanOption(IOption):
@@ -84,6 +94,10 @@ class AmericanOption(IOption):
         prices = np.atleast_2d(prices)
         return self.payoff_fcn(prices)
 
+    @property
+    def expiry(self):
+        return np.inf
+
 
 class BermudanOption(IOption):
     """ Bermudan and Canary-styled option class
@@ -94,11 +108,6 @@ class BermudanOption(IOption):
         Payoff dates (as integers)
     payoff_fcn: Callable
         Payoff function for given price(s)
-
-    Attributes
-    ---------
-    expiry: int
-        Maximum of payoff dates (expiration date)
 
 
     Notes
@@ -112,7 +121,7 @@ class BermudanOption(IOption):
         payoff_dates = np.array(payoff_dates, dtype=int).flatten()
         assert np.all(payoff_dates > 0), 'All payoff dates must be greater than zero!'
         self.payoff_dates = payoff_dates
-        self.expiry = self.payoff_dates.max()
+        self._expiry = self.payoff_dates.max()
         self.payoff_fcn = payoff_fcn
 
     def payoff(self, prices, t=None):
@@ -120,6 +129,10 @@ class BermudanOption(IOption):
         if t in self.payoff_dates:
             return self.payoff_fcn(prices)
         return np.full((np.atleast_2d(prices).shape[0],), -np.inf)
+
+    @property
+    def expiry(self):
+        return self._expiry
 
 
 def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None):

@@ -30,7 +30,7 @@ __all__ = ['Problem',
 
 
 class Problem:
-    """ A class representing a problem of pricing and hedging an option via a guaranteed approach.
+    r""" A class representing a problem of pricing and hedging an option via a guaranteed approach.
 
     TODO: Provide detailed explanation of a problem here
 
@@ -155,8 +155,9 @@ class ISolver(ABC):
         raise NotImplementedError('This method should be implemented!')
 
 
+# noinspection PyPep8Naming,PyBroadException
 class ConvhullSolver(ISolver):
-    '''
+    """
     Represents the numeric solver to the option pricing problem under the guaranteed approach.
 
     TODO: write detailed description
@@ -182,7 +183,7 @@ class ConvhullSolver(ISolver):
     --------
     :class:`guaranteed.pricing.option_pricer_RU.OptionPricer`
 
-    '''
+    """
 
     def solve(self, problem, calc_hedge=False):
         self.calc_market_strategies = calc_hedge
@@ -223,6 +224,7 @@ class ConvhullSolver(ISolver):
 
         self.pruning_random_state_ = check_random_state(self.pricer_options['convex_hull_prune_seed'])
 
+    # noinspection PyPep8Naming
     def __chull_prune_points(self, xv):
         """ Pruning for the convex hull calculation. De facto not used.
 
@@ -305,11 +307,9 @@ class ConvhullSolver(ISolver):
                 success_cnt += 1
                 fail_cnt = 0
 
-            #     if (ind_remove.shape[0] > 0) and np.any(np.max(np.abs(xv[ind_remove] - np.array([[0.5, 0.9, 0.0]], dtype=xv.dtype)), axis=1) <= 0.001):
-            #         print('x_rest, lmb, v, v_thresh')
-            #         tmp = lmb @ vc
-            #         for i in range(x_rest.shape[0]):
-            #             print(x_rest[i,:], lmb[i,:], v_rest[i], tmp[i])
+            # if (ind_remove.shape[0] > 0) and np.any(np.max(np.abs(xv[ind_remove] - np.array([[0.5, 0.9, 0.0]],
+            # dtype=xv.dtype)), axis=1) <= 0.001): print('x_rest, lmb, v, v_thresh') tmp = lmb @ vc for i in range(
+            # x_rest.shape[0]): print(x_rest[i,:], lmb[i,:], v_rest[i], tmp[i])
 
             #         print('xc = ', xc)
             #         print('vc = ', vc)
@@ -329,6 +329,7 @@ class ConvhullSolver(ISolver):
 
         return res_ind
 
+    # noinspection PyUnboundLocalVariable
     def __get_cxhull_value(self, x, v, z, calc_market_strategies, tol=1e-8):
         """ Returns the baricentric coordinates of base points x which
         correspond to the concave hull of {(x,v)} at z.
@@ -398,12 +399,10 @@ class ConvhullSolver(ISolver):
 
                 for dim in range(len(z) + 1):
 
-                    #                 for ind in combinations(ch.vertices, dim+1):
-                    #                     if (max(ind) < len(pruned_ind)) and in_hull(z, points[ind,:-1])\
-                    #                     and (get_max_coordinates(points[ind, :-1], points[ind, -1], z, tol=tol, ignore_warnings=True) @ points[ind, -1] >= f - tol):
-                    #                         print('pruned_ind = ', pruned_ind)
-                    #                         print('pruned_ind.shape =', pruned_ind.shape)
-                    #                         print('ind = ', ind)
+                    # for ind in combinations(ch.vertices, dim+1): if (max(ind) < len(pruned_ind)) and in_hull(z,
+                    # points[ind,:-1])\ and (get_max_coordinates(points[ind, :-1], points[ind, -1], z, tol=tol,
+                    # ignore_warnings=True) @ points[ind, -1] >= f - tol): print('pruned_ind = ', pruned_ind) print(
+                    # 'pruned_ind.shape =', pruned_ind.shape) print('ind = ', ind)
 
                     strategies = np.array([pruned_ind[list(ind)] for ind in combinations(ch.vertices, dim + 1) \
                                            if (max(ind) < len(pruned_ind)) and in_hull(z, points[list(ind), :-1]) \
@@ -422,7 +421,8 @@ class ConvhullSolver(ISolver):
 
                 #                 with Timer('Convex hull', flush=True):
                 cv_point_indices = ch.vertices
-                #                 print('result = {0}/{1}'.format(cv_point_indices[cv_point_indices < x.shape[0]].shape[0], points.shape[0]))
+                # print('result = {0}/{1}'.format(cv_point_indices[cv_point_indices < x.shape[0]].shape[0],
+                # points.shape[0]))
 
                 #                 raise Exception('stopped')
 
@@ -479,7 +479,7 @@ class ConvhullSolver(ISolver):
 
         if np.sum(tf) == 0:
             print('support function is +Inf')
-            return (-np.Inf, np.nan)
+            return -np.Inf, np.nan
 
         K_x = K_x[tf]
         convdK_x = convdK_x[tf]
@@ -540,7 +540,8 @@ class ConvhullSolver(ISolver):
                     for i, vp in enumerate(Vp[t]):
 
                         if not self.silent_timer_:
-                            if np.random.uniform() < 0.001: print('iter = {0}/{1}'.format(i, len(Vp[t])))
+                            if np.random.uniform() < 0.001:
+                                print('iter = {0}/{1}'.format(i, len(Vp[t])))
 
                         with PTimer(header='K = vp + self.dK_', silent=True, profiler_data=pdata2) as tm2:
 
