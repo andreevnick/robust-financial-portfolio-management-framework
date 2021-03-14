@@ -60,7 +60,11 @@ class OptionPricer:
         
     See also
     --------
-    Grid, IOption, ProfilerData
+    Grid
+    IOption
+    ProfilerData
+    :class:`guaranteed.pricing.problem.ConvhullSolver`
+        An implementation for another class structure
         
     '''
     

@@ -18,7 +18,11 @@ from abc import ABC, abstractmethod
 from .set_handler import ISetHandler
 from .grid import Grid
 
-__all__ = ['IMultivalMap', 'IdenticalMap', 'PriceDynamics', 'TIMIDynamics']
+__all__ = ['IMultivalMap',
+           'IdenticalMap',
+           'PriceDynamics',
+           'PIDynamics',
+           'ConstantDynamics']
 
 
 class IMultivalMap(ABC):
@@ -113,13 +117,23 @@ class PriceDynamics(IMultivalMap):
         raise NotImplementedError('The method must be defined in a subclass')
 
 
-class TIMIDynamics(PriceDynamics):
-    """ Time-independent, multiplicatively-independent price dynamics. That is,
+class PIDynamics(PriceDynamics):
+    """ Abstract class for price-independent price dynamics.
+    That is, increment (for additive) or multipliers (for multiplicative) is independent of x.
+    """
 
-    .. math :: K_t(x_0, \dots, x_{t-1}) = \{(y_1, \dots, y_n) \in \mathbb{R}^n:\; y_i = (m_i - 1)\cdot x_i,\; (m_1,\dots, m_n) \in C^*\},
+    def __call__(self, x=0, t=1):
+        return self._call(t)
 
-    where :math:`C^* \subseteq \mathbb{R}^n` is constant.
-    In other words, it is essentially a multiplicative dynamics where multipliers don't depend both on previous prices and time.
+    @abstractmethod
+    def _call(self, t):
+        raise NotImplementedError('The method must be defined in a subclass')
+
+
+class ConstantDynamics(PIDynamics):
+    """ Time-independent, price-independent price dynamics.
+    It is a price dynamics where increments (for additive) or multipliers (for multiplicative)
+    don't depend both on previous prices and time.
 
     Parameters
     ----------
@@ -130,7 +144,7 @@ class TIMIDynamics(PriceDynamics):
 
     Notes
     -----
-    This class, essentially, functions as IdenticalMap with additional property `type`.
+    This class, essentially, functions as IdenticalMap with additional properties `type` and `t_max`.
     """
 
     def __init__(self, support: ISetHandler, type='mult'):
@@ -139,7 +153,7 @@ class TIMIDynamics(PriceDynamics):
             raise TypeError('Wrong type dynamics!')
         self._type = type
 
-    def __call__(self, x, t=1):
+    def _call(self, t):
         return self._support
 
     @property
