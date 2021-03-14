@@ -53,10 +53,10 @@ class IdenticalMap(IMultivalMap):
     """
 
     def __init__(self, support: ISetHandler):
-        self._support = support
+        self.support = support
 
     def __call__(self, x, t):
-        return self._support
+        return self.support
 
 
 class PriceDynamics(IMultivalMap):
