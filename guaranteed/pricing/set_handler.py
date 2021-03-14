@@ -12,10 +12,10 @@ respective methods.
 
 import numpy as np
 from ..util import coalesce, cartesian_product
+from abc import ABC, abstractmethod
 
 __all__ = [
     'ISetHandler',
-    'SetHandler',
     'RectangularHandler',
     'EllipseHandler',
     'RealSpaceHandler',
@@ -23,11 +23,12 @@ __all__ = [
 ]
 
 
-class ISetHandler:
+class ISetHandler(ABC):
     """ Interface which contains the set-based operations for implementation in non-abstract SetHandlers.
     
     """
 
+    @abstractmethod
     def project(self, grid):
         """ Projects the set onto the grid.
 
@@ -43,8 +44,9 @@ class ISetHandler:
 
         """
 
-        raise NotImplementedError("The method must be defined in a subclass")
+        raise NotImplementedError('The method must be defined in a subclass')
 
+    @abstractmethod
     def support_function(self, x):
         """ Returns value of the support function of the set at point `x`.
 
@@ -70,8 +72,9 @@ class ISetHandler:
 
         """
 
-        raise Exception("The method must be defined in a subclass")
+        raise NotImplementedError('The method must be defined in a subclass')
 
+    @abstractmethod
     def iscompact(self):
         """ Checks if the set is a `compact <https://en.wikipedia.org/wiki/Compact_space>`_
         subset of :math:`\mathbb{R}^{n}`.
@@ -83,8 +86,9 @@ class ISetHandler:
 
         """
 
-        raise Exception("The method must be defined in a subclass")
+        raise NotImplementedError('The method must be defined in a subclass')
 
+    @abstractmethod
     def multiply(self, x):
         """ Multiplies the set by a point `x` from :math:`\mathbb{R}^{n}`.
 
@@ -100,36 +104,25 @@ class ISetHandler:
 
         """
 
-        raise Exception("The method must be defined in a subclass")
+        raise NotImplementedError('The method must be defined in a subclass')
 
+    @abstractmethod
+    def add(self, x):
+        """ Adds a point `x` from :math:`\mathbb{R}^{n}` to the set.
 
-class SetHandler(ISetHandler):
-    """ SetHandler factory.
+        Parameters
+        ----------
+        x : np.ndarray
+            Point to add to the set
 
-    .. deprecated:: 1.0.0
-        :class:`SetHandler` is to be removed in the first release
+        Returns
+        -------
+        ISetHandler
+            Set handler that corresponds to the set :math:`\{x + a, a \in A\}`, where :math:`A` is the current set (`self`).
 
-    """
+        """
 
-    def __init__(self, shape, verify_compactness=False, **kwargs):
-
-        if shape.lower() == 'rect':
-            self.handler = RectangularHandler(kwargs.pop('bounds'))
-
-        elif shape.lower() == 'ellipse':
-            self.handler = EllipseHandler(kwargs.pop('mu'), kwargs.pop('sigma'), kwargs.get('conf_level', None))
-
-        elif shape.lower() == 'unbounded':
-            self.handler = RealSpaceHandler()
-
-        elif shape.lower() == 'nonnegative':
-            self.handler = NonNegativeSpaceHandler()
-
-        else:
-            raise ValueError('Unsupported constraint type \'{0}\''.format(shape))
-
-        if verify_compactness:
-            assert self.handler.iscompact(), 'The set is not compact'
+        raise NotImplementedError('The method must be defined in a subclass')
 
 
 class RectangularHandler(ISetHandler):
@@ -170,14 +163,19 @@ class RectangularHandler(ISetHandler):
 
     def multiply(self, x):
         assert np.all(x >= 0), 'x must be >= 0'
+        mul = np.asarray(x).reshape(-1, 1)
+        return RectangularHandler(self.bounds * mul, dtype=self.bounds.dtype)
 
-        return RectangularHandler(self.bounds * np.asarray(x).reshape(-1, 1), dtype=self.bounds.dtype)
+    def add(self, x):
+        to_add = np.asarray(x).reshape(-1, 1)
+        return RectangularHandler(self.bounds + to_add, dtype=self.bounds.dtype)
 
 
 class EllipseHandler(ISetHandler):
     """ Handler for an n-dimensional ellipsoid
 
     """
+
     def __init__(self, mu, sigma, conf_level=None, dtype=None):
         self.mu = np.atleast_2d(mu).astype(coalesce(dtype, np.float64))
 
@@ -206,17 +204,21 @@ class EllipseHandler(ISetHandler):
     def support_function(self, x, x_center=None):
         x = np.atleast_2d(x)
 
-        return (x @ self.mu) + np.linalg.norm(self.L @ self.U.T @ x.T, axis=0, ord=2)
+        return (x.T @ self.mu) + np.linalg.norm(self.L @ self.U.T @ x.T, axis=0, ord=2)
 
     def iscompact(self):
         return (not np.any(np.isinf(self.sigma))) and (not np.any(np.isinf(self.mu)))
 
     def multiply(self, x):
+
         assert np.all(x >= 0), 'x must be >= 0'
 
         D = np.diag(x)
 
         return EllipseHandler(self.mu @ D, D @ self.sigma @ D.T, dtype=np.result_type(self.mu, self.sigma))
+
+    def add(self, x):
+        return EllipseHandler(self.mu + x.reshape(1,-1), self.sigma, dtype=np.result_type(self.mu, self.sigma))
 
 
 class RealSpaceHandler(ISetHandler):
@@ -239,6 +241,9 @@ class RealSpaceHandler(ISetHandler):
         return False
 
     def multiply(self, x):
+        return RealSpaceHandler()
+
+    def add(self, x):
         return RealSpaceHandler()
 
 
@@ -266,3 +271,6 @@ class NonNegativeSpaceHandler(ISetHandler):
 
     def multiply(self, x):
         return NonNegativeSpaceHandler()
+
+    def add(self, x):
+        raise NotImplementedError('Addition to NonNegativeSpaceHandler is not implemented.')
