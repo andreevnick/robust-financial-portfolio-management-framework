@@ -66,8 +66,6 @@ class Problem:
         if not isinstance(option, IOption):
             raise TypeError('Option must implement IOption interface!')
         self.option = option
-        if time_horizon is not None and (time_horizon is not int or time_horizon <= 0):
-            raise ValueError('Wrong time horizon! Must be a positive integer.')
         self.time_horizon = time_horizon
         # if no time_horizon is provided, try to take it from an option
         if time_horizon is None:
@@ -77,6 +75,8 @@ class Problem:
                 self.time_horizon = self.price_dynamics.t_max
             else:
                 raise TypeError('Can not determine time horizon! Problem is unbounded.')
+        if self.time_horizon <= 0:
+            raise ValueError('Wrong time horizon! Must be a positive integer.')
         # check that if option has an expiration, then it is the same as given.
         if 'expiry' in self.option.__dict__ and option.expiry != self.time_horizon:
             raise ValueError(
@@ -572,7 +572,7 @@ class ConvhullSolver(ISolver):
                     #                             for c1, c2 in zip(self.grid.map2x(Vp[t+1][tf]), Vf[t+1][tf]):
                     #                                 print(c1, c2)
 
-                    Vf[t] = np.maximum(res, option.payoff(x=grid.map2x(Vp[t]), t=t))
+                    Vf[t] = np.maximum(res, option.payoff(prices=grid.map2x(Vp[t]), t=t))
 
         gc.collect()
 
