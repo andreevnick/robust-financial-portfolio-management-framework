@@ -85,10 +85,13 @@ class AmericanOption(IOption):
     ----------
     payoff_fcn: Callable
         Payoff function for given price(s)
+    expiry: int, optional
+        Expiration date
     """
 
-    def __init__(self, payoff_fcn: Callable):
+    def __init__(self, payoff_fcn: Callable, expiry=None):
         self.payoff_fcn = payoff_fcn
+        self._expiry = expiry
 
     def payoff(self, prices, t=None):
         prices = np.atleast_2d(prices)
@@ -96,7 +99,7 @@ class AmericanOption(IOption):
 
     @property
     def expiry(self):
-        return np.inf
+        return np.inf if self._expiry is None else self._expiry
 
 
 class BermudanOption(IOption):

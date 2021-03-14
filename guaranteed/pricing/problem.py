@@ -71,7 +71,7 @@ class Problem:
         self.time_horizon = time_horizon
         # if no time_horizon is provided, try to take it from an option
         if time_horizon is None:
-            if 'expiry' in self.option.__dict__:
+            if not np.isinf(option.expiry):
                 self.time_horizon = option.expiry
             elif self.price_dynamics.t_max > 0 and not (np.isinf(self.price_dynamics.t_max)):
                 self.time_horizon = self.price_dynamics.t_max
