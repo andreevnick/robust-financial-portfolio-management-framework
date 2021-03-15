@@ -20,7 +20,7 @@ from sklearn.utils import check_random_state
 
 from .multival_map import PriceDynamics, IMultivalMap
 from ..finance import IOption
-from ..pricing import Grid
+from ..pricing import Lattice
 from ..util import Timer, PTimer, ProfilerData, coalesce, isin_points
 from .util import get_support_set, generate_evaluation_point_lists
 from ..cxhull import get_max_coordinates, in_hull
@@ -45,8 +45,8 @@ class Problem:
         A mapping :math:`D_t(\cdot)`, representing trading constraints
     option: IOption
         An option to price (and hedge)
-    grid: Grid
-        A grid to solve problem on
+    lattice: Lattice
+        A lattice to solve problem on
     time_horizon: int, optional
         Time horizon :math:`N`. If not given, then deduced from `option` expiration and `price_dynamics` (if possible).
     solver: ISolver
@@ -55,7 +55,7 @@ class Problem:
     """
 
     def __init__(self, starting_price, price_dynamics, trading_constraints, option,
-                 grid, time_horizon=None, solver=None):
+                 lattice, time_horizon=None, solver=None):
         self.starting_price = starting_price
         if not isinstance(price_dynamics, PriceDynamics):
             raise TypeError('Price dynamics must be an instance of PriceDynamics!')
@@ -87,8 +87,8 @@ class Problem:
         if self.time_horizon > self.price_dynamics.t_max:
             raise ValueError('Price dynamics must be defined for all time t <= time_horizon!')
 
-        self.grid = grid
-        self.dimension = grid.delta.shape[0]
+        self.lattice = lattice
+        self.dimension = lattice.delta.shape[0]
         self.solver = solver
         self.hedge = None
         self.Vp = None
@@ -106,7 +106,7 @@ class Problem:
         raise NotImplementedError('This method is not yet implemented')
 
     def set_precision(self, precision):
-        """ Changes grid to match given precision
+        """ Changes lattice to match given precision
 
         Parameters
         ----------
@@ -150,7 +150,7 @@ class ISolver(ABC):
         Returns
         -------
         tuple
-            First element is values of value function Vx, second is points on `problem.grid` on which Vx is calculated,
+            First element is values of value function Vx, second is points on `problem.lattice` on which Vx is calculated,
              third (optional) is hedging strategy.
         """
         raise NotImplementedError('This method should be implemented!')
@@ -171,6 +171,8 @@ class ConvhullSolver(ISolver):
         If True, warnings from the linprog optimization procedures are not displayed. Default is False.
     enable_timer: boolean
         If True, profiler information will be displayed during execution. Default is False.
+    iter_tick: int
+        If `enable_timer` is True, then timer will tick, on average, each `iter_tick` iteration. Default is 1000.
     profiler_data: class:'ProfilerData'
         Profiler data, to which the execution timing can be appended to. If None, a new profiler data
         object will be created. Default is None.
@@ -188,16 +190,17 @@ class ConvhullSolver(ISolver):
 
     def solve(self, problem, calc_hedge=False):
         self.calc_market_strategies = calc_hedge
-        return self.evaluate(x0=problem.starting_price, grid=problem.grid, price_dynamics=problem.price_dynamics,
+        return self.evaluate(x0=problem.starting_price, lattice=problem.lattice, price_dynamics=problem.price_dynamics,
                              trading_constraints=problem.trading_constraints, max_time=problem.time_horizon,
                              option=problem.option)
 
-    def __init__(self, debug_mode=False, ignore_warnings=False, enable_timer=False, profiler_data=None,
+    def __init__(self, debug_mode=False, ignore_warnings=False, enable_timer=False, iter_tick=1000, profiler_data=None,
                  calc_market_strategies=False, pricer_options=None):
 
         self.debug_mode = debug_mode
         self.ignore_warnings = ignore_warnings
         self.enable_timer = enable_timer
+        self.iter_tick = 1/iter_tick
 
         self.profiler_data = coalesce(profiler_data, ProfilerData())
 
@@ -214,12 +217,12 @@ class ConvhullSolver(ISolver):
             'convex_hull_prune_seed': pricer_options.get('convex_hull_prune_seed', None)
         }
 
-    def __precalc(self, x0, grid):
+    def __precalc(self, x0, lattice):
         """ Init the required private attributes before the main pricing has started.
 
         """
 
-        self.p0_ = grid.get_projection(x0)  # map x0
+        self.p0_ = lattice.get_projection(x0)  # map x0
 
         self.silent_timer_ = not self.enable_timer
 
@@ -503,31 +506,31 @@ class ConvhullSolver(ISolver):
 
         return res_u[maxind] - supp_func[maxind], convdK_x[maxind]
 
-    def evaluate(self, x0, grid, price_dynamics, trading_constraints, max_time, option):
-        """ Calculates the option value by backward-reconstructing the value function on a grid.
+    def evaluate(self, x0, lattice, price_dynamics, trading_constraints, max_time, option):
+        """ Calculates the option value by backward-reconstructing the value function on a lattice.
         Returns all the intermediate values of the value function Vf at points Vp.
         Vf[0][0] is the option value.
 
         """
 
         with PTimer(header='__precalc', silent=True, profiler_data=self.profiler_data) as tm:
-            self.__precalc(x0=x0, grid=grid)
+            self.__precalc(x0=x0, lattice=lattice)
 
         with Timer('Solving the problem', flush=False, silent=self.silent_timer_) as tm_total:
 
             pdata = self.profiler_data.data[tm_total.header]
 
             with Timer('Precalculating points for value function evaluation', silent=self.silent_timer_) as tm:
-                Vp, Vf = generate_evaluation_point_lists(p0=self.p0_, grid=grid, price_dynamics=price_dynamics,
+                Vp, Vf = generate_evaluation_point_lists(p0=self.p0_, lattice=lattice, price_dynamics=price_dynamics,
                                                          N=max_time, profiler_data=pdata.data[tm.header])
             # price check (negative prices)
-            if np.any([np.any(grid.map2x(Vp[i]) < 0) for i in range(max_time)]):
+            if np.any([np.any(lattice.map2x(Vp[i]) < 0) for i in range(max_time)]):
                 raise TypeError('Prices can become negative! The problem is badly stated.')
 
             with PTimer('Computing value function in the last point', silent=self.silent_timer_,
                         profiler_data=pdata) as tm:
 
-                x = grid.map2x(Vp[-1])
+                x = lattice.map2x(Vp[-1])
                 Vf[-1] = option.payoff(x, max_time)
 
             with Timer('Computing value function in intermediate points in time', silent=self.silent_timer_) as tm:
@@ -544,13 +547,13 @@ class ConvhullSolver(ISolver):
                     for i, vp in enumerate(Vp[t]):
 
                         if not self.silent_timer_:
-                            if np.random.uniform() < 0.001:
-                                print('iter = {0}/{1}'.format(i, len(Vp[t])))
+                            if np.random.uniform() < self.iter_tick:
+                                print('iter = {0}/{1} ({2:.2f}%)'.format(i, len(Vp[t]), 100*i/len(Vp[t])))
 
                         with PTimer(header='K = vp + self.dK_', silent=True, profiler_data=pdata2) as tm2:
 
                             #                             K = vp + self.dK_
-                            K = get_support_set(vp, grid=grid, price_dynamics=price_dynamics, t=t)
+                            K = get_support_set(vp, lattice=lattice, price_dynamics=price_dynamics, t=t)
 
                         with PTimer(header='tf = isin_points(Vp[t+1], K)', silent=True, profiler_data=pdata2) as tm2:
 
@@ -558,21 +561,21 @@ class ConvhullSolver(ISolver):
 
                         with PTimer(header='find_rho', silent=True, profiler_data=pdata2) as tm2:
 
-                            res_v, _ = self.find_rho(grid.map2x(Vp[t + 1][tf]),
+                            res_v, _ = self.find_rho(lattice.map2x(Vp[t + 1][tf]),
                                                      Vf[t + 1][tf],
-                                                     grid.map2x(K),
-                                                     grid.map2x(K - vp),
+                                                     lattice.map2x(K),
+                                                     lattice.map2x(K - vp),
                                                      self.calc_market_strategies,
-                                                     constraint_set=trading_constraints(x=grid.map2x(vp), t=t))
+                                                     constraint_set=trading_constraints(x=lattice.map2x(vp), t=t))
                             res[i] = res_v
 
-                    #                             print('vp = ', self.grid.map2x(vp))
+                    #                             print('vp = ', self.lattice.map2x(vp))
                     #                             print('res_v = ', res_v)
                     #                             print('Vp[t+1], Vf[t+1] = ')
-                    #                             for c1, c2 in zip(self.grid.map2x(Vp[t+1][tf]), Vf[t+1][tf]):
+                    #                             for c1, c2 in zip(self.lattice.map2x(Vp[t+1][tf]), Vf[t+1][tf]):
                     #                                 print(c1, c2)
 
-                    Vf[t] = np.maximum(res, option.payoff(prices=grid.map2x(Vp[t]), t=t))
+                    Vf[t] = np.maximum(res, option.payoff(prices=lattice.map2x(Vp[t]), t=t))
 
         gc.collect()
 

@@ -13,7 +13,7 @@ from sklearn.utils import check_random_state
 
 from ..finance import IOption
 from .set_handler import ISetHandler
-from .grid import Grid
+from .lattice import Lattice
 from ..util import coalesce, ProfilerData, Timer, PTimer, minksum_points, isin_points
 from guaranteed.cxhull import get_max_coordinates
 
@@ -27,7 +27,7 @@ class OptionPricer:
                  debug_mode=False, ignore_warnings=False, enable_timer=False, profiler_data=None,
                  pricer_options={}):
         
-        self.grid = grid if isinstance(grid, Grid) else Grid(grid)
+        self.grid = grid if isinstance(grid, Lattice) else Lattice(grid)
         self.n = grid.delta.size
         self.N = N
         

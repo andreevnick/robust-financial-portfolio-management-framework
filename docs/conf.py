@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.abspath('../guaranteed/'))
 # -- Project information -----------------------------------------------------
 
 project = 'Guaranteed Test'
-copyright = '2021, Nick Andreev, Vlad Kuznetsov, Vadim Slivinski'
-author = 'Nick Andreev, Vlad Kuznetsov, Vadim Slivinski'
+copyright = '2021, Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski'
+author = 'Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'

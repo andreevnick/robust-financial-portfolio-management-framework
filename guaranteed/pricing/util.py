@@ -8,7 +8,7 @@
 """ Utility functions for pricing module"""
 import numpy as np
 from .multival_map import PIDynamics
-from ..util import minkprod_points, minksum_points, unique_points_union, PTimer
+from ..util import minkprod_points, minksum_points, unique_points_union, PTimer, square_neighbourhood_on_grid
 
 __all__ = ['get_support_set',
            'generate_evaluation_point_lists']
@@ -37,11 +37,11 @@ def get_support_set(curr_set, price_dynamics, grid, t):
         else:
             return minkprod_points(grid, curr_set, increment, pos=True)
     else:
+        # curr_set = minksum_points(curr_set, square_neighbourhood_on_grid(np.zeros_like(grid.delta), 1, True))
         if price_dynamics_type == 'add':
             res = None
             for pt in curr_set:
                 increment = price_dynamics(x=grid.map2x(pt), t=t)
-                # res = unique_points_union(res, minksum_points(pt, increment.project(grid), recur_max_level=None))
                 res = increment.add(grid.map2x(pt)).project(grid) if res is None \
                     else unique_points_union(res, increment.add(grid.map2x(pt)).project(grid))
             return res

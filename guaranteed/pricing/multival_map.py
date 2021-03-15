@@ -16,7 +16,7 @@ For any sets :math:`X, Y`, a multivalued mapping is such a mapping :math:`\Gamma
 import numpy as np
 from abc import ABC, abstractmethod
 from .set_handler import ISetHandler
-from .grid import Grid
+from .lattice import Lattice
 
 __all__ = ['IMultivalMap',
            'IdenticalMap',

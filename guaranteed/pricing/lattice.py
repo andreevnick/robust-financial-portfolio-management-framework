@@ -4,10 +4,10 @@
 # http://apache.org/licenses/LICENSE-2.0> or the MIT license <LICENSE-MIT or
 # http://opensource.org/licenses/MIT>, at your option. This file may not be
 # copied, modified, or distributed except according to those terms.
-r""" This submodule implements a Grid class for working with n-dimensional grids on :math:`\mathbb{R}^{n}`
+r""" This submodule implements a Grid class for working with n-dimensional lattices on :math:`\mathbb{R}^{n}`
 
-The rationale behind such grid is that it is much easier to work with integer coordinates than with real ones.
-:class:`Grid` incapsulates such a uniform grid.
+The rationale behind such lattice is that it is much easier to work with integer coordinates than with real ones.
+:class:`Grid` incapsulates such a uniform lattice.
 
 """
 
@@ -16,32 +16,32 @@ import numpy as np
 from ..util import coalesce, cartesian_product
 from .set_handler import ISetHandler
 
-__all__ = ['Grid']
+__all__ = ['Lattice']
 
 
-class Grid:
-    r""" Handler for the uniform or logscale n-dimensional grid. Provides functionality
+class Lattice:
+    r""" Handler for the uniform or logscale n-dimensional lattice. Provides functionality
     for mapping integer point coordinates to :math:`\mathbb{R}^{n}` and vice versa.
     
     Parameters
     ----------
     delta : array_like, size = n x 1
-        Grid steps.
+        Lattice steps.
     logscale : bool, default = False
-        If True, the grid is considered logscale. Default is False.
+        If True, the lattice is considered logscale. Default is False.
     center : array_like, size = n x 1
-        Point from :math:`\mathbb{R}^{n}` which corresponds to zero coordinates on a grid.
+        Point from :math:`\mathbb{R}^{n}` which corresponds to zero coordinates on a lattice.
     dtype : numeric np.dtype
         Type for points in :math:`\mathbb{R}^{n}`. Default is np.float64.
     dtype_p : numeric np.dtype
-        Type for grid coordinates. Default is np.int64.
+        Type for lattice coordinates. Default is np.int64.
 
 
 
     Notes
     ------
     The class upholds the following notation: 'x' means points from :math:`\mathbb{R}^{n}`,
-    'point' means points from the grid.
+    'point' means points from the lattice.
     
     """
 
@@ -54,7 +54,7 @@ class Grid:
         self.center = np.asarray(coalesce(center, self.delta * 0), dtype=self.dtype)
 
     def _x_trans(self, x):
-        """ Utility function for reducing logscale grid logic to uniform grid.
+        """ Utility function for reducing logscale grid logic to uniform lattice.
 
         Parameters
         ----------
@@ -64,7 +64,7 @@ class Grid:
         Returns
         -------
         np.ndarray
-            logarithm of `x` if the grid is logscale, otherwise `x`.
+            logarithm of `x` if the lattice is logscale, otherwise `x`.
 
         """
 
@@ -78,7 +78,7 @@ class Grid:
         return x if self.logscale == False else np.exp(x)
 
     def get_projection(self, obj):
-        r""" Projects a point or :math:`\mathbb{R}^{n}`, an array of points or a predefined set to grid coordinates.
+        r""" Projects a point or :math:`\mathbb{R}^{n}`, an array of points or a predefined set to lattice coordinates.
 
         Parameters
         ----------
@@ -90,7 +90,7 @@ class Grid:
         np.ndarray
             If obj is an array, returns an array of coordinates.
             If obj is an ISetHandler instance, the ISetHandler method of grid-projection will be used
-            to return the projection of the set to the grid.
+            to return the projection of the set to the lattice.
 
         """
 
@@ -103,7 +103,7 @@ class Grid:
             return self._get_point(obj)
 
     def _get_point(self, x):
-        """ Returns grid coordinates of the array of points from :math:`\mathbb{R}^{n}`.
+        """ Returns lattice coordinates of the array of points from :math:`\mathbb{R}^{n}`.
 
         Parameters
         ----------
@@ -113,7 +113,7 @@ class Grid:
         Returns
         -------
         np.ndarray
-            An array of grid coordinates.
+            An array of lattice coordinates.
 
         """
 
@@ -122,14 +122,14 @@ class Grid:
         return np.rint((x - self.center) / self.delta).astype(self.dtype_p)
 
     def map2x(self, point):
-        """ Maps the array of grid coordinates to points in :math:`\mathbb{R}^{n}`.
+        """ Maps the array of lattice coordinates to points in :math:`\mathbb{R}^{n}`.
 
         This function acts as a sort of inverse to :meth:`get_projection()`.
 
         Parameters
         ----------
         point : array_like, size = (n,) or (m,n)
-            A set of integer-based coordinates on the grid.
+            A set of integer-based coordinates on the lattice.
 
         Returns
         -------
@@ -144,7 +144,7 @@ class Grid:
         return self._x_trans_inv(point * self.delta + self.center)
 
     def xrectangle_points(self, x_from, x_to):
-        """ Returns projection to the grid for the parallelotope specified
+        """ Returns projection to the lattice for the parallelotope specified
         via its corner points.
 
         Parameters
@@ -157,7 +157,7 @@ class Grid:
         Returns
         -------
         np.ndarray
-            An array of grid coordinates.
+            An array of lattice coordinates.
 
         See Also
         --------

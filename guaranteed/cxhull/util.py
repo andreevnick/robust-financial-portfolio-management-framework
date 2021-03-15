@@ -11,6 +11,7 @@ from sklearn.utils import check_random_state
 
 from scipy.optimize import linprog
 from scipy.optimize import OptimizeWarning
+from scipy.linalg import LinAlgWarning
 from scipy.spatial import ConvexHull
 
 import warnings
@@ -122,6 +123,7 @@ def get_max_coordinates(x, f, z, method='interior-point', tol=1e-8, debug_mode=F
         with warnings.catch_warnings():
 
             warnings.simplefilter("ignore", OptimizeWarning)
+            warnings.simplefilter("ignore", LinAlgWarning)
 
             res = linprog(c, A_eq=A, b_eq=b, bounds=(float(0),None), method=method, options=opts)
             
