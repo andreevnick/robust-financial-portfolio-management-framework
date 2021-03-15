@@ -4,10 +4,10 @@
 # http://apache.org/licenses/LICENSE-2.0> or the MIT license <LICENSE-MIT or
 # http://opensource.org/licenses/MIT>, at your option. This file may not be
 # copied, modified, or distributed except according to those terms.
-r""" This submodule implements a Grid class for working with n-dimensional lattices on :math:`\mathbb{R}^{n}`
+r""" This submodule implements a :class:`Lattice` class for working with n-dimensional lattices on :math:`\mathbb{R}^{n}`
 
 The rationale behind such lattice is that it is much easier to work with integer coordinates than with real ones.
-:class:`Grid` incapsulates such a uniform lattice.
+:class:`Lattice` incapsulates such a uniform lattice.
 
 """
 
@@ -54,7 +54,7 @@ class Lattice:
         self.center = np.asarray(coalesce(center, self.delta * 0), dtype=self.dtype)
 
     def _x_trans(self, x):
-        """ Utility function for reducing logscale grid logic to uniform lattice.
+        """ Utility function for reducing logscale lattice logic to uniform lattice.
 
         Parameters
         ----------
@@ -89,7 +89,7 @@ class Lattice:
         -------
         np.ndarray
             If obj is an array, returns an array of coordinates.
-            If obj is an ISetHandler instance, the ISetHandler method of grid-projection will be used
+            If obj is an ISetHandler instance, the ISetHandler method of lattice-projection will be used
             to return the projection of the set to the lattice.
 
         """

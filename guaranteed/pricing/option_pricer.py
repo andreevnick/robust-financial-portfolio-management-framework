@@ -23,12 +23,12 @@ __all__ = ['OptionPricer']
 
 class OptionPricer:
     
-    def __init__(self, grid, N, option, x0, price_support, constraint_set=None,
+    def __init__(self, lattice, N, option, x0, price_support, constraint_set=None,
                  debug_mode=False, ignore_warnings=False, enable_timer=False, profiler_data=None,
                  pricer_options={}):
         
-        self.grid = grid if isinstance(grid, Lattice) else Lattice(grid)
-        self.n = grid.delta.size
+        self.lattice = lattice if isinstance(lattice, Lattice) else Lattice(lattice)
+        self.n = lattice.delta.size
         self.N = N
         
         assert isinstance(option, IOption), 'option must implement the IOption interface'
@@ -63,9 +63,9 @@ class OptionPricer:
         
     def __precalc(self):
         
-        self.p0_ = self.grid.get_projection(self.x0) # map x0
+        self.p0_ = self.lattice.get_projection(self.x0) # map x0
         
-        self.dK_ = self.grid.get_projection(self.price_support) # map support neighbourhood
+        self.dK_ = self.lattice.get_projection(self.price_support) # map support neighbourhood
         
         self.silent_timer_ = not self.enable_timer
         
@@ -303,7 +303,7 @@ class OptionPricer:
         convdK_x = np.atleast_2d(convdK_x)
         K_x      = np.atleast_2d(K_x)
 
-        supp_func = self.constraint_set.support_function(convdK_x - (1 if self.grid.logscale else 0))
+        supp_func = self.constraint_set.support_function(convdK_x - (1 if self.lattice.logscale else 0))
         tf = supp_func < np.Inf
         
         if np.sum(tf) == 0:
@@ -346,7 +346,7 @@ class OptionPricer:
             with PTimer('Evaluation of the value function at the terminal moment', silent=self.silent_timer_,
                       profiler_data=pdata) as tm:
 
-                x = self.grid.map2x(Vp[-1])
+                x = self.lattice.map2x(Vp[-1])
                     
                 Vf[-1] = self.option.payoff(x)
                       
@@ -376,13 +376,13 @@ class OptionPricer:
 
                         with PTimer(header='find_rho', silent=True, profiler_data=pdata2) as tm2:
         
-                            res_v, _ = self.find_rho(self.grid.map2x(Vp[t+1][tf]), Vf[t+1][tf], self.grid.map2x(K), self.grid.map2x(self.dK_))
+                            res_v, _ = self.find_rho(self.lattice.map2x(Vp[t+1][tf]), Vf[t+1][tf], self.lattice.map2x(K), self.lattice.map2x(self.dK_))
                             res[i] = res_v
                 
-#                             print('vp = ', self.grid.map2x(vp))
+#                             print('vp = ', self.lattice.map2x(vp))
 #                             print('res_v = ', res_v)
 #                             print('Vp[t+1], Vf[t+1] = ')
-#                             for c1, c2 in zip(self.grid.map2x(Vp[t+1][tf]), Vf[t+1][tf]):
+#                             for c1, c2 in zip(self.lattice.map2x(Vp[t+1][tf]), Vf[t+1][tf]):
 #                                 print(c1, c2)
 
                     Vf[t] = res                

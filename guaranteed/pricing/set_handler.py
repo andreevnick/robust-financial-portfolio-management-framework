@@ -29,18 +29,18 @@ class ISetHandler(ABC):
     """
 
     @abstractmethod
-    def project(self, grid):
-        """ Projects the set onto the grid.
+    def project(self, lattice):
+        """ Projects the set onto the lattice.
 
         Parameters
         ----------
-        grid : Grid
-            Target grid.
+        lattice : lattice
+            Target lattice.
 
         Returns
         -------
         np.ndarray
-            Array of points on the grid which belong to the set.
+            Array of points on the lattice which belong to the set.
 
         """
 
@@ -146,8 +146,8 @@ class RectangularHandler(ISetHandler):
     def __init__(self, bounds, dtype=None):
         self.bounds = np.atleast_2d(np.asarray(bounds, dtype=coalesce(dtype, np.float64))).reshape(-1,2)
 
-    def project(self, grid):
-        bnd = np.vstack((grid.get_projection(self.bounds.T[0]), grid.get_projection(self.bounds.T[1]))).T
+    def project(self, lattice):
+        bnd = np.vstack((lattice.get_projection(self.bounds.T[0]), lattice.get_projection(self.bounds.T[1]))).T
 
         return cartesian_product(*[np.arange(lb, ub + 1) for lb, ub in bnd])
 
@@ -194,12 +194,12 @@ class EllipseHandler(ISetHandler):
     def __r2(self, x):
         return np.sum((x - self.mu).dot(self.sigma_inv) * (x - self.mu), axis=1)
 
-    def project(self, grid):
-        R = np.max(np.abs(np.diagonal(self.L))) + np.max(grid.delta)
+    def project(self, lattice):
+        R = np.max(np.abs(np.diagonal(self.L))) + np.max(lattice.delta)
 
-        S = RectangularHandler(self.mu.T + np.array([-R, R], dtype=self.L.dtype)).project(grid)
+        S = RectangularHandler(self.mu.T + np.array([-R, R], dtype=self.L.dtype)).project(lattice)
 
-        return S[self.__r2(grid.map2x(S)) <= 1]
+        return S[self.__r2(lattice.map2x(S)) <= 1]
 
     def support_function(self, x, x_center=None):
         x = np.atleast_2d(x)
@@ -229,7 +229,7 @@ class RealSpaceHandler(ISetHandler):
     def __init__(self):
         pass
 
-    def project(self, grid):
+    def project(self, lattice):
         raise Exception('Cannot map the unbounded set')
 
     def support_function(self, x):
@@ -258,7 +258,7 @@ class NonNegativeSpaceHandler(ISetHandler):
     def __init__(self):
         pass
 
-    def project(self, grid):
+    def project(self, lattice):
         raise Exception('Cannot map the unbounded set')
 
     def support_function(self, x):

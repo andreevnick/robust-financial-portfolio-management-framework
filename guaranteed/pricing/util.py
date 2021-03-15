@@ -8,13 +8,13 @@
 """ Utility functions for pricing module"""
 import numpy as np
 from .multival_map import PIDynamics
-from ..util import minkprod_points, minksum_points, unique_points_union, PTimer, square_neighbourhood_on_grid
+from ..util import minkprod_points, minksum_points, unique_points_union, PTimer, square_neighbourhood_on_lattice
 
 __all__ = ['get_support_set',
            'generate_evaluation_point_lists']
 
 
-def get_support_set(curr_set, price_dynamics, grid, t):
+def get_support_set(curr_set, price_dynamics, lattice, t):
     """ Based on the set of price scenarios at :math:`K_{t-1}` and the increment :math:`dK_t`,
     returns the price scenarios at t.
     For additive dynamics, returns the set
@@ -33,28 +33,28 @@ def get_support_set(curr_set, price_dynamics, grid, t):
     if isinstance(price_dynamics, PIDynamics):
         increment = price_dynamics(t=t)
         if price_dynamics_type == 'add':
-            return minksum_points(curr_set, increment.project(grid), recur_max_level=None)
+            return minksum_points(curr_set, increment.project(lattice), recur_max_level=None)
         else:
-            return minkprod_points(grid, curr_set, increment, pos=True)
+            return minkprod_points(lattice, curr_set, increment, pos=True)
     else:
-        # curr_set = minksum_points(curr_set, square_neighbourhood_on_grid(np.zeros_like(grid.delta), 1, True))
+        # curr_set = minksum_points(curr_set, square_neighbourhood_on_lattice(np.zeros_like(lattice.delta), 1, True))
         if price_dynamics_type == 'add':
             res = None
             for pt in curr_set:
-                increment = price_dynamics(x=grid.map2x(pt), t=t)
-                res = increment.add(grid.map2x(pt)).project(grid) if res is None \
-                    else unique_points_union(res, increment.add(grid.map2x(pt)).project(grid))
+                increment = price_dynamics(x=lattice.map2x(pt), t=t)
+                res = increment.add(lattice.map2x(pt)).project(lattice) if res is None \
+                    else unique_points_union(res, increment.add(lattice.map2x(pt)).project(lattice))
             return res
         else:
             res = None
             for pt in curr_set:
-                increment = price_dynamics(x=grid.map2x(pt), t=t)
-                res = increment.multiply(grid.map2x(pt)).project(grid) if res is None \
-                    else unique_points_union(res, increment.multiply(grid.map2x(pt)).project(grid))
+                increment = price_dynamics(x=lattice.map2x(pt), t=t)
+                res = increment.multiply(lattice.map2x(pt)).project(lattice) if res is None \
+                    else unique_points_union(res, increment.multiply(lattice.map2x(pt)).project(lattice))
             return res
 
 
-def generate_evaluation_point_lists(p0, grid, price_dynamics, N, profiler_data=None):
+def generate_evaluation_point_lists(p0, lattice, price_dynamics, N, profiler_data=None):
     """ Precalculates the price scenarios for every t to avoid unnecessary evaluations of V_t.
 
     """
@@ -68,7 +68,7 @@ def generate_evaluation_point_lists(p0, grid, price_dynamics, N, profiler_data=N
         with PTimer(header='Vp.append(minksum_points(Vp[-1], dK, recur_max_level=None))', silent=True,
                     profiler_data=profiler_data):
             #                 Vp.append(minksum_points(Vp[-1], dK, recur_max_level=None))
-            Vp.append(get_support_set(curr_set=Vp[-1], grid=grid, price_dynamics=price_dynamics, t=i + 1))
+            Vp.append(get_support_set(curr_set=Vp[-1], lattice=lattice, price_dynamics=price_dynamics, t=i + 1))
             Vf.append(np.empty(Vp[-1].shape[0], dtype=Vp[-1].dtype))
 
     return Vp, Vf
