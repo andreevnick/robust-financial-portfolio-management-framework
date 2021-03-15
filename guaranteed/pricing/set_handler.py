@@ -144,7 +144,7 @@ class RectangularHandler(ISetHandler):
     """
 
     def __init__(self, bounds, dtype=None):
-        self.bounds = np.asarray(bounds, dtype=coalesce(dtype, np.float64))
+        self.bounds = np.atleast_2d(np.asarray(bounds, dtype=coalesce(dtype, np.float64))).reshape(-1,2)
 
     def project(self, grid):
         bnd = np.vstack((grid.get_projection(self.bounds.T[0]), grid.get_projection(self.bounds.T[1]))).T
@@ -218,7 +218,7 @@ class EllipseHandler(ISetHandler):
         return EllipseHandler(self.mu @ D, D @ self.sigma @ D.T, dtype=np.result_type(self.mu, self.sigma))
 
     def add(self, x):
-        return EllipseHandler(self.mu + x.reshape(1,-1), self.sigma, dtype=np.result_type(self.mu, self.sigma))
+        return EllipseHandler(self.mu + x.reshape(1, -1), self.sigma, dtype=np.result_type(self.mu, self.sigma))
 
 
 class RealSpaceHandler(ISetHandler):

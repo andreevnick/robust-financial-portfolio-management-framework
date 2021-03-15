@@ -38,17 +38,19 @@ def get_support_set(curr_set, price_dynamics, grid, t):
             return minkprod_points(grid, curr_set, increment, pos=True)
     else:
         if price_dynamics_type == 'add':
-            res = np.array([])
+            res = None
             for pt in curr_set:
                 increment = price_dynamics(x=grid.map2x(pt), t=t)
                 # res = unique_points_union(res, minksum_points(pt, increment.project(grid), recur_max_level=None))
-                res = unique_points_union(res, increment.add(grid.map2x(pt)).project(grid))
+                res = increment.add(grid.map2x(pt)).project(grid) if res is None \
+                    else unique_points_union(res, increment.add(grid.map2x(pt)).project(grid))
             return res
         else:
-            res = np.array([])
+            res = None
             for pt in curr_set:
                 increment = price_dynamics(x=grid.map2x(pt), t=t)
-                res = unique_points_union(res, increment.multiply(grid.map2x(pt)).project(grid))
+                res = increment.multiply(grid.map2x(pt)).project(grid) if res is None \
+                    else unique_points_union(res, increment.multiply(grid.map2x(pt)).project(grid))
             return res
 
 

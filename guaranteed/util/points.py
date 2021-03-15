@@ -238,7 +238,7 @@ def __minkprod_points(grid, points, set_handler, pos):
     set_handler should represent a non-negative set
     '''
     
-    points_ext = minksum_points(points, square_neighbourhood_on_grid([0,0], 1, include_center=True))
+    points_ext = minksum_points(points, square_neighbourhood_on_grid(np.zeros_like(grid.delta), 1, include_center=True))
     
     if pos:
         x = grid.map2x(points_ext)
