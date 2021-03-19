@@ -46,6 +46,14 @@ class IMultivalMap(ABC):
         """
         raise NotImplementedError('The method must be defined in a subclass')
 
+    @property
+    @abstractmethod
+    def dim(self):
+        """ Returns the dimension of image or inf if return value can be of any dimension (e.g., a :class:`guaranteed.pricing.set_handler.RealSpaceHandler`)
+
+        For a multivalued map :math:`\Gamma: \mathbb{R}^{n} \\times  \{0, 1, \dots\} \mapsto \mathbb{R}^{n}`, returns n. """
+        raise NotImplementedError('The method must be defined in a subclass')
+
 
 class IdenticalMap(IMultivalMap):
     """ Identical mapping: always returns the same set (its support)
@@ -61,6 +69,10 @@ class IdenticalMap(IMultivalMap):
 
     def __call__(self, x, t):
         return self.support
+
+    @property
+    def dim(self):
+        return self.support.dim
 
 
 class PriceDynamics(IMultivalMap):
@@ -157,6 +169,10 @@ class ConstantDynamics(PIDynamics):
 
     def _call(self, t):
         return self._support
+
+    @property
+    def dim(self):
+        return self._support.dim
 
     @property
     def type(self):

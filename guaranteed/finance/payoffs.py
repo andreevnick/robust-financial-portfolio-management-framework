@@ -48,7 +48,7 @@ def putonmax(strike):
         prices = np.atleast_2d(prices)
         return np.maximum(strike - prices.max(axis=1), float(0))
 
-    return putonmax
+    return putonmax_known_strike
 
 
 def callonmax(strike):

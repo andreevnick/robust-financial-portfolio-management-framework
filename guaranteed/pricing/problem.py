@@ -19,7 +19,7 @@ from scipy.spatial import ConvexHull
 from sklearn.utils import check_random_state
 
 from .multival_map import PriceDynamics, IMultivalMap
-from ..finance import IOption
+from ..finance import IOption, AmericanOption
 from ..pricing import Lattice
 from ..util import Timer, PTimer, ProfilerData, coalesce, isin_points
 from .util import get_support_set, generate_evaluation_point_lists
@@ -56,7 +56,7 @@ class Problem:
 
     def __init__(self, starting_price, price_dynamics, trading_constraints, option,
                  lattice, time_horizon=None, solver=None):
-        self.starting_price = starting_price
+        self.starting_price = np.array(starting_price).reshape((1, -1))
         if not isinstance(price_dynamics, PriceDynamics):
             raise TypeError('Price dynamics must be an instance of PriceDynamics!')
         self.price_dynamics = price_dynamics
@@ -77,8 +77,8 @@ class Problem:
                 raise TypeError('Can not determine time horizon! Problem is unbounded.')
         if self.time_horizon <= 0:
             raise ValueError('Wrong time horizon! Must be a positive integer.')
-        # check that if option has an expiration, then it is the same as given.
-        if 'expiry' in self.option.__dict__ and option.expiry != self.time_horizon:
+        # if the option is american, set its expiration to time_horizon
+        if not isinstance(self.option, AmericanOption) and self.option.expiry != self.time_horizon:
             raise ValueError(
                 'Expiration of an option ({exp_opt}) and given time horizon ({th}) do not match!'.format(
                     exp_opt=option.expiry, th=self.time_horizon
@@ -88,7 +88,13 @@ class Problem:
             raise ValueError('Price dynamics must be defined for all time t <= time_horizon!')
 
         self.lattice = lattice
-        self.dimension = lattice.delta.shape[0]
+        self.dim = lattice.delta.shape[0]
+        # check dimensions
+        if (not np.isinf(self.price_dynamics.dim) and self.price_dynamics.dim != self.dim) or (
+                not np.isinf(self.trading_constraints.dim) and self.trading_constraints.dim != self.dim) or (
+                self.starting_price.shape[1] != self.dim):
+            raise ValueError('Dimensions of price_dynamics, trading_constraints, starting_price and lattice must match!')
+
         self.solver = solver
         self.hedge = None
         self.Vp = None
@@ -200,7 +206,7 @@ class ConvhullSolver(ISolver):
         self.debug_mode = debug_mode
         self.ignore_warnings = ignore_warnings
         self.enable_timer = enable_timer
-        self.iter_tick = 1/iter_tick
+        self.iter_tick = 1 / iter_tick
 
         self.profiler_data = coalesce(profiler_data, ProfilerData())
 
@@ -548,7 +554,7 @@ class ConvhullSolver(ISolver):
 
                         if not self.silent_timer_:
                             if np.random.uniform() < self.iter_tick:
-                                print('iter = {0}/{1} ({2:.2f}%)'.format(i, len(Vp[t]), 100*i/len(Vp[t])))
+                                print('iter = {0}/{1} ({2:.2f}%)'.format(i, len(Vp[t]), 100 * i / len(Vp[t])))
 
                         with PTimer(header='K = vp + self.dK_', silent=True, profiler_data=pdata2) as tm2:
 

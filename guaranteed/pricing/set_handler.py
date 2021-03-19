@@ -124,6 +124,11 @@ class ISetHandler(ABC):
 
         raise NotImplementedError('The method must be defined in a subclass')
 
+    @property
+    @abstractmethod
+    def dim(self):
+        raise NotImplementedError('The method must be defined in a subclass')
+
 
 class RectangularHandler(ISetHandler):
     """ Handler for a rectangular set.
@@ -144,7 +149,7 @@ class RectangularHandler(ISetHandler):
     """
 
     def __init__(self, bounds, dtype=None):
-        self.bounds = np.atleast_2d(np.asarray(bounds, dtype=coalesce(dtype, np.float64))).reshape(-1,2)
+        self.bounds = np.atleast_2d(np.asarray(bounds, dtype=coalesce(dtype, np.float64))).reshape(-1, 2)
 
     def project(self, lattice):
         bnd = np.vstack((lattice.get_projection(self.bounds.T[0]), lattice.get_projection(self.bounds.T[1]))).T
@@ -169,6 +174,10 @@ class RectangularHandler(ISetHandler):
     def add(self, x):
         to_add = np.asarray(x).reshape(-1, 1)
         return RectangularHandler(self.bounds + to_add, dtype=self.bounds.dtype)
+
+    @property
+    def dim(self):
+        return self.bounds.shape[0]
 
 
 class EllipseHandler(ISetHandler):
@@ -210,7 +219,6 @@ class EllipseHandler(ISetHandler):
         return (not np.any(np.isinf(self.sigma))) and (not np.any(np.isinf(self.mu)))
 
     def multiply(self, x):
-
         assert np.all(x >= 0), 'x must be >= 0'
 
         D = np.diag(x)
@@ -219,6 +227,10 @@ class EllipseHandler(ISetHandler):
 
     def add(self, x):
         return EllipseHandler(self.mu + x.reshape(1, -1), self.sigma, dtype=np.result_type(self.mu, self.sigma))
+
+    @property
+    def dim(self):
+        return self.mu.shape[1]
 
 
 class RealSpaceHandler(ISetHandler):
@@ -245,6 +257,10 @@ class RealSpaceHandler(ISetHandler):
 
     def add(self, x):
         return RealSpaceHandler()
+
+    @property
+    def dim(self):
+        return np.inf
 
 
 class NonNegativeSpaceHandler(ISetHandler):
@@ -274,3 +290,7 @@ class NonNegativeSpaceHandler(ISetHandler):
 
     def add(self, x):
         raise NotImplementedError('Addition to NonNegativeSpaceHandler is not implemented.')
+
+    @property
+    def dim(self):
+        return np.inf
