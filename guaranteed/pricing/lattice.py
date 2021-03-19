@@ -53,6 +53,10 @@ class Lattice:
         self.logscale = logscale
         self.center = np.asarray(coalesce(center, self.delta * 0), dtype=self.dtype)
 
+    @property
+    def dim(self):
+        return self.delta.shape[0]
+
     def _x_trans(self, x):
         """ Utility function for reducing logscale lattice logic to uniform lattice.
 

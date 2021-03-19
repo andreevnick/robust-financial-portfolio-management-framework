@@ -88,7 +88,7 @@ class Problem:
             raise ValueError('Price dynamics must be defined for all time t <= time_horizon!')
 
         self.lattice = lattice
-        self.dim = lattice.delta.shape[0]
+        self.dim = lattice.dim
         # check dimensions
         if (not np.isinf(self.price_dynamics.dim) and self.price_dynamics.dim != self.dim) or (
                 not np.isinf(self.trading_constraints.dim) and self.trading_constraints.dim != self.dim) or (
