@@ -1,0 +1,9 @@
+{
+    "scene2D": {
+        "figsize": [10, 10],
+        "font": 16,
+        "background": "w",
+        "grid": 0,
+        "minor_grid": 0
+    }
+}
