@@ -220,7 +220,8 @@ class EllipseHandler(ISetHandler):
         return (not np.any(np.isinf(self.sigma))) and (not np.any(np.isinf(self.mu)))
 
     def multiply(self, x):
-         if not np.all(x >= 0):
+        x = np.asarray(x)
+        if not np.all(x >= 0):
             raise ValueError('X must be >= 0!')
 
         D = np.diag(x)
@@ -228,6 +229,7 @@ class EllipseHandler(ISetHandler):
         return EllipseHandler(self.mu @ D, D @ self.sigma @ D.T, dtype=np.result_type(self.mu, self.sigma))
 
     def add(self, x):
+        x = np.asarray(x)
         return EllipseHandler(self.mu + x.reshape(1, -1), self.sigma, dtype=np.result_type(self.mu, self.sigma))
 
     @property

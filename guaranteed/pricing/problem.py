@@ -98,7 +98,7 @@ class Problem:
         self.solver = solver
         self.hedge = None
         self.Vp = None
-        self.Vx = None
+        self.Vf = None
 
     def get_precision(self):
         """ Calculates the precision of given problem
@@ -123,7 +123,7 @@ class Problem:
         raise NotImplementedError('This method is not yet implemented')
 
     def solve(self, calc_hedge=False):
-        """ Solves a problem and sets its Vp and Vx (and hedge, if `calc_hedge` is True) to solution
+        """ Solves a problem and sets its Vp and Vf (and hedge, if `calc_hedge` is True) to solution
 
         Parameters
         ----------
@@ -135,9 +135,9 @@ class Problem:
             raise ValueError('Solver is not set! Can not solve a problem')
         solution = self.solver.solve(self, calc_hedge)
         if calc_hedge:
-            self.Vx, self.Vp, self.hedge = solution
+            self.Vf, self.Vp, self.hedge = solution
         else:
-            self.Vx, self.Vp = solution
+            self.Vf, self.Vp = solution
 
 
 class ISolver(ABC):
@@ -156,7 +156,7 @@ class ISolver(ABC):
         Returns
         -------
         tuple
-            First element is values of value function Vx, second is points on `problem.lattice` on which Vx is calculated,
+            First element is values of value function Vf, second is points on `problem.lattice` on which Vf is calculated,
              third (optional) is hedging strategy.
         """
         raise NotImplementedError('This method should be implemented!')
@@ -206,7 +206,7 @@ class ConvhullSolver(ISolver):
         self.debug_mode = debug_mode
         self.ignore_warnings = ignore_warnings
         self.enable_timer = enable_timer
-        self.iter_tick = 1 / iter_tick
+        self.iter_tick = iter_tick
 
         self.profiler_data = coalesce(profiler_data, ProfilerData())
 
@@ -553,7 +553,7 @@ class ConvhullSolver(ISolver):
                     for i, vp in enumerate(Vp[t]):
 
                         if not self.silent_timer_:
-                            if np.random.uniform() < self.iter_tick:
+                            if np.random.uniform() < (1 / self.iter_tick):
                                 print('iter = {0}/{1} ({2:.2f}%)'.format(i, len(Vp[t]), 100 * i / len(Vp[t])))
 
                         with PTimer(header='K = vp + self.dK_', silent=True, profiler_data=pdata2) as tm2:

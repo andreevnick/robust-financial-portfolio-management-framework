@@ -26,7 +26,7 @@ __all__ = [
 class IOption(ABC):
     """ An abstract interface for Options"""
     def __init__(self, expiry, payoff_fcn):
-        if expiry <= 0:
+        if expiry is not None and expiry <= 0:
             raise ValueError('Expiration date must be greater, than zero!')
         if not callable(payoff_fcn):
             raise ValueError('Payoff function must be callable!')
@@ -128,8 +128,8 @@ class BermudanOption(IOption):
     """
 
     def __init__(self, payoff_dates, payoff_fcn: Callable):
-        super().__init__(payoff_dates.max(), payoff_fcn)
         payoff_dates = np.array(payoff_dates, dtype=int).flatten()
+        super().__init__(payoff_dates.max(), payoff_fcn)
         if not np.all(payoff_dates > 0):
             raise  ValueError('All payoff dates must be greater than zero!')
         self.payoff_dates = payoff_dates
