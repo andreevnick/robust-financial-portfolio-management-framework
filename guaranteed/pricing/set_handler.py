@@ -167,7 +167,8 @@ class RectangularHandler(ISetHandler):
         return not np.any(np.isinf(self.bounds))
 
     def multiply(self, x):
-        assert np.all(x >= 0), 'x must be >= 0'
+        if not np.all(x >= 0):
+            raise ValueError('X must be >= 0!')
         mul = np.asarray(x).reshape(-1, 1)
         return RectangularHandler(self.bounds * mul, dtype=self.bounds.dtype)
 
@@ -213,13 +214,14 @@ class EllipseHandler(ISetHandler):
     def support_function(self, x, x_center=None):
         x = np.atleast_2d(x)
 
-        return (x.T @ self.mu) + np.linalg.norm(self.L @ self.U.T @ x.T, axis=0, ord=2)
+        return np.squeeze((x @ self.mu.T).T + np.linalg.norm(self.L @ self.U.T @ x.T, axis=0, ord=2))
 
     def iscompact(self):
         return (not np.any(np.isinf(self.sigma))) and (not np.any(np.isinf(self.mu)))
 
     def multiply(self, x):
-        assert np.all(x >= 0), 'x must be >= 0'
+         if not np.all(x >= 0):
+            raise ValueError('X must be >= 0!')
 
         D = np.diag(x)
 
