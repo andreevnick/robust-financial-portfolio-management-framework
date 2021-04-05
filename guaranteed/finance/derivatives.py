@@ -25,7 +25,13 @@ __all__ = [
 
 class IOption(ABC):
     """ An abstract interface for Options"""
-
+    def __init__(self, expiry, payoff_fcn):
+        if expiry <= 0:
+            raise ValueError('Expiration date must be greater, than zero!')
+        if not callable(payoff_fcn):
+            raise ValueError('Payoff function must be callable!')
+        
+        
     @abstractmethod
     def payoff(self, prices, t=None):
         """ Get the value of payoff function for `prices` and time `t`
@@ -63,7 +69,7 @@ class EuropeanOption(IOption):
     """
 
     def __init__(self, expiry: int, payoff_fcn: Callable):
-        assert expiry > 0, 'Expiration date must be greater than zero!'
+        super().__init__(expiry, payoff_fcn)
         self._expiry = expiry
         self.payoff_fcn = payoff_fcn
 
@@ -91,6 +97,7 @@ class AmericanOption(IOption):
 
     def __init__(self, payoff_fcn: Callable, expiry=None):
         self.payoff_fcn = payoff_fcn
+        super().__init__(expiry, payoff_fcn)
         self._expiry = expiry
 
     def payoff(self, prices, t=None):
@@ -121,8 +128,10 @@ class BermudanOption(IOption):
     """
 
     def __init__(self, payoff_dates, payoff_fcn: Callable):
+        super().__init__(payoff_dates.max(), payoff_fcn)
         payoff_dates = np.array(payoff_dates, dtype=int).flatten()
-        assert np.all(payoff_dates > 0), 'All payoff dates must be greater than zero!'
+        if not np.all(payoff_dates > 0):
+            raise  ValueError('All payoff dates must be greater than zero!')
         self.payoff_dates = payoff_dates
         self._expiry = self.payoff_dates.max()
         self.payoff_fcn = payoff_fcn
