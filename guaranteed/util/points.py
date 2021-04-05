@@ -17,12 +17,12 @@ __all__ = [
             'minkprod_points',
             'isin_points',
             'setdiff_points',
-            'square_neighbourhood_on_grid',
-            'diamond_neighbourhood_on_grid'
+            'square_neighbourhood_on_lattice',
+            'diamond_neighbourhood_on_lattice'
           ]
 
-""" The module provides operations over the sets of points on the n-dimensional grid.
-Points are represented as n-dimensional integer vectors of coordinates on the grid.
+""" The module provides operations over the sets of points on the n-dimensional lattice.
+Points are represented as n-dimensional integer vectors of coordinates on the lattice.
 """
     
 
@@ -32,9 +32,9 @@ def unique_points_union(points1, points2):
     Parameters
     ----------
     points1 : array-like
-        A set of unique grid points.
+        A set of unique lattice points.
     points2 : array-like
-        A set of unique grid points.
+        A set of unique lattice points.
         
     Returns
     -------
@@ -77,9 +77,9 @@ def minksum_points(points1, points2, recur_max_level=None):
     Parameters
     ----------
     points1 : array-like
-        A set of grid points.
+        A set of lattice points.
     points2 : array-like
-        A set of grid points.
+        A set of lattice points.
     recur_max_level : int
         Max recursion level for the numeric algorithm. When None, half of
         the maximum allowed recursion level is used.
@@ -126,9 +126,9 @@ def isin_points(points1, points2):
     Parameters
     ----------
     points1 : array-like
-        A set of unique grid points.
+        A set of unique lattice points.
     points2 : array-like
-        A set of unique grid points.
+        A set of unique lattice points.
         
     Returns
     -------
@@ -146,9 +146,9 @@ def setdiff_points(pointsA, pointsB):
     Parameters
     ----------
     pointsA : array-like
-        A set of unique grid points.
+        A set of unique lattice points.
     pointsB : array-like
-        A set of unique grid points.
+        A set of unique lattice points.
         
     Returns
     -------
@@ -160,8 +160,8 @@ def setdiff_points(pointsA, pointsB):
     return pointsA[np.in1d(pairing_function(pointsA), pairing_function(pointsB), assume_unique=True, invert=True)]
 
 
-def square_neighbourhood_on_grid(grid_point, radius, include_center=False):
-    """ Returns a grid set, representing the square neighbourhood of the
+def square_neighbourhood_on_lattice(lattice_point, radius, include_center=False):
+    """ Returns a lattice set, representing the square neighbourhood of the
     specified point. Square neighbourhood (denoted by X) of a point (denoted by *):
     O|O|O|O|O
     ---------
@@ -175,32 +175,32 @@ def square_neighbourhood_on_grid(grid_point, radius, include_center=False):
     
     Parameters
     ----------
-    grid_point : array-like
-        A grid point.
+    lattice_point : array-like
+        A lattice point.
     radius : int >= 0
         Radius of the neighbourhood.
     include_center : bool
-        If True, grid_point is included in the returned set. Default is False.
+        If True, lattice_point is included in the returned set. Default is False.
         
     Returns
     -------
     array-like
-        Set of grid points, representing a square neighbourhood with the specified radius.
+        Set of lattice points, representing a square neighbourhood with the specified radius.
     
     """
     
-    grid_point = np.asarray(grid_point)
+    lattice_point = np.asarray(lattice_point)
     
-    U = np.asarray(cartesian_product(*[np.arange(p-radius, p+radius+1) for p in grid_point]))
+    U = np.asarray(cartesian_product(*[np.arange(p-radius, p+radius+1) for p in lattice_point]))
     
     if include_center:
         return U
     else:
-        return np.asarray([p for p in U if np.any(p-grid_point)])
+        return np.asarray([p for p in U if np.any(p-lattice_point)])
 
 
-def diamond_neighbourhood_on_grid(grid_point, radius, include_center=False):
-    """ Returns a grid set, representing the diamond neighbourhood of the
+def diamond_neighbourhood_on_lattice(lattice_point, radius, include_center=False):
+    """ Returns a lattice set, representing the diamond neighbourhood of the
     specified point. Diamond neighbourhood (denoted by X) of a point (denoted by *):
     O|O|O|O|O
     ---------
@@ -214,67 +214,67 @@ def diamond_neighbourhood_on_grid(grid_point, radius, include_center=False):
     
     Parameters
     ----------
-    grid_point : array-like
-        A grid point.
+    lattice_point : array-like
+        A lattice point.
     radius : int >= 0
         Radius of the neighbourhood.
     include_center : bool
-        If True, grid_point is included in the returned set. Default is False.
+        If True, lattice_point is included in the returned set. Default is False.
         
     Returns
     -------
     array-like
-        Set of grid points, representing a diamond neighbourhood with the specified radius.
+        Set of lattice points, representing a diamond neighbourhood with the specified radius.
     
     """
     
-    grid_point = np.asarray(grid_point)
+    lattice_point = np.asarray(lattice_point)
     
-    return np.asarray([p for p in square_neighbourhood_on_grid(grid_point, radius, include_center) if np.sum(np.abs(grid_point-p)) <= radius])
+    return np.asarray([p for p in square_neighbourhood_on_lattice(lattice_point, radius, include_center) if np.sum(np.abs(lattice_point-p)) <= radius])
 
 
-def __minkprod_points(grid, points, set_handler, pos):
+def __minkprod_points(lattice, points, set_handler, pos):
     '''
     set_handler should represent a non-negative set
     '''
     
-    points_ext = minksum_points(points, square_neighbourhood_on_grid([0,0], 1, include_center=True))
+    points_ext = minksum_points(points, square_neighbourhood_on_lattice(np.zeros_like(lattice.delta), 1, include_center=True))
     
     if pos:
-        x = grid.map2x(points_ext)
+        x = lattice.map2x(points_ext)
         points_ext = points_ext[np.min(x, axis=1) > 0, :]
     
     set_sum = np.empty((0, points_ext.shape[1]), dtype = points_ext.dtype)
     
     for p in points_ext:
         
-        s = set_handler.multiply(grid.map2x(p)).project(grid)
+        s = set_handler.multiply(lattice.map2x(p)).project(lattice)
         
         set_sum = unique_points_union(set_sum, s)
         
     if pos:
-        x = grid.map2x(set_sum)
+        x = lattice.map2x(set_sum)
         set_sum = set_sum[np.min(x, axis=1) > 0, :]
         
     return set_sum
 
 
-def minkprod_points(grid, points, set_handler, pos=False, recur_max_level=None):
+def minkprod_points(lattice, points, set_handler, pos=False, recur_max_level=None):
     '''
     Calculates the set of element-wise products of two sets.
     
-    For the provided set handler and the set of points on the grid calculates
+    For the provided set handler and the set of points on the lattice calculates
     the approximation of the set of element-wise products
-    {x*y, where x is from the set, y is from the set handler projection on the grid}.
+    {x*y, where x is from the set, y is from the set handler projection on the lattice}.
     Optionally filters out points of the product which have non-positive coordinates.
     
     Parameters
     ----------
     
-    grid : class:`Grid`
-        Point grid.
+    lattice : class:`lattice`
+        Point lattice.
     points : array-like
-        Sequence of points on the grid.
+        Sequence of points on the lattice.
     set_handler : class:`ISetHandler`
         Set handler, representing a non-negative set.
     pos : bool
@@ -297,7 +297,7 @@ def minkprod_points(grid, points, set_handler, pos=False, recur_max_level=None):
         recur_max_level = sys.getrecursionlimit() // 2
     
     if recur_max_level <= 1:
-        return __minkprod_points(grid, points, set_handler, pos)
+        return __minkprod_points(lattice, points, set_handler, pos)
     
     else:
 
@@ -307,11 +307,11 @@ def minkprod_points(grid, points, set_handler, pos=False, recur_max_level=None):
             return []
         
         if n == 1:
-            return __minkprod_points(grid, points, set_handler, pos)
+            return __minkprod_points(lattice, points, set_handler, pos)
         
         else:
-            return unique_points_union(minkprod_points(grid, points[:(n//2),:], set_handler, pos=pos, recur_max_level=recur_max_level-1),
-                                       minkprod_points(grid, points[(n//2):,:], set_handler, pos=pos, recur_max_level=recur_max_level-1)
+            return unique_points_union(minkprod_points(lattice, points[:(n//2),:], set_handler, pos=pos, recur_max_level=recur_max_level-1),
+                                       minkprod_points(lattice, points[(n//2):,:], set_handler, pos=pos, recur_max_level=recur_max_level-1)
                                       )
 
 

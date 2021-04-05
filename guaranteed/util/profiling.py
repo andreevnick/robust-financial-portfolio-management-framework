@@ -8,7 +8,7 @@
 from datetime import datetime
 import time
 
-from .util import coalesce, keydefaultdict
+from ..util import coalesce, keydefaultdict
 
 
 __all__ = [

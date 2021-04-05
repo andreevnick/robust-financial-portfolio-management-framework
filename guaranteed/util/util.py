@@ -5,9 +5,9 @@
 # http://opensource.org/licenses/MIT>, at your option. This file may not be
 # copied, modified, or distributed except according to those terms.
 
-from datetime import datetime
-import time
 import collections
+from datetime import datetime
+
 import numpy as np
 
 __all__ = ['tic',
@@ -18,10 +18,9 @@ __all__ = ['tic',
            'triple_product',
            'cantor_pairing_function',
            'pairing_function'
-          ]
+           ]
 
-
-__timestamp = None;
+__timestamp = None
 
 
 def tic():
@@ -160,5 +159,5 @@ def pairing_function(x):
     
     else:
         return cantor_pairing_function(x_[:,0], x_[:,1])
-    
-    
+
+
