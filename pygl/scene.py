@@ -25,7 +25,7 @@ class Scene:
     
     def __init__(self, **kwargs):
         
-        conf = self.__read_conf(kwargs.get('template', path.join(path.dirname(__file__), '.\scene_templates\default.json')))
+        conf = self.__read_conf(kwargs.get('template', path.join(path.dirname(__file__), './scene_templates/default.json')))
         override_conf = kwargs.get('override_conf', {})
             
         self.conf = conf['scene2D']
