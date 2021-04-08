@@ -22,7 +22,8 @@ __all__ = ['IMultivalMap',
            'IdenticalMap',
            'PriceDynamics',
            'PIDynamics',
-           'ConstantDynamics']
+           'ConstantDynamics',
+           'MDAFDynamics']
 
 
 class IMultivalMap(ABC):
@@ -185,4 +186,30 @@ class ConstantDynamics(PIDynamics):
 
     def get_lipschitz(self, t: int):
         # TODO: implement this method
+        pass
+
+
+class MDAFDynamics(PriceDynamics):
+    """Multiplicative dynamics in additive form (time-independent)
+    """
+
+    def __init__(self, support: ISetHandler):
+        self._support = support
+
+    def __call__(self, x, t=1):
+        return self._support.multiply(x).add(-x)
+
+    @property
+    def dim(self):
+        return self._support.dim
+
+    @property
+    def type(self):
+        return 'add'
+
+    @property
+    def t_max(self):
+        return np.inf
+
+    def get_lipschitz(self, t: int):
         pass
