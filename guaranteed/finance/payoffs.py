@@ -13,6 +13,7 @@ __all__ = ['putonmax',
            'callonmax',
            'put2call1']
 
+
 def putonmax(strike):
     """ Payoff of Put On Max rainbow option generator
 
@@ -44,7 +45,7 @@ def putonmax(strike):
     array([3., 0.])
     """
 
-    def putonmax_known_strike(prices):
+    def putonmax_known_strike(prices, *unused):
         prices = np.atleast_2d(prices)
         return np.maximum(strike - prices.max(axis=1), float(0))
 
@@ -82,14 +83,14 @@ def callonmax(strike):
     array([0, 1.])
     """
 
-    def callonmax_known_strike(prices):
+    def callonmax_known_strike(prices, *unused):
         prices = np.atleast_2d(prices)
         return np.maximum(prices.max(axis=1) - strike, float(0))
 
     return callonmax_known_strike
 
 
-def put2call1(prices):
+def put2call1(prices, *unused):
     """ Payoff of Put 2 Call 1 rainbow option
 
     Parameters

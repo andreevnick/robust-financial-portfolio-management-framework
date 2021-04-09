@@ -76,7 +76,7 @@ class EuropeanOption(IOption):
     def payoff(self, prices, t=None):
         prices = np.atleast_2d(prices)
         if t == self.expiry:
-            return self.payoff_fcn(prices)
+            return self.payoff_fcn(prices, t)
         return np.full((np.atleast_2d(prices).shape[0],), -np.inf)
 
     @property
@@ -102,7 +102,7 @@ class AmericanOption(IOption):
 
     def payoff(self, prices, t=None):
         prices = np.atleast_2d(prices)
-        return self.payoff_fcn(prices)
+        return self.payoff_fcn(prices, t)
 
     @property
     def expiry(self):
@@ -139,7 +139,7 @@ class BermudanOption(IOption):
     def payoff(self, prices, t=None):
         prices = np.atleast_2d(prices)
         if t in self.payoff_dates:
-            return self.payoff_fcn(prices)
+            return self.payoff_fcn(prices, t)
         return np.full((np.atleast_2d(prices).shape[0],), -np.inf)
 
     @property
