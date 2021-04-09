@@ -132,7 +132,7 @@ class ISetHandler(ABC):
         Notes
         -----
         If set :math:`\mathcal{X} \in \mathbb{R}^n`, then this method should return `n`.
-        If `\mathcal{X}` is independent of `n` (like RealSpaceHandler), then this method should return `np.inf`
+        If :math:`\mathcal{X}` is independent of `n` (like RealSpaceHandler), then this method should return `np.inf`
 
         """
         raise NotImplementedError('The method must be defined in a subclass')
