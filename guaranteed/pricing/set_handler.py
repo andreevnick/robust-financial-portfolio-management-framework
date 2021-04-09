@@ -127,12 +127,21 @@ class ISetHandler(ABC):
     @property
     @abstractmethod
     def dim(self):
+        """ Returns dimension of set (or np.inf, if set handler can be of any dimension.
+
+        Notes
+        -----
+        If set :math:`\mathcal{X} \in \mathbb{R}^n`, then this method should return `n`.
+        If `\mathcal{X}` is independent of `n` (like RealSpaceHandler), then this method should return `np.inf`
+
+        """
         raise NotImplementedError('The method must be defined in a subclass')
 
     @abstractmethod
     def contains(self, x, is_interior=False):
         """ Check that point `x` from :math:`\mathbb{R}^n` is in set
-        This method checks for :math:`x \in \mathcal{X}` or for :math:`x \in int(\mathcal{X}) (if `is_interior` is True)
+
+        This method checks for :math:`x \in \mathcal{X}` or for :math:`x \in int(\mathcal{X}`) (if `is_interior` is True)
 
         Parameters
         ----------
@@ -144,12 +153,13 @@ class ISetHandler(ABC):
         Returns
         -------
         bool
+            True, if `x` (or all points in `x`) lie in set (in its interior)
 
         """
         raise NotImplementedError('The method must be defined in a subclass')
 
     def __contains__(self, x):
-        """ Magic wrapper for self.contains(x, is_interior=False)
+        """ Magic wrapper for :code:`self.contains(x, is_interior=False)`
 
         See Also
         --------
@@ -160,7 +170,12 @@ class ISetHandler(ABC):
         return self.contains(x)
 
     def is_interior(self, x):
-        """ Wrapper for self.contains(x, is_interior=True)"""
+        """ Wrapper for :code:`self.contains(x, is_interior=True)`
+
+        See Also
+        --------
+        :func:`contains`
+        """
 
         return self.contains(x, is_interior=True)
 
@@ -282,7 +297,7 @@ class EllipseHandler(ISetHandler):
     def dim(self):
         return self.mu.shape[1]
 
-    def contains(self, x, is_interior = False):
+    def contains(self, x, is_interior=False):
         def comparison(first, second):
             return first < second if is_interior else first <= second
 
@@ -319,7 +334,7 @@ class RealSpaceHandler(ISetHandler):
     def dim(self):
         return np.inf
 
-    def contains(self, x, is_interior = False):
+    def contains(self, x, is_interior=False):
         return True
 
 
@@ -362,4 +377,3 @@ class NonNegativeSpaceHandler(ISetHandler):
         x = np.atleast_2d(x)
 
         return np.all(comparison(x, 0.0))
-
