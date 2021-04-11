@@ -15,7 +15,7 @@ For any sets :math:`X, Y`, a multivalued mapping is such a mapping :math:`\Gamma
 
 import numpy as np
 from abc import ABC, abstractmethod
-from .set_handler import ISetHandler
+from .set_handler import ISetHandler, NonNegativeSimplex
 from .lattice import Lattice
 
 __all__ = ['IMultivalMap',
@@ -23,7 +23,8 @@ __all__ = ['IMultivalMap',
            'PriceDynamics',
            'PIDynamics',
            'ConstantDynamics',
-           'MDAFDynamics']
+           'MDAFDynamics',
+           'SimplexConstraints']
 
 
 class IMultivalMap(ABC):
@@ -74,6 +75,44 @@ class IdenticalMap(IMultivalMap):
     @property
     def dim(self):
         return self.support.dim
+
+
+class SimplexConstraints(IMultivalMap):
+    """ A simplex mapping that corresponds to the following trading constraints:
+
+    - No short positions;
+    - Total value of risky assets at any given time can not exceed given limit `r`
+
+    In mathematical terms, given a vector of discounted prices of risky assets :math:`x = (x_1, \dots, x_n)`
+
+    .. math:: D_t(x) = \{h = (h_1, \dots, h_n):\; \sum\limits_{i=1}^{n}h_i x_i \leqslant r, \; h_i \geqslant 0, i = 1,\dots, n\}
+
+    Parameters
+    ----------
+    r : np.float64
+        Limit on total value of risky assets (in discounted prices, i.e., in terms of units of riskless asset)
+
+    Notes
+    -----
+    We denote these constraints as *simplex* since :math:`D_t(x)` is, in fact, a special type of N-simplex.
+
+    See Also
+    --------
+
+    :class:`guaranteed.pricing.set_handler.NonNegativeSimplex`
+    """
+
+    def __init__(self, r: np.float64):
+        if r < 0:
+            raise ValueError('Bound must be non-negative!')
+        self.r = r
+
+    def __call__(self, x, t):
+        return NonNegativeSimplex(self.r / x, dtype=x.dtype)
+
+    @property
+    def dim(self):
+        return np.inf
 
 
 class PriceDynamics(IMultivalMap):

@@ -19,7 +19,8 @@ __all__ = [
     'RectangularHandler',
     'EllipseHandler',
     'RealSpaceHandler',
-    'NonNegativeSpaceHandler'
+    'NonNegativeSpaceHandler',
+    'NonNegativeSimplex'
 ]
 
 
@@ -139,35 +140,24 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def contains(self, x, is_interior=False):
-        """ Check that point `x` from :math:`\mathbb{R}^n` is in set
+        """ Check that points `x` from :math:`\mathbb{R}^n` are in set
 
         This method checks for :math:`x \in \mathcal{X}` or for :math:`x \in int(\mathcal{X}`) (if `is_interior` is True)
 
         Parameters
         ----------
         x : np.ndarray, size = (n,) or (m,n)
-            Point(s) to check. If given multiple points, returns True if all of them are in a set.
+            Point(s) to check. If given multiple points, returns an array of boolean values for each point
         is_interior : bool, default = False
             Flag whether to check that `x` is in interior of a set.
 
         Returns
         -------
-        bool
-            True, if `x` (or all points in `x`) lie in set (in its interior)
+        np.ndarray, size = (m,)
+            True, if `x` (or `x_i`) lies in set (in its interior)
 
         """
         raise NotImplementedError('The method must be defined in a subclass')
-
-    def __contains__(self, x):
-        """ Magic wrapper for :code:`self.contains(x, is_interior=False)`
-
-        See Also
-        --------
-        :func:`contains`
-
-        """
-
-        return self.contains(x)
 
     def is_interior(self, x):
         """ Wrapper for :code:`self.contains(x, is_interior=True)`
@@ -193,13 +183,13 @@ class RectangularHandler(ISetHandler):
     ----------
     bounds : array_like, size = (2,) or (n,2)
         Array of boundary points [:math:`lb_i, ub_i`]
-    dtype : np.dtype, optional
+    dtype : np.dtype, default = np.float64
         Numpy datatype of points in bounds
 
     """
 
-    def __init__(self, bounds, dtype=None):
-        self.bounds = np.atleast_2d(np.asarray(bounds, dtype=coalesce(dtype, np.float64))).reshape(-1, 2)
+    def __init__(self, bounds, dtype=np.float64):
+        self.bounds = np.atleast_2d(np.asarray(bounds, dtype=dtype)).reshape(-1, 2)
 
     def project(self, lattice):
         bnd = np.vstack((lattice.get_projection(self.bounds.T[0]), lattice.get_projection(self.bounds.T[1]))).T
@@ -232,14 +222,14 @@ class RectangularHandler(ISetHandler):
 
     def contains(self, x, is_interior=False):
         def left(first, second):
-            return first >= second if is_interior else first > second
+            return first > second if is_interior else first >= second
 
-        def right(first, r):
+        def right(first, second):
             return first < second if is_interior else first <= second
 
         x = np.atleast_2d(x)
-        return np.all(
-            np.logical_and(np.all(left(x, self.bounds.T[0, :]), axis=1), np.all(right(x, self.bounds.T[1, :]), axis=1)))
+        return np.logical_and(np.all(left(x, self.bounds.T[0, :]), axis=1),
+                              np.all(right(x, self.bounds.T[1, :]), axis=1))
 
 
 class EllipseHandler(ISetHandler):
@@ -302,7 +292,7 @@ class EllipseHandler(ISetHandler):
             return first < second if is_interior else first <= second
 
         x = np.atleast_2d(x)
-        return np.all(comparison(self.__r2(x), 1.0))
+        return comparison(self.__r2(x), 1.0)
 
 
 class RealSpaceHandler(ISetHandler):
@@ -335,7 +325,8 @@ class RealSpaceHandler(ISetHandler):
         return np.inf
 
     def contains(self, x, is_interior=False):
-        return True
+        x = np.atleast_2d(x)
+        return np.full(shape=(x.shape[0], 1), fill_value=True)
 
 
 class NonNegativeSpaceHandler(ISetHandler):
@@ -371,9 +362,69 @@ class NonNegativeSpaceHandler(ISetHandler):
         return np.inf
 
     def contains(self, x, is_interior=False):
-        def comparison(first, second):
-            return first > second if is_interior else first >= second
-
         x = np.atleast_2d(x)
 
-        return np.all(comparison(x, 0.0))
+        return np.all(x > 0.0 if is_interior else x >= 0.0, axis=1)
+
+
+class NonNegativeSimplex(ISetHandler):
+    """ Represents an n-simplex with vertices :math:`(0,\dots, 0), (x_i^1,\dots, x_i^j, \dots, x_i^n), \; i = 1,2,\dots, n`,
+    where
+
+    .. math:: x_i^j = b_i \\cdot \delta_i^j, \; \\forall i, j = 1,\dots, n, \; b_i > 0, \; \delta_i^j \\text{ is a Kronecker delta.}
+
+
+    Parameters
+    ----------
+    bounds : array_like, size = (n,)
+        Array of boundary points [:math:`b_i`]
+    dtype : np.dtype, default = np.float64
+        Numpy datatype of points in bounds
+
+    """
+
+    def __init__(self, bounds, dtype=np.float64):
+        bounds = np.asarray(bounds, dtype=dtype).squeeze()
+        if bounds.ndim > 1:
+            raise ValueError('Bounds for NonNegativeSimplex must be given as 1d array!')
+        if np.any(bounds <= 0):
+            raise ValueError('Bounds for NonNegativeSimplex must be greater than zero!')
+        if np.any(np.isinf(bounds)):
+            raise ValueError('Bounds for NonNegativeSimplex must be finite!')
+        self.bounds = bounds
+
+    def project(self, lattice):
+        R = RectangularHandler(bounds=np.hstack((np.zeros(shape=(self.dim, 1)), np.atleast_2d(self.bounds).T)),
+                               dtype=self.bounds.dtype)
+        S = R.project(lattice)
+
+        return S[self.contains(lattice.map2x(S))]
+
+    def iscompact(self):
+        return True
+
+    def contains(self, x, is_interior=False):
+        # get barycentric coordinates of given points
+        x = np.atleast_2d(x)
+        barycentric_coords = x / self.bounds
+        barycentric_coords = np.hstack((np.atleast_2d(1 - barycentric_coords.sum(axis=1)).T, barycentric_coords))
+        return np.all(barycentric_coords > 0 if is_interior else barycentric_coords >= 0, axis=1)
+
+    def support_function(self, x):
+        x = np.atleast_2d(x)
+        return np.max(np.hstack((np.zeros(shape=(x.shape[0], 1)), x*self.bounds)), axis=1)
+
+    def multiply(self, x):
+        x = np.asarray(x)
+
+        if np.any(x <= 0):
+            raise ValueError('X must be > 0!')
+
+        return NonNegativeSimplex(x*self.bounds, dtype=self.bounds.dtype)
+
+    def add(self, x):
+        raise NotImplementedError('Addition for NonNegative simplex is not implemented!')
+
+    @property
+    def dim(self):
+        return self.bounds.shape[0]
