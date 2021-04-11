@@ -377,7 +377,7 @@ class NonNegativeSimplex(ISetHandler):
     Parameters
     ----------
     bounds : array_like, size = (n,)
-        Array of boundary points [:math:`b_i`]
+        Array of boundary points :math:`b_i`
     dtype : np.dtype, default = np.float64
         Numpy datatype of points in bounds
 
