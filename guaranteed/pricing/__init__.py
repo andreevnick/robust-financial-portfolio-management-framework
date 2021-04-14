@@ -6,8 +6,7 @@
 # copied, modified, or distributed except according to those terms.
 
 from .lattice import *
-from .set_handler import *
-from .option_pricer_RU import *
 from .multival_map import *
 from .problem import *
+from .set_handler import *
 from .util import *

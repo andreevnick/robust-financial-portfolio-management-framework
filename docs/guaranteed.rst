@@ -14,6 +14,5 @@ Subpackages
 
    guaranteed.cxhull
    guaranteed.finance
-   guaranteed.plot
    guaranteed.pricing
    guaranteed.util

@@ -9,13 +9,23 @@ r""" This submodule implements :class:`MultivalMap` as an abstract interface for
 
 For any sets :math:`X, Y`, a multivalued mapping is such a mapping :math:`\Gamma: X \mapsto Y`, that
 
-.. math :: \forall x \in X \; \Gamma(x) \subseteq Y
+.. math :: \forall x \in X \;\; \Gamma(x) \subseteq Y
 
+This module also provides two simple instances of :class:`IMultivalMap`: `NoConstraints` and `LongOnlyConstraints` for
+ease of use. They are defined as:
+
+>>> NoConstraints = IdenticalMap(RealSpaceHandler())
+>>> LongOnlyConstraints = IdenticalMap(NonNegativeSpaceHandler)
+
+See Also
+--------
+:class:`guaranteed.pricing.set_handler.RealSpaceHandler`
+:class:`guaranteed.pricing.set_handler.NonNegativeSpaceHandler`
 """
 
 import numpy as np
 from abc import ABC, abstractmethod
-from .set_handler import ISetHandler, NonNegativeSimplex
+from .set_handler import ISetHandler, NonNegativeSimplex, RealSpaceHandler, NonNegativeSpaceHandler
 from .lattice import Lattice
 
 __all__ = ['IMultivalMap',
@@ -24,7 +34,10 @@ __all__ = ['IMultivalMap',
            'PIDynamics',
            'ConstantDynamics',
            'MDAFDynamics',
-           'SimplexConstraints']
+           'SimplexConstraints',
+           'NoConstraints',
+           'LongOnlyConstraints'
+           ]
 
 
 class IMultivalMap(ABC):
@@ -32,7 +45,7 @@ class IMultivalMap(ABC):
 
     @abstractmethod
     def __call__(self, x, t):
-        """ A call of a multivalued mapping
+        r""" :code:`A.__call__(x,t)` is equivalent to :code:`A(x,t)`
 
         Parameters
         ----------
@@ -51,9 +64,11 @@ class IMultivalMap(ABC):
     @property
     @abstractmethod
     def dim(self):
-        """ Returns the dimension of image or inf if return value can be of any dimension (e.g., a :class:`guaranteed.pricing.set_handler.RealSpaceHandler`)
+        r"""
+            int: The dimension of image or :code:`np.inf` if return value can be of any dimension (e.g., a :class:`guaranteed.pricing.set_handler.RealSpaceHandler`)
 
-        For a multivalued map :math:`\Gamma: \mathbb{R}^{n} \\times  \{0, 1, \dots\} \mapsto \mathbb{R}^{n}`, returns n. """
+        For a multivalued map :math:`\Gamma: \mathbb{R}^{n} \times  \{0, 1, \dots\} \mapsto \mathbb{R}^{n}`, returns :math:`n`.
+        """
         raise NotImplementedError('The method must be defined in a subclass')
 
 
@@ -78,7 +93,7 @@ class IdenticalMap(IMultivalMap):
 
 
 class SimplexConstraints(IMultivalMap):
-    """ A simplex mapping that corresponds to the following trading constraints:
+    r""" A simplex mapping that corresponds to the following trading constraints:
 
     - No short positions;
     - Total value of risky assets at any given time can not exceed given limit `r`
@@ -117,12 +132,17 @@ class SimplexConstraints(IMultivalMap):
 
 class PriceDynamics(IMultivalMap):
     """An abstract base class for different price dynamics
+
+    Differs from :class:`IMultivalMap` in that it also has to have:
+        - type
+        - time horizon
+        - method for calculating Lipschitz constant
     """
     _allowed_types = {'mult', 'add'}
 
     @abstractmethod
     def __call__(self, x, t=1):
-        """
+        r""" :code:`A.__call__(x,t)` `is equivalent to :code:`A(x,t)`
 
         Parameters
         ----------
@@ -156,7 +176,7 @@ class PriceDynamics(IMultivalMap):
 
     @abstractmethod
     def get_lipschitz(self, t: int):
-        """
+        """ Get value of a Lipshitz constant for underlying multivalued mapping at time `t`.
 
         Parameters
         ----------
@@ -220,7 +240,7 @@ class ConstantDynamics(PIDynamics):
 
     @property
     def t_max(self):
-        """np.inf (since the model is time-independent)"""
+        """:code:`np.inf` (since the model is time-independent)"""
         return np.inf
 
     def get_lipschitz(self, t: int):
@@ -229,7 +249,10 @@ class ConstantDynamics(PIDynamics):
 
 
 class MDAFDynamics(PriceDynamics):
-    """Multiplicative dynamics in additive form (time-independent)
+    r"""Multiplicative dynamics in additive form (time-independent).
+
+    Given as its support a set of `price-independent` multipliers :math:`K`, it returns (when called), a set of `increments` :math:`\{y = k\cdotx - x:\; k \in K\}`.
+    Here, :math:`k\cdot x` denotes `element-wise` multiplication (Hadamard product) of :math:`k` and :math:`x`.
     """
 
     def __init__(self, support: ISetHandler):
@@ -252,3 +275,8 @@ class MDAFDynamics(PriceDynamics):
 
     def get_lipschitz(self, t: int):
         pass
+
+
+# Two simple constraints for ease of use
+NoConstraints = IdenticalMap(RealSpaceHandler())
+LongOnlyConstraints = IdenticalMap(NonNegativeSpaceHandler)

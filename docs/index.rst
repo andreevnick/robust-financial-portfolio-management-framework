@@ -3,37 +3,32 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
 Guaranteed Portfolio Test Doc
-===========================================
+=============================
 
-Installation
-============
-Some text and links to how-to and readme docs
+This is a test version of documentation of :code:`guaranteed` framework for solving Bellman-Isaacs equations in pricing and superhedging an option (or a portfolio) under a *guaranteed deterministic approach*.
 
-Examples
-========
-Links to example notebooks / scripts
-
-About Guaranteed Approach
-=========================
-Section devoted to *marketing* documents, maths explanation, also links to articles?
-
-API Documentation
-=================
 .. toctree::
-   :maxdepth: 8
+   :maxdepth: 4
    :caption: Contents:
    
-   guaranteed
+   Installation <installation>
+   How-To: Beginners' steps <examples_pt1>
+   How-To: Advanced techniques <examples_pt2>
+   About Guaranteed Approach <about_gda>
+
+
+.. toctree::
+   :maxdepth: 6
+   :caption: API Documentation:
+   :hidden:
+   
+   Main package <guaranteed>
 
 
 
 
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+:ref:`search`

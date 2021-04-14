@@ -161,7 +161,7 @@ def setdiff_points(pointsA, pointsB):
 
 
 def square_neighbourhood_on_lattice(lattice_point, radius, include_center=False):
-    """ Returns a lattice set, representing the square neighbourhood of the
+    """ Returns a lattice set, representing the Moore (square) neighbourhood of the
     specified point. Square neighbourhood (denoted by X) of a point (denoted by *):
     O|O|O|O|O
     ---------
@@ -200,7 +200,7 @@ def square_neighbourhood_on_lattice(lattice_point, radius, include_center=False)
 
 
 def diamond_neighbourhood_on_lattice(lattice_point, radius, include_center=False):
-    """ Returns a lattice set, representing the diamond neighbourhood of the
+    """ Returns a lattice set, representing the von Neumann (diamond) neighbourhood of the
     specified point. Diamond neighbourhood (denoted by X) of a point (denoted by *):
     O|O|O|O|O
     ---------
@@ -224,7 +224,7 @@ def diamond_neighbourhood_on_lattice(lattice_point, radius, include_center=False
     Returns
     -------
     array-like
-        Set of lattice points, representing a diamond neighbourhood with the specified radius.
+        Set of lattice points, representing a von Neumann neighbourhood with the specified radius.
     
     """
     

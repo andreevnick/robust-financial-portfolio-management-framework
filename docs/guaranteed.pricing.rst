@@ -14,8 +14,6 @@ Submodules
 
    guaranteed.pricing.lattice
    guaranteed.pricing.multival_map
-   guaranteed.pricing.option_pricer
-   guaranteed.pricing.option_pricer_RU
    guaranteed.pricing.problem
    guaranteed.pricing.set_handler
    guaranteed.pricing.util

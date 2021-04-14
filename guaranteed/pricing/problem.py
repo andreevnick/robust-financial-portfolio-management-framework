@@ -33,8 +33,6 @@ __all__ = ['Problem',
 class Problem:
     r""" A class representing a problem of pricing and hedging an option via a guaranteed approach.
 
-    TODO: Provide detailed explanation of a problem here
-
     Parameters
     ----------
     starting_price: np.ndarray, size = (n,)
@@ -44,13 +42,11 @@ class Problem:
     trading_constraints: IMultivalMap
         A mapping :math:`D_t(\cdot)`, representing trading constraints
     option: IOption
-        An option to price (and hedge)
+        An option (portfolio) to price (and hedge)
     lattice: Lattice
         A lattice to solve problem on
     time_horizon: int, optional
         Time horizon :math:`N`. If not given, then deduced from `option` expiration and `price_dynamics` (if possible).
-    solver: ISolver
-        Solver for a problem
 
     """
 
@@ -95,11 +91,6 @@ class Problem:
                 self.starting_price.shape[1] != self.dim):
             raise ValueError('Dimensions of price_dynamics, trading_constraints, starting_price and lattice must match!')
 
-        self.solver = solver
-        self.hedge = None
-        self.Vp = None
-        self.Vf = None
-
     def get_precision(self):
         """ Calculates the precision of given problem
 
@@ -107,6 +98,10 @@ class Problem:
         -------
         float
             Precision for value function
+
+        Notes
+        -----
+        This is not implemented
         """
         # TODO: calculate and return precision via lipshitz constants of price_dynamics and trading_constraints
         raise NotImplementedError('This method is not yet implemented')
@@ -118,26 +113,13 @@ class Problem:
         ----------
         precision: float
             target precision
+
+        Notes
+        -----
+        This is not implemented
         """
         # TODO: implement
         raise NotImplementedError('This method is not yet implemented')
-
-    def solve(self, calc_hedge=False):
-        """ Solves a problem and sets its Vp and Vf (and hedge, if `calc_hedge` is True) to solution
-
-        Parameters
-        ----------
-        calc_hedge: bool, optional, default = False
-            If True, also calculates hedging strategy (might be sufficiently slower)
-        """
-
-        if self.solver is None:
-            raise ValueError('Solver is not set! Can not solve a problem')
-        solution = self.solver.solve(self, calc_hedge)
-        if calc_hedge:
-            self.Vf, self.Vp, self.hedge = solution
-        else:
-            self.Vf, self.Vp = solution
 
 
 class ISolver(ABC):
@@ -155,9 +137,9 @@ class ISolver(ABC):
 
         Returns
         -------
-        tuple
-            First element is values of value function Vf, second is points on `problem.lattice` on which Vf is calculated,
-             third (optional) is hedging strategy.
+        solution: dict
+            Solution['Vf'] — values of value function, solution['Vx] — points on `problem.lattice` where Vf is calculated,
+             solution['hedge'] (optional) — hedging strategy.
         """
         raise NotImplementedError('This method should be implemented!')
 
@@ -167,7 +149,7 @@ class ConvhullSolver(ISolver):
     """
     Represents the numeric solver to the option pricing problem under the guaranteed approach.
 
-    TODO: write detailed description
+    This solver uses the convex hull algorithm.
 
     Parameters
     ----------
@@ -585,4 +567,5 @@ class ConvhullSolver(ISolver):
 
         gc.collect()
 
-        return Vf, Vp
+        return {'Vf': Vf, 'Vp': Vp}
+

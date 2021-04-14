@@ -23,7 +23,7 @@ copyright = '2021, Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Sliv
 author = 'Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '0.0.9'
 
 
 # -- General configuration ---------------------------------------------------
@@ -35,8 +35,11 @@ release = '0.0.1'
 
 extensions = ['sphinx.ext.autodoc'
 , 'sphinx.ext.napoleon'
-# , 'sphinx_rtd_theme'
+, 'sphinx_rtd_theme'
+, 'sphinx.ext.todo'
 ]
+
+todo_include_todos=True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -52,8 +55,16 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-# html_theme = 'sphinx_rtd_theme'
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
+
+html_theme_options = {
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'navigation_depth': -1,
+    'includehidden': True,
+    'titles_only': False
+}
+# html_theme = 'alabaster'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

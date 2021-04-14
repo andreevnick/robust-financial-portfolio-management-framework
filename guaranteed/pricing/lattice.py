@@ -55,10 +55,18 @@ class Lattice:
 
     @property
     def dim(self):
+        """ Returns lattice's dimension
+
+        Returns
+        -------
+        int
+            Lattice's dimesion
+
+        """
         return self.delta.shape[0]
 
     def _x_trans(self, x):
-        """ Utility function for reducing logscale lattice logic to uniform lattice.
+        r""" Utility function for reducing logscale lattice logic to uniform lattice.
 
         Parameters
         ----------
@@ -107,11 +115,11 @@ class Lattice:
             return self._get_point(obj)
 
     def _get_point(self, x):
-        """ Returns lattice coordinates of the array of points from :math:`\mathbb{R}^{n}`.
+        r""" Returns lattice coordinates of the array of points from :math:`\mathbb{R}^{n}`.
 
         Parameters
         ----------
-        obj : array_like, size = (n,) or (m,n)
+        x : array_like, size = (n,) or (m,n)
             A set of points from :math:`\mathbb{R}^{n}`.
 
         Returns
@@ -126,7 +134,7 @@ class Lattice:
         return np.rint((x - self.center) / self.delta).astype(self.dtype_p)
 
     def map2x(self, point):
-        """ Maps the array of lattice coordinates to points in :math:`\mathbb{R}^{n}`.
+        r""" Maps the array of lattice coordinates to points in :math:`\mathbb{R}^{n}`.
 
         This function acts as a sort of inverse to :meth:`get_projection()`.
 
@@ -148,7 +156,7 @@ class Lattice:
         return self._x_trans_inv(point * self.delta + self.center)
 
     def xrectangle_points(self, x_from, x_to):
-        """ Returns projection to the lattice for the parallelotope specified
+        """ Returns lattice projection for the parallelotope specified
         via its corner points.
 
         Parameters

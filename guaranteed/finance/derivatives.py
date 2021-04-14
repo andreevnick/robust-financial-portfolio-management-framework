@@ -123,8 +123,6 @@ class BermudanOption(IOption):
     Notes
     -----
     Bermudan and Canary options are very much alike, so we put both styles in the same class.
-
-    The payoff function is assumed to be independent of time, meaning that for all `t` in `payoff_dates` the payoff function is the same.
     """
 
     def __init__(self, payoff_dates, payoff_fcn: Callable):

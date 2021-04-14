@@ -233,7 +233,19 @@ class RectangularHandler(ISetHandler):
 
 
 class EllipseHandler(ISetHandler):
-    """ Handler for an n-dimensional ellipsoid
+    """ Handler for an n-dimensional ellipsoid with center :math:`\mu` and matrix :math:`\Sigma`
+
+    Parameters
+    ----------
+
+    mu: np.ndarray, size = (n,) or (1,n)
+        Coordinates of center of an ellipsoid :math:`\mu`
+    sigma: np.ndarray, size = (n,n)
+        Matrix of an ellipsoid :math:`\Sigma`
+    conf_level: np.float64, default = None
+        Confidence level of a multivariate notmav distribution. `See also <https://stats.stackexchange.com/questions/64680/how-to-determine-quantiles-isolines-of-a-multivariate-normal-distribution>`_
+    dtype: np.dtype, default = np.float64
+        Type of elements in mu, sigma
 
     """
 
@@ -423,6 +435,12 @@ class NonNegativeSimplex(ISetHandler):
         return NonNegativeSimplex(x*self.bounds, dtype=self.bounds.dtype)
 
     def add(self, x):
+        """
+        Notes
+        -----
+        This method is not implemented
+
+        """
         raise NotImplementedError('Addition for NonNegative simplex is not implemented!')
 
     @property
