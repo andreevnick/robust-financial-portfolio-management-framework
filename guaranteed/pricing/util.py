@@ -37,7 +37,7 @@ def get_support_set(curr_set, price_dynamics, lattice, t):
         else:
             return minkprod_points(lattice, curr_set, increment, pos=True)
     else:
-        # curr_set = minksum_points(curr_set, square_neighbourhood_on_lattice(np.zeros_like(lattice.delta), 1, True))
+        curr_set = minksum_points(curr_set, square_neighbourhood_on_lattice(np.zeros_like(lattice.delta), 1, True))
         if price_dynamics_type == 'add':
             res = None
             for pt in curr_set:

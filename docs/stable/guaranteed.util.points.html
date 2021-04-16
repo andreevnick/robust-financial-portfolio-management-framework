@@ -298,16 +298,18 @@ the maximum allowed recursion level is used.</p></li>
 <dt id="guaranteed.util.points.square_neighbourhood_on_lattice">
 <code class="sig-prename descclassname"><span class="pre">guaranteed.util.points.</span></code><code class="sig-name descname"><span class="pre">square_neighbourhood_on_lattice</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#guaranteed.util.points.square_neighbourhood_on_lattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a lattice set, representing the Moore (square) neighbourhood of the
-specified point. Square neighbourhood (denoted by X) of a point (denoted by <a href="#id1"><span class="problematic" id="id2">*</span></a>):
-O|O|O|O|O
-———
-O|X|X|X|O
-———
-O|X|*|X|O
-———
-O|X|X|X|O
-———
-O|O|O|O|O</p>
+specified point. Square neighbourhood (denoted by <code class="docutils literal notranslate"><span class="pre">X</span></code>) of a point (denoted by <code class="docutils literal notranslate"><span class="pre">*</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span>
+<span class="o">---------</span>
+<span class="n">O</span><span class="o">|</span><span class="n">X</span><span class="o">|</span><span class="n">X</span><span class="o">|</span><span class="n">X</span><span class="o">|</span><span class="n">O</span>
+<span class="o">---------</span>
+<span class="n">O</span><span class="o">|</span><span class="n">X</span><span class="o">|*|</span><span class="n">X</span><span class="o">|</span><span class="n">O</span>
+<span class="o">---------</span>
+<span class="n">O</span><span class="o">|</span><span class="n">X</span><span class="o">|</span><span class="n">X</span><span class="o">|</span><span class="n">X</span><span class="o">|</span><span class="n">O</span>
+<span class="o">---------</span>
+<span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -329,16 +331,18 @@ O|O|O|O|O</p>
 <dt id="guaranteed.util.points.diamond_neighbourhood_on_lattice">
 <code class="sig-prename descclassname"><span class="pre">guaranteed.util.points.</span></code><code class="sig-name descname"><span class="pre">diamond_neighbourhood_on_lattice</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#guaranteed.util.points.diamond_neighbourhood_on_lattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a lattice set, representing the von Neumann (diamond) neighbourhood of the
-specified point. Diamond neighbourhood (denoted by X) of a point (denoted by <a href="#id3"><span class="problematic" id="id4">*</span></a>):
-O|O|O|O|O
-———
-O|O|X|O|O
-———
-O|X|*|X|O
-———
-O|O|X|O|O
-———
-O|O|O|O|O</p>
+specified point. Diamond neighbourhood (denoted by <code class="docutils literal notranslate"><span class="pre">X</span></code>) of a point (denoted by <code class="docutils literal notranslate"><span class="pre">*</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span>
+<span class="o">---------</span>
+<span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">X</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span>
+<span class="o">---------</span>
+<span class="n">O</span><span class="o">|</span><span class="n">X</span><span class="o">|*|</span><span class="n">X</span><span class="o">|</span><span class="n">O</span>
+<span class="o">---------</span>
+<span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">X</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span>
+<span class="o">---------</span>
+<span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span><span class="o">|</span><span class="n">O</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
