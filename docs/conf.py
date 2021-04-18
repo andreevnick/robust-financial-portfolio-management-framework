@@ -13,17 +13,17 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../guaranteed/'))
+sys.path.insert(0, os.path.abspath('../robustportfolio/'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'Guaranteed Test'
+project = 'Robust financial portfolio management framework'
 copyright = '2021, Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski'
 author = 'Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '0.1.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -35,8 +35,11 @@ release = '0.0.1'
 
 extensions = ['sphinx.ext.autodoc'
 , 'sphinx.ext.napoleon'
-# , 'sphinx_rtd_theme'
+, 'sphinx_rtd_theme'
+, 'sphinx.ext.todo'
 ]
+
+todo_include_todos=True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -52,8 +55,16 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-# html_theme = 'sphinx_rtd_theme'
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
+
+html_theme_options = {
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'navigation_depth': -1,
+    'includehidden': True,
+    'titles_only': False
+}
+# html_theme = 'alabaster'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
