@@ -79,28 +79,6 @@ Let's create some basic 1D Problem with Rectangular multiplicative dynamics and 
                   lattice=Lattice(delta=[1]),
                   time_horizon=5)
 
-  We begin by instantiating solver with some parameters.
-
-  >>> from robustportfolio.pricing import *
-  >>> opts = {'convex_hull_filter': 'qhull', 'convex_hull_prune_fail_count': 0,
-  >>>         'convex_hull_prune_success_count':0,'convex_hull_prune_corner_n': 3,'convex_hull_prune_seed': 0}
-  >>> solver = ConvhullSolver(enable_timer=True, pricer_options=opts, ignore_warnings=True, iter_tick=50)
-                  price_dynamics=ConstantDynamics(support=RectangularHandler([.9, 1.1]), type='mult'),
-                  trading_constraints=NoConstraints, option=option1,
-                  lattice=Lattice(delta=[1]),
-                  time_horizon=5)
-
-  We begin by instantiating solver with some parameters.
-
-  >>> from robustportfolio.pricing import *
-  >>> opts = {'convex_hull_filter': 'qhull', 'convex_hull_prune_fail_count': 0,
-  >>>         'convex_hull_prune_success_count':0,'convex_hull_prune_corner_n': 3,'convex_hull_prune_seed': 0}
-  >>> solver = ConvhullSolver(enable_timer=True, pricer_options=opts, ignore_warnings=True, iter_tick=50)
-                price_dynamics=ConstantDynamics(support=RectangularHandler([.9, 1.1]), type='mult'),
-                trading_constraints=NoConstraints, option=option1, 
-                lattice=Lattice(delta=[1]), 
-                time_horizon=5)
-
 We begin by instantiating solver with some parameters.
 
 >>> from robustportfolio.pricing import *
