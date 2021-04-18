@@ -13,17 +13,17 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../guaranteed/'))
+sys.path.insert(0, os.path.abspath('../robustportfolio/'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'Guaranteed Test'
+project = 'Robust financial portfolio management framework'
 copyright = '2021, Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski'
 author = 'Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.9'
+release = '0.1.0'
 
 
 # -- General configuration ---------------------------------------------------

@@ -7,8 +7,8 @@ Load package and create basic options
 -------------------------------------
 
 >>> import os, sys
->>> sys.path.insert(0, os.path.abspath('./relative/path/to/guaranteed'))
->>> from guaranteed.finance import make_option
+>>> sys.path.insert(0, os.path.abspath('/path/to/robustportfolio'))
+>>> from robustportfolio.finance import make_option
 
 Let's start with some basic options:
 
@@ -23,10 +23,39 @@ Let's see how options got instantiated:
 >>> print('Option 2: {}'.format(option2))
 >>> print('Option 3: {}'.format(option3))
 >>> print('Option 4: {}'.format(option4))
-Option 1: <guaranteed.finance.derivatives.AmericanOption object at 0x129591a60>
-Option 2: <guaranteed.finance.derivatives.EuropeanOption object at 0x1295916d0>
-Option 3: <guaranteed.finance.derivatives.BermudanOption object at 0x129591160>
-Option 4: <guaranteed.finance.derivatives.AmericanOption object at 0x129591550>
+Option 1: <robustportfolio.finance.derivatives.AmericanOption object at 0x129591a60>
+Option 2: <robustportfolio.finance.derivatives.EuropeanOption object at 0x1295916d0>
+Option 3: <robustportfolio.finance.derivatives.BermudanOption object at 0x129591160>
+Option 4: <robustportfolio.finance.derivatives.AmericanOption object at 0x129591550>
+
+>>> print('Option 1 payoff at x = 80, 90, and 100, t = 3: {}'.format(option1.payoff([[80], [90], [100]], 3)))
+>>> print('Option 2 payoff at x = 100, t = 3: {}'.format(option2.payoff(100, 3)))
+>>> print('Option 3 payoff at x = 100, t = 3: {}'.format(option3.payoff(100, 3)))
+>>> print('Option 3 payoff at x = 100, t = 4: {}'.format(option3.payoff(100, 4)))
+Option 1 payoff at x = 80, 90, and 100, t = 3: [10.  0.  0.]
+Option 2 payoff at x = 100, t = 3: [-inf]
+Option 3 payoff at x = 100, t = 3: [10.]
+Option 3 payoff at x = 100, t = 4: [-inf]
+>>> sys.path.insert(0, os.path.abspath('./relative/path/to/robustportfolio'))
+>>> from robustportfolio.finance import make_option
+
+Let's start with some basic options:
+
+>>> option1 = make_option(option_type='putonmax', strike=90) # American Put with strike 90
+>>> option2 = make_option(option_type='putonmax', strike=80, payoff_dates = 5) # European Put with strike 80 and expiration date 5
+>>> option3 = make_option(option_type='callonmax', strike=90, payoff_dates = [3,5]) # Bermudan Call with strike 90 and payoff dates 3 and 5
+>>> option4 = make_option(option_type='put2call1') # American Put2Call1 option
+
+Let's see how options got instantiated:
+
+>>> print('Option 1: {}'.format(option1))
+>>> print('Option 2: {}'.format(option2))
+>>> print('Option 3: {}'.format(option3))
+>>> print('Option 4: {}'.format(option4))
+Option 1: <robustportfolio.finance.derivatives.AmericanOption object at 0x129591a60>
+Option 2: <robustportfolio.finance.derivatives.EuropeanOption object at 0x1295916d0>
+Option 3: <robustportfolio.finance.derivatives.BermudanOption object at 0x129591160>
+Option 4: <robustportfolio.finance.derivatives.AmericanOption object at 0x129591550>
 
 >>> print('Option 1 payoff at x = 80, 90, and 100, t = 3: {}'.format(option1.payoff([[80], [90], [100]], 3)))
 >>> print('Option 2 payoff at x = 100, t = 3: {}'.format(option2.payoff(100, 3)))
@@ -41,10 +70,32 @@ Option 3 payoff at x = 100, t = 4: [-inf]
 Creating solver and solving some problems
 -----------------------------------------
 
-Let's create some basic 1D Problem with Rectangular multiplicative dynamics and no trading constraints. For that, we need :class:`guaranteed.pricing.problem.Problem` from :mod:`guaranteed.pricing`:
+Let's create some basic 1D Problem with Rectangular multiplicative dynamics and no trading constraints. For that, we need :class:`robustportfolio.pricing.problem.Problem` from :mod:`robustportfolio.pricing`:
 ::
 
-  pm1 = Problem(starting_price=np.array(100), 
+  pm1 = Problem(starting_price=np.array(100),
+                  price_dynamics=ConstantDynamics(support=RectangularHandler([.9, 1.1]), type='mult'),
+                  trading_constraints=NoConstraints, option=option1,
+                  lattice=Lattice(delta=[1]),
+                  time_horizon=5)
+
+  We begin by instantiating solver with some parameters.
+
+  >>> from robustportfolio.pricing import *
+  >>> opts = {'convex_hull_filter': 'qhull', 'convex_hull_prune_fail_count': 0,
+  >>>         'convex_hull_prune_success_count':0,'convex_hull_prune_corner_n': 3,'convex_hull_prune_seed': 0}
+  >>> solver = ConvhullSolver(enable_timer=True, pricer_options=opts, ignore_warnings=True, iter_tick=50)
+                  price_dynamics=ConstantDynamics(support=RectangularHandler([.9, 1.1]), type='mult'),
+                  trading_constraints=NoConstraints, option=option1,
+                  lattice=Lattice(delta=[1]),
+                  time_horizon=5)
+
+  We begin by instantiating solver with some parameters.
+
+  >>> from robustportfolio.pricing import *
+  >>> opts = {'convex_hull_filter': 'qhull', 'convex_hull_prune_fail_count': 0,
+  >>>         'convex_hull_prune_success_count':0,'convex_hull_prune_corner_n': 3,'convex_hull_prune_seed': 0}
+  >>> solver = ConvhullSolver(enable_timer=True, pricer_options=opts, ignore_warnings=True, iter_tick=50)
                 price_dynamics=ConstantDynamics(support=RectangularHandler([.9, 1.1]), type='mult'),
                 trading_constraints=NoConstraints, option=option1, 
                 lattice=Lattice(delta=[1]), 
@@ -52,13 +103,13 @@ Let's create some basic 1D Problem with Rectangular multiplicative dynamics and 
 
 We begin by instantiating solver with some parameters.
 
->>> from guaranteed.pricing import *
+>>> from robustportfolio.pricing import *
 >>> opts = {'convex_hull_filter': 'qhull', 'convex_hull_prune_fail_count': 0,
 >>>         'convex_hull_prune_success_count':0,'convex_hull_prune_corner_n': 3,'convex_hull_prune_seed': 0} 
 >>> solver = ConvhullSolver(enable_timer=True, pricer_options=opts, ignore_warnings=True, iter_tick=50)
 
 .. note:: Most of the time, there is no point in tweaking *all* of these parameters, only some, namely :code:`enable_timer` and :code:`iter_tick`.
-.. seealso:: :class:`guaranteed.pricing.problem.ConvhullSolver` 
+.. seealso:: :class:`robustportfolio.pricing.problem.ConvhullSolver` 
 
 
                 
@@ -212,7 +263,9 @@ Value: 2.244970331346091
 
 .. seealso:: 
 
-  :mod:`guaranteed.pricing.multival_map`:
+  :mod:`robustportfolio.pricing.multival_map`:
     Module with multivalued mappings, used for both Trading Constraints and Price Dynamics.
-  :class:`guaranteed.pricing.multival_map.IMultivalMap`
-  :class:`guaranteed.pricing.multival_map.PriceDynamics`
+  :class:`robustportfolio.pricing.multival_map.IMultivalMap`
+    Class for multivalued mappings, used for trading constraints
+  :class:`robustportfolio.pricing.multival_map.PriceDynamics`
+    Class for price dynamics

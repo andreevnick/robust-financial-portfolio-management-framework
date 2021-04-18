@@ -4,10 +4,10 @@
    contain the root `toctree` directive.
 
 
-Guaranteed Portfolio Test Doc
-=============================
+Robust Financial Portfolio Management Framework 
+===============================================
 
-This is a test version of documentation of :code:`guaranteed` framework for solving Bellman-Isaacs equations in pricing and superhedging an option (or a portfolio) under a *guaranteed deterministic approach*.
+This is a test version of documentation of :code:`robustportfolio` framework for solving Bellman-Isaacs equations in pricing and superhedging an option (or a portfolio) under a *guaranteed deterministic approach*.
 
 .. toctree::
    :maxdepth: 4
@@ -24,7 +24,7 @@ This is a test version of documentation of :code:`guaranteed` framework for solv
    :caption: API Documentation:
    :hidden:
    
-   Main package <guaranteed>
+   Main package <robustportfolio>
 
 
 
