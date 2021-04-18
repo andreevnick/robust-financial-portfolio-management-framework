@@ -1,0 +1,1091 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>robustfpm.pricing.set_handler module &mdash; Robust financial portfolio management framework 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="robustfpm.pricing.util module" href="robustfpm.pricing.util.html" />
+    <link rel="prev" title="robustfpm.pricing.problem module" href="robustfpm.pricing.problem.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Robust financial portfolio management framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_pt1.html">How-To: Beginners' steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_pt2.html">How-To: Advanced techniques</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about_rfpmf.html">About Robust Financial Portfolio Management Framework</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="robustfpm.html">Main package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="robustfpm.html#package-scheme">Package scheme</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="robustfpm.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="robustfpm.cxhull.html">robustfpm.cxhull package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="robustfpm.finance.html">robustfpm.finance package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="robustfpm.pricing.html">robustfpm.pricing package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="robustfpm.pricing.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="robustfpm.pricing.lattice.html">robustfpm.pricing.lattice module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="robustfpm.pricing.multival_map.html">robustfpm.pricing.multival_map module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="robustfpm.pricing.problem.html">robustfpm.pricing.problem module</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#">robustfpm.pricing.set_handler module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="robustfpm.pricing.util.html">robustfpm.pricing.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="robustfpm.util.html">robustfpm.util package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Robust financial portfolio management framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="robustfpm.html">robustfpm package</a> &raquo;</li>
+        
+          <li><a href="robustfpm.pricing.html">robustfpm.pricing package</a> &raquo;</li>
+        
+      <li>robustfpm.pricing.set_handler module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/robustfpm.pricing.set_handler.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-robustfpm.pricing.set_handler">
+<span id="robustfpm-pricing-set-handler-module"></span><h1>robustfpm.pricing.set_handler module<a class="headerlink" href="#module-robustfpm.pricing.set_handler" title="Permalink to this headline">¶</a></h1>
+<p>This submodule implements <a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">ISetHandler</span></code></a> as an abstract interface for set and different types of sets with
+respective methods.</p>
+<dl class="py class">
+<dt id="robustfpm.pricing.set_handler.ISetHandler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.set_handler.</span></code><code class="sig-name descname"><span class="pre">ISetHandler</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Interface which contains the set-based operations for implementation in non-abstract SetHandlers.</p>
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.ISetHandler.project">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">project</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler.project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects the set onto the lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lattice</strong> (<em>lattice</em>) – Target lattice.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of points on the lattice which belong to the set.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.ISetHandler.support_function">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">support_function</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler.support_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value of the support function of the set at point <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Array of points from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of support function values, may be np.Inf.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The support function <span class="math notranslate nohighlight">\(\sigma_A(l)\)</span> of any non-empty subset <span class="math notranslate nohighlight">\(A \subseteq X\)</span>, where <span class="math notranslate nohighlight">\(X\)</span> is a Banach space, is defined by the following relation:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\sigma_A(l) = \sup\limits_{a \in A} \langle a, l \rangle,\]</div>
+</div></blockquote>
+<p>for each <span class="math notranslate nohighlight">\(l \in X^*\)</span> — continuous dual space of X</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.ISetHandler.iscompact">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">iscompact</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler.iscompact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the set is a <a class="reference external" href="https://en.wikipedia.org/wiki/Compact_space">compact</a>
+subset of <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the set is compact.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.ISetHandler.multiply">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">multiply</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler.multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies the set by a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to multiply the set by</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x\cdot a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>), <span class="math notranslate nohighlight">\(x\cdot a\)</span> — <cite>element-wise</cite> (Hadamard) product.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.ISetHandler.add">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span> to the set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to add to the set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x + a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.ISetHandler.dim">
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dimension of set (or np.inf, if set handler can be of any dimension.</p>
+<p class="rubric">Notes</p>
+<p>If set <span class="math notranslate nohighlight">\(\mathcal{X} \in \mathbb{R}^n\)</span>, then this method should return <cite>n</cite>.
+If <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is independent of <cite>n</cite> (like RealSpaceHandler), then this method should return <cite>np.inf</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.ISetHandler.contains">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_interior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that points <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> are in set</p>
+<p>This method checks for <span class="math notranslate nohighlight">\(x \in \mathcal{X}\)</span> or for <span class="math notranslate nohighlight">\(x \in int(\mathcal{X}\)</span>) (if <cite>is_interior</cite> is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Point(s) to check. If given multiple points, returns an array of boolean values for each point</p></li>
+<li><p><strong>is_interior</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Flag whether to check that <cite>x</cite> is in interior of a set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True, if <cite>x</cite> (or <cite>x_i</cite>) lies in set (in its interior)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray, size = (m,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.ISetHandler.is_interior">
+<code class="sig-name descname"><span class="pre">is_interior</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.ISetHandler.is_interior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <code class="code docutils literal notranslate"><span class="pre">self.contains(x,</span> <span class="pre">is_interior=True)</span></code></p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler.contains" title="robustfpm.pricing.set_handler.ISetHandler.contains"><code class="xref py py-func docutils literal notranslate"><span class="pre">contains()</span></code></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.set_handler.</span></code><code class="sig-name descname"><span class="pre">RectangularHandler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">bounds</span></em>, <em class="sig-param"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.set_handler.ISetHandler</span></code></a></p>
+<p>Handler for a rectangular set.</p>
+<p>Such a set <span class="math notranslate nohighlight">\(\mathcal{X}\subseteq \mathbb{R}^{n}\)</span> is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{X} = \{(x_1,\dots,x_n) \in \mathbb{R}^{n}:\; lb_i \leqslant x_i \leqslant ub_i, i = 1,2,\dots,n\},\]</div>
+<p>where <span class="math notranslate nohighlight">\(lb_i, ub_i\)</span> are given bounds on i-th dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bounds</strong> (<em>array_like</em><em>, </em><em>size =</em><em> (</em><em>2</em><em>,</em><em>) or </em><em>(</em><em>n</em><em>,</em><em>2</em><em>)</em>) – Array of boundary points [<span class="math notranslate nohighlight">\(lb_i, ub_i\)</span>]</p></li>
+<li><p><strong>dtype</strong> (<em>np.dtype</em><em>, </em><em>default = np.float64</em>) – Numpy datatype of points in bounds</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler.project">
+<code class="sig-name descname"><span class="pre">project</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler.project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects the set onto the lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lattice</strong> (<em>lattice</em>) – Target lattice.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of points on the lattice which belong to the set.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler.support_function">
+<code class="sig-name descname"><span class="pre">support_function</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler.support_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value of the support function of the set at point <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Array of points from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of support function values, may be np.Inf.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The support function <span class="math notranslate nohighlight">\(\sigma_A(l)\)</span> of any non-empty subset <span class="math notranslate nohighlight">\(A \subseteq X\)</span>, where <span class="math notranslate nohighlight">\(X\)</span> is a Banach space, is defined by the following relation:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\sigma_A(l) = \sup\limits_{a \in A} \langle a, l \rangle,\]</div>
+</div></blockquote>
+<p>for each <span class="math notranslate nohighlight">\(l \in X^*\)</span> — continuous dual space of X</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler.iscompact">
+<code class="sig-name descname"><span class="pre">iscompact</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler.iscompact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the set is a <a class="reference external" href="https://en.wikipedia.org/wiki/Compact_space">compact</a>
+subset of <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the set is compact.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler.multiply">
+<code class="sig-name descname"><span class="pre">multiply</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler.multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies the set by a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to multiply the set by</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x\cdot a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>), <span class="math notranslate nohighlight">\(x\cdot a\)</span> — <cite>element-wise</cite> (Hadamard) product.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler.add">
+<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span> to the set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to add to the set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x + a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler.dim">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dimension of set (or np.inf, if set handler can be of any dimension.</p>
+<p class="rubric">Notes</p>
+<p>If set <span class="math notranslate nohighlight">\(\mathcal{X} \in \mathbb{R}^n\)</span>, then this method should return <cite>n</cite>.
+If <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is independent of <cite>n</cite> (like RealSpaceHandler), then this method should return <cite>np.inf</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler.contains">
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_interior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that points <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> are in set</p>
+<p>This method checks for <span class="math notranslate nohighlight">\(x \in \mathcal{X}\)</span> or for <span class="math notranslate nohighlight">\(x \in int(\mathcal{X}\)</span>) (if <cite>is_interior</cite> is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Point(s) to check. If given multiple points, returns an array of boolean values for each point</p></li>
+<li><p><strong>is_interior</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Flag whether to check that <cite>x</cite> is in interior of a set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True, if <cite>x</cite> (or <cite>x_i</cite>) lies in set (in its interior)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray, size = (m,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RectangularHandler.is_interior">
+<code class="sig-name descname"><span class="pre">is_interior</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RectangularHandler.is_interior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <code class="code docutils literal notranslate"><span class="pre">self.contains(x,</span> <span class="pre">is_interior=True)</span></code></p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#robustfpm.pricing.set_handler.RectangularHandler.contains" title="robustfpm.pricing.set_handler.RectangularHandler.contains"><code class="xref py py-func docutils literal notranslate"><span class="pre">contains()</span></code></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.set_handler.</span></code><code class="sig-name descname"><span class="pre">EllipseHandler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.set_handler.ISetHandler</span></code></a></p>
+<p>Handler for an n-dimensional ellipsoid with center <span class="math notranslate nohighlight">\(\mu\)</span> and matrix <span class="math notranslate nohighlight">\(\Sigma\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>1</em><em>,</em><em>n</em><em>)</em>) – Coordinates of center of an ellipsoid <span class="math notranslate nohighlight">\(\mu\)</span></p></li>
+<li><p><strong>sigma</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>n</em><em>)</em>) – Matrix of an ellipsoid <span class="math notranslate nohighlight">\(\Sigma\)</span></p></li>
+<li><p><strong>conf_level</strong> (<em>np.float64</em><em>, </em><em>default = None</em>) – Confidence level of a multivariate normal distribution. See also: <a class="reference external" href="https://stats.stackexchange.com/questions/64680/how-to-determine-quantiles-isolines-of-a-multivariate-normal-distribution">https://stats.stackexchange.com/questions/64680/how-to-determine-quantiles-isolines-of-a-multivariate-normal-distribution</a></p></li>
+<li><p><strong>dtype</strong> (<em>np.dtype</em><em>, </em><em>default = np.float64</em>) – Type of elements in mu, sigma</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler.project">
+<code class="sig-name descname"><span class="pre">project</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler.project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects the set onto the lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lattice</strong> (<em>lattice</em>) – Target lattice.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of points on the lattice which belong to the set.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler.support_function">
+<code class="sig-name descname"><span class="pre">support_function</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler.support_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value of the support function of the set at point <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Array of points from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of support function values, may be np.Inf.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The support function <span class="math notranslate nohighlight">\(\sigma_A(l)\)</span> of any non-empty subset <span class="math notranslate nohighlight">\(A \subseteq X\)</span>, where <span class="math notranslate nohighlight">\(X\)</span> is a Banach space, is defined by the following relation:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\sigma_A(l) = \sup\limits_{a \in A} \langle a, l \rangle,\]</div>
+</div></blockquote>
+<p>for each <span class="math notranslate nohighlight">\(l \in X^*\)</span> — continuous dual space of X</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler.iscompact">
+<code class="sig-name descname"><span class="pre">iscompact</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler.iscompact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the set is a <a class="reference external" href="https://en.wikipedia.org/wiki/Compact_space">compact</a>
+subset of <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the set is compact.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler.multiply">
+<code class="sig-name descname"><span class="pre">multiply</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler.multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies the set by a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to multiply the set by</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x\cdot a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>), <span class="math notranslate nohighlight">\(x\cdot a\)</span> — <cite>element-wise</cite> (Hadamard) product.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler.add">
+<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span> to the set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to add to the set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x + a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler.dim">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dimension of set (or np.inf, if set handler can be of any dimension.</p>
+<p class="rubric">Notes</p>
+<p>If set <span class="math notranslate nohighlight">\(\mathcal{X} \in \mathbb{R}^n\)</span>, then this method should return <cite>n</cite>.
+If <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is independent of <cite>n</cite> (like RealSpaceHandler), then this method should return <cite>np.inf</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler.contains">
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_interior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that points <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> are in set</p>
+<p>This method checks for <span class="math notranslate nohighlight">\(x \in \mathcal{X}\)</span> or for <span class="math notranslate nohighlight">\(x \in int(\mathcal{X}\)</span>) (if <cite>is_interior</cite> is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Point(s) to check. If given multiple points, returns an array of boolean values for each point</p></li>
+<li><p><strong>is_interior</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Flag whether to check that <cite>x</cite> is in interior of a set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True, if <cite>x</cite> (or <cite>x_i</cite>) lies in set (in its interior)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray, size = (m,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.EllipseHandler.is_interior">
+<code class="sig-name descname"><span class="pre">is_interior</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.EllipseHandler.is_interior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <code class="code docutils literal notranslate"><span class="pre">self.contains(x,</span> <span class="pre">is_interior=True)</span></code></p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#robustfpm.pricing.set_handler.EllipseHandler.contains" title="robustfpm.pricing.set_handler.EllipseHandler.contains"><code class="xref py py-func docutils literal notranslate"><span class="pre">contains()</span></code></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.set_handler.</span></code><code class="sig-name descname"><span class="pre">RealSpaceHandler</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.set_handler.ISetHandler</span></code></a></p>
+<p>Handler for <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span></p>
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler.project">
+<code class="sig-name descname"><span class="pre">project</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler.project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects the set onto the lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lattice</strong> (<em>lattice</em>) – Target lattice.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of points on the lattice which belong to the set.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler.support_function">
+<code class="sig-name descname"><span class="pre">support_function</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler.support_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value of the support function of the set at point <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Array of points from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of support function values, may be np.Inf.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The support function <span class="math notranslate nohighlight">\(\sigma_A(l)\)</span> of any non-empty subset <span class="math notranslate nohighlight">\(A \subseteq X\)</span>, where <span class="math notranslate nohighlight">\(X\)</span> is a Banach space, is defined by the following relation:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\sigma_A(l) = \sup\limits_{a \in A} \langle a, l \rangle,\]</div>
+</div></blockquote>
+<p>for each <span class="math notranslate nohighlight">\(l \in X^*\)</span> — continuous dual space of X</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler.iscompact">
+<code class="sig-name descname"><span class="pre">iscompact</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler.iscompact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the set is a <a class="reference external" href="https://en.wikipedia.org/wiki/Compact_space">compact</a>
+subset of <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the set is compact.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler.multiply">
+<code class="sig-name descname"><span class="pre">multiply</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler.multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies the set by a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to multiply the set by</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x\cdot a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>), <span class="math notranslate nohighlight">\(x\cdot a\)</span> — <cite>element-wise</cite> (Hadamard) product.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler.add">
+<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span> to the set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to add to the set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x + a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler.dim">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dimension of set (or np.inf, if set handler can be of any dimension.</p>
+<p class="rubric">Notes</p>
+<p>If set <span class="math notranslate nohighlight">\(\mathcal{X} \in \mathbb{R}^n\)</span>, then this method should return <cite>n</cite>.
+If <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is independent of <cite>n</cite> (like RealSpaceHandler), then this method should return <cite>np.inf</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler.contains">
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_interior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that points <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> are in set</p>
+<p>This method checks for <span class="math notranslate nohighlight">\(x \in \mathcal{X}\)</span> or for <span class="math notranslate nohighlight">\(x \in int(\mathcal{X}\)</span>) (if <cite>is_interior</cite> is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Point(s) to check. If given multiple points, returns an array of boolean values for each point</p></li>
+<li><p><strong>is_interior</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Flag whether to check that <cite>x</cite> is in interior of a set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True, if <cite>x</cite> (or <cite>x_i</cite>) lies in set (in its interior)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray, size = (m,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.RealSpaceHandler.is_interior">
+<code class="sig-name descname"><span class="pre">is_interior</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.RealSpaceHandler.is_interior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <code class="code docutils literal notranslate"><span class="pre">self.contains(x,</span> <span class="pre">is_interior=True)</span></code></p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#robustfpm.pricing.set_handler.RealSpaceHandler.contains" title="robustfpm.pricing.set_handler.RealSpaceHandler.contains"><code class="xref py py-func docutils literal notranslate"><span class="pre">contains()</span></code></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.set_handler.</span></code><code class="sig-name descname"><span class="pre">NonNegativeSpaceHandler</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.set_handler.ISetHandler</span></code></a></p>
+<p>Handler for closed non-negative orthant of <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>
+Such an orthant is defined as</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{R}^{n}_{+} = \{(x_1,\dots,x_n) \in \mathbb{R}^n:\; x_i \geqslant 0, i = 1,2,\dots,n\}\]</div>
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.project">
+<code class="sig-name descname"><span class="pre">project</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects the set onto the lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lattice</strong> (<em>lattice</em>) – Target lattice.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of points on the lattice which belong to the set.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.support_function">
+<code class="sig-name descname"><span class="pre">support_function</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.support_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value of the support function of the set at point <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Array of points from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of support function values, may be np.Inf.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The support function <span class="math notranslate nohighlight">\(\sigma_A(l)\)</span> of any non-empty subset <span class="math notranslate nohighlight">\(A \subseteq X\)</span>, where <span class="math notranslate nohighlight">\(X\)</span> is a Banach space, is defined by the following relation:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\sigma_A(l) = \sup\limits_{a \in A} \langle a, l \rangle,\]</div>
+</div></blockquote>
+<p>for each <span class="math notranslate nohighlight">\(l \in X^*\)</span> — continuous dual space of X</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.iscompact">
+<code class="sig-name descname"><span class="pre">iscompact</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.iscompact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the set is a <a class="reference external" href="https://en.wikipedia.org/wiki/Compact_space">compact</a>
+subset of <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the set is compact.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.multiply">
+<code class="sig-name descname"><span class="pre">multiply</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies the set by a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to multiply the set by</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x\cdot a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>), <span class="math notranslate nohighlight">\(x\cdot a\)</span> — <cite>element-wise</cite> (Hadamard) product.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.add">
+<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span> to the set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to add to the set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x + a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.dim">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dimension of set (or np.inf, if set handler can be of any dimension.</p>
+<p class="rubric">Notes</p>
+<p>If set <span class="math notranslate nohighlight">\(\mathcal{X} \in \mathbb{R}^n\)</span>, then this method should return <cite>n</cite>.
+If <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is independent of <cite>n</cite> (like RealSpaceHandler), then this method should return <cite>np.inf</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.contains">
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_interior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that points <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> are in set</p>
+<p>This method checks for <span class="math notranslate nohighlight">\(x \in \mathcal{X}\)</span> or for <span class="math notranslate nohighlight">\(x \in int(\mathcal{X}\)</span>) (if <cite>is_interior</cite> is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Point(s) to check. If given multiple points, returns an array of boolean values for each point</p></li>
+<li><p><strong>is_interior</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Flag whether to check that <cite>x</cite> is in interior of a set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True, if <cite>x</cite> (or <cite>x_i</cite>) lies in set (in its interior)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray, size = (m,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.is_interior">
+<code class="sig-name descname"><span class="pre">is_interior</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.is_interior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <code class="code docutils literal notranslate"><span class="pre">self.contains(x,</span> <span class="pre">is_interior=True)</span></code></p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#robustfpm.pricing.set_handler.NonNegativeSpaceHandler.contains" title="robustfpm.pricing.set_handler.NonNegativeSpaceHandler.contains"><code class="xref py py-func docutils literal notranslate"><span class="pre">contains()</span></code></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.set_handler.</span></code><code class="sig-name descname"><span class="pre">NonNegativeSimplex</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">bounds</span></em>, <em class="sig-param"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.set_handler.ISetHandler</span></code></a></p>
+<p>Represents an n-simplex with vertices <span class="math notranslate nohighlight">\((0,\dots, 0), (x_i^1,\dots, x_i^j, \dots, x_i^n), \; i = 1,2,\dots, n\)</span>,
+where</p>
+<div class="math notranslate nohighlight">
+\[x_i^j = b_i \cdot \delta_i^j, \; \forall i, j = 1,\dots, n, \; b_i &gt; 0, \; \delta_i^j \text{ is a Kronecker delta.}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bounds</strong> (<em>array_like</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>)</em>) – Array of boundary points <span class="math notranslate nohighlight">\(b_i\)</span></p></li>
+<li><p><strong>dtype</strong> (<em>np.dtype</em><em>, </em><em>default = np.float64</em>) – Numpy datatype of points in bounds</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex.project">
+<code class="sig-name descname"><span class="pre">project</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projects the set onto the lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lattice</strong> (<em>lattice</em>) – Target lattice.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of points on the lattice which belong to the set.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex.iscompact">
+<code class="sig-name descname"><span class="pre">iscompact</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.iscompact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the set is a <a class="reference external" href="https://en.wikipedia.org/wiki/Compact_space">compact</a>
+subset of <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the set is compact.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex.contains">
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_interior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that points <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> are in set</p>
+<p>This method checks for <span class="math notranslate nohighlight">\(x \in \mathcal{X}\)</span> or for <span class="math notranslate nohighlight">\(x \in int(\mathcal{X}\)</span>) (if <cite>is_interior</cite> is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Point(s) to check. If given multiple points, returns an array of boolean values for each point</p></li>
+<li><p><strong>is_interior</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Flag whether to check that <cite>x</cite> is in interior of a set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True, if <cite>x</cite> (or <cite>x_i</cite>) lies in set (in its interior)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray, size = (m,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex.support_function">
+<code class="sig-name descname"><span class="pre">support_function</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.support_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value of the support function of the set at point <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>m</em><em>,</em><em>n</em><em>)</em>) – Array of points from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of support function values, may be np.Inf.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The support function <span class="math notranslate nohighlight">\(\sigma_A(l)\)</span> of any non-empty subset <span class="math notranslate nohighlight">\(A \subseteq X\)</span>, where <span class="math notranslate nohighlight">\(X\)</span> is a Banach space, is defined by the following relation:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\sigma_A(l) = \sup\limits_{a \in A} \langle a, l \rangle,\]</div>
+</div></blockquote>
+<p>for each <span class="math notranslate nohighlight">\(l \in X^*\)</span> — continuous dual space of X</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex.multiply">
+<code class="sig-name descname"><span class="pre">multiply</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies the set by a point <cite>x</cite> from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Point to multiply the set by</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set handler that corresponds to the set <span class="math notranslate nohighlight">\(\{x\cdot a, a \in A\}\)</span>, where <span class="math notranslate nohighlight">\(A\)</span> is the current set (<cite>self</cite>), <span class="math notranslate nohighlight">\(x\cdot a\)</span> — <cite>element-wise</cite> (Hadamard) product.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#robustfpm.pricing.set_handler.ISetHandler" title="robustfpm.pricing.set_handler.ISetHandler">ISetHandler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex.add">
+<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.add" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>This method is not implemented</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex.dim">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim</span></code><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dimension of set (or np.inf, if set handler can be of any dimension.</p>
+<p class="rubric">Notes</p>
+<p>If set <span class="math notranslate nohighlight">\(\mathcal{X} \in \mathbb{R}^n\)</span>, then this method should return <cite>n</cite>.
+If <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is independent of <cite>n</cite> (like RealSpaceHandler), then this method should return <cite>np.inf</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.set_handler.NonNegativeSimplex.is_interior">
+<code class="sig-name descname"><span class="pre">is_interior</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.is_interior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <code class="code docutils literal notranslate"><span class="pre">self.contains(x,</span> <span class="pre">is_interior=True)</span></code></p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#robustfpm.pricing.set_handler.NonNegativeSimplex.contains" title="robustfpm.pricing.set_handler.NonNegativeSimplex.contains"><code class="xref py py-func docutils literal notranslate"><span class="pre">contains()</span></code></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="robustfpm.pricing.util.html" class="btn btn-neutral float-right" title="robustfpm.pricing.util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="robustfpm.pricing.problem.html" class="btn btn-neutral float-left" title="robustfpm.pricing.problem module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

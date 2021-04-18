@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>robustfpm.pricing.problem module &mdash; Robust financial portfolio management framework 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="robustfpm.pricing.set_handler module" href="robustfpm.pricing.set_handler.html" />
+    <link rel="prev" title="robustfpm.pricing.multival_map module" href="robustfpm.pricing.multival_map.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Robust financial portfolio management framework
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_pt1.html">How-To: Beginners' steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_pt2.html">How-To: Advanced techniques</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about_rfpmf.html">About Robust Financial Portfolio Management Framework</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="robustfpm.html">Main package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="robustfpm.html#package-scheme">Package scheme</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="robustfpm.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="robustfpm.cxhull.html">robustfpm.cxhull package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="robustfpm.finance.html">robustfpm.finance package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="robustfpm.pricing.html">robustfpm.pricing package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="robustfpm.pricing.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="robustfpm.pricing.lattice.html">robustfpm.pricing.lattice module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="robustfpm.pricing.multival_map.html">robustfpm.pricing.multival_map module</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#">robustfpm.pricing.problem module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="robustfpm.pricing.set_handler.html">robustfpm.pricing.set_handler module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="robustfpm.pricing.util.html">robustfpm.pricing.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="robustfpm.util.html">robustfpm.util package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Robust financial portfolio management framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="robustfpm.html">robustfpm package</a> &raquo;</li>
+        
+          <li><a href="robustfpm.pricing.html">robustfpm.pricing package</a> &raquo;</li>
+        
+      <li>robustfpm.pricing.problem module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/robustfpm.pricing.problem.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-robustfpm.pricing.problem">
+<span id="robustfpm-pricing-problem-module"></span><h1>robustfpm.pricing.problem module<a class="headerlink" href="#module-robustfpm.pricing.problem" title="Permalink to this headline">¶</a></h1>
+<p>This submodule implements a <a class="reference internal" href="#robustfpm.pricing.problem.Problem" title="robustfpm.pricing.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Problem</span></code></a> class that
+incapsulates a problem of pricing and hedging an option under a robust financial portfolio management framework
+and solver classes for solving such problems: <a class="reference internal" href="#robustfpm.pricing.problem.ISolver" title="robustfpm.pricing.problem.ISolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">ISolver</span></code></a> as an interface and some realisations.</p>
+<dl class="py class">
+<dt id="robustfpm.pricing.problem.Problem">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.problem.</span></code><code class="sig-name descname"><span class="pre">Problem</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starting_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price_dynamics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trading_constraints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.problem.Problem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class representing a problem of pricing and hedging an option under a robust financial portfolio management framework.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starting_price</strong> (<em>np.ndarray</em><em>, </em><em>size =</em><em> (</em><em>n</em><em>,</em><em>)</em>) – Starting prices of assets, as points from <span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span></p></li>
+<li><p><strong>price_dynamics</strong> (<a class="reference internal" href="robustfpm.pricing.multival_map.html#robustfpm.pricing.multival_map.PriceDynamics" title="robustfpm.pricing.multival_map.PriceDynamics"><em>PriceDynamics</em></a>) – Price dynamics of a problem. Must be defined for all t &lt;= time_horizon.</p></li>
+<li><p><strong>trading_constraints</strong> (<a class="reference internal" href="robustfpm.pricing.multival_map.html#robustfpm.pricing.multival_map.IMultivalMap" title="robustfpm.pricing.multival_map.IMultivalMap"><em>IMultivalMap</em></a>) – A mapping <span class="math notranslate nohighlight">\(D_t(\cdot)\)</span>, representing trading constraints</p></li>
+<li><p><strong>option</strong> (<a class="reference internal" href="robustfpm.finance.derivatives.html#robustfpm.finance.derivatives.IOption" title="robustfpm.finance.derivatives.IOption"><em>IOption</em></a>) – An option (portfolio) to price (and hedge)</p></li>
+<li><p><strong>lattice</strong> (<a class="reference internal" href="robustfpm.pricing.lattice.html#robustfpm.pricing.lattice.Lattice" title="robustfpm.pricing.lattice.Lattice"><em>Lattice</em></a>) – A lattice to solve problem on</p></li>
+<li><p><strong>time_horizon</strong> (<em>int</em><em>, </em><em>optional</em>) – Time horizon <span class="math notranslate nohighlight">\(N\)</span>. If not given, then deduced from <cite>option</cite> expiration and <cite>price_dynamics</cite> (if possible).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="robustfpm.pricing.problem.Problem.get_precision">
+<code class="sig-name descname"><span class="pre">get_precision</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.problem.Problem.get_precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the precision of given problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Precision for value function</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is not implemented</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="robustfpm.pricing.problem.Problem.set_precision">
+<code class="sig-name descname"><span class="pre">set_precision</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precision</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.problem.Problem.set_precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes lattice to match given precision</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>precision</strong> (<em>float</em>) – target precision</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is not implemented</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="robustfpm.pricing.problem.ISolver">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.problem.</span></code><code class="sig-name descname"><span class="pre">ISolver</span></code><a class="headerlink" href="#robustfpm.pricing.problem.ISolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="robustfpm.pricing.problem.ISolver.solve">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">solve</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_hedge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.problem.ISolver.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves a given problem and calculates hedging strategy (if <cite>calc_hedge</cite> is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="#robustfpm.pricing.problem.Problem" title="robustfpm.pricing.problem.Problem"><em>Problem</em></a>) – Problem to solve</p></li>
+<li><p><strong>calc_hedge</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – If True, also tries to return hedging strategy</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><strong>solution</strong> – a dictionary, representing the solution, where:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">Solution['Vf']</span></code> is a list of values of value function</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">Solution['Vx']</span></code> is a list of points on <cite>problem.lattice</cite> where Vf is calculated</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">Solution['hedge']</span></code> (optional) is a hedging strategy.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="robustfpm.pricing.problem.ConvhullSolver">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">robustfpm.pricing.problem.</span></code><code class="sig-name descname"><span class="pre">ConvhullSolver</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_timer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_tick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profiler_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_market_strategies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pricer_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.problem.ConvhullSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#robustfpm.pricing.problem.ISolver" title="robustfpm.pricing.problem.ISolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.problem.ISolver</span></code></a></p>
+<p>Represents the numerical solver to the option pricing problem under the robust financial portfolio management framework.</p>
+<p>This solver uses the convex hull algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>debug_mode</strong> (<em>boolean</em>) – If True, debug information is displayed during execution. Default is False.</p></li>
+<li><p><strong>ignore_warnings</strong> (<em>boolean</em>) – If True, warnings from the linprog optimization procedures are not displayed. Default is False.</p></li>
+<li><p><strong>enable_timer</strong> (<em>boolean</em>) – If True, profiler information will be displayed during execution. Default is False.</p></li>
+<li><p><strong>iter_tick</strong> (<em>int</em>) – If <cite>enable_timer</cite> is True, then timer will tick, on average, each <cite>iter_tick</cite> iteration. Default is 1000.</p></li>
+<li><p><strong>profiler_data</strong> (<em>class:'ProfilerData'</em>) – Profiler data, to which the execution timing can be appended to. If None, a new profiler data
+object will be created. Default is None.</p></li>
+<li><p><strong>calc_market_strategies</strong> (<em>boolean</em>) – If True, adverse market strategies at every step will calculated. Not used for pricing.
+True leads to the slower execution speed. Default is False.</p></li>
+<li><p><strong>pricer_options</strong> (<em>dict</em>) – Options for numerical methods.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.option_pricer_RU.OptionPricer</span></code></p>
+</div>
+<dl class="py method">
+<dt id="robustfpm.pricing.problem.ConvhullSolver.solve">
+<code class="sig-name descname"><span class="pre">solve</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_hedge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robustfpm.pricing.problem.ConvhullSolver.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves a given problem and calculates hedging strategy (if <cite>calc_hedge</cite> is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="#robustfpm.pricing.problem.Problem" title="robustfpm.pricing.problem.Problem"><em>Problem</em></a>) – Problem to solve</p></li>
+<li><p><strong>calc_hedge</strong> (<em>bool</em><em>, </em><em>optional</em><em>, </em><em>default = False</em>) – If True, also tries to return hedging strategy</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><strong>solution</strong> – a dictionary, representing the solution, where:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">Solution['Vf']</span></code> is a list of values of value function</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">Solution['Vx']</span></code> is a list of points on <cite>problem.lattice</cite> where Vf is calculated</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">Solution['hedge']</span></code> (optional) is a hedging strategy.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="robustfpm.pricing.set_handler.html" class="btn btn-neutral float-right" title="robustfpm.pricing.set_handler module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="robustfpm.pricing.multival_map.html" class="btn btn-neutral float-left" title="robustfpm.pricing.multival_map module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Nick Andreev, Sergey Smirnov, Vladislav Kuznetsov, Vadim Slivinski.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

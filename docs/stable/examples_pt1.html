@@ -94,11 +94,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples_pt2.html">How-To: Advanced techniques</a></li>
-<li class="toctree-l1"><a class="reference internal" href="about_gda.html">About Guaranteed Approach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about_rfpmf.html">About Robust Financial Portfolio Management Framework</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="robustportfolio.html">Main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="robustfpm.html">Main package</a></li>
 </ul>
 
             
@@ -172,8 +172,8 @@
 <div class="section" id="load-package-and-create-basic-options">
 <h2>Load package and create basic options<a class="headerlink" href="#load-package-and-create-basic-options" title="Permalink to this headline">¶</a></h2>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;/path/to/robustportfolio&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">robustportfolio.finance</span> <span class="kn">import</span> <span class="n">make_option</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;/path/to/robustfpm&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">robustfpm.finance</span> <span class="kn">import</span> <span class="n">make_option</span>
 </pre></div>
 </div>
 <p>Let’s start with some basic options:</p>
@@ -188,40 +188,10 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 2: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option2</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 3: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option3</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 4: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option4</span><span class="p">))</span>
-<span class="go">Option 1: &lt;robustportfolio.finance.derivatives.AmericanOption object at 0x129591a60&gt;</span>
-<span class="go">Option 2: &lt;robustportfolio.finance.derivatives.EuropeanOption object at 0x1295916d0&gt;</span>
-<span class="go">Option 3: &lt;robustportfolio.finance.derivatives.BermudanOption object at 0x129591160&gt;</span>
-<span class="go">Option 4: &lt;robustportfolio.finance.derivatives.AmericanOption object at 0x129591550&gt;</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 1 payoff at x = 80, 90, and 100, t = 3: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option1</span><span class="o">.</span><span class="n">payoff</span><span class="p">([[</span><span class="mi">80</span><span class="p">],</span> <span class="p">[</span><span class="mi">90</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">]],</span> <span class="mi">3</span><span class="p">)))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 2 payoff at x = 100, t = 3: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option2</span><span class="o">.</span><span class="n">payoff</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 3 payoff at x = 100, t = 3: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option3</span><span class="o">.</span><span class="n">payoff</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 3 payoff at x = 100, t = 4: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option3</span><span class="o">.</span><span class="n">payoff</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)))</span>
-<span class="go">Option 1 payoff at x = 80, 90, and 100, t = 3: [10.  0.  0.]</span>
-<span class="go">Option 2 payoff at x = 100, t = 3: [-inf]</span>
-<span class="go">Option 3 payoff at x = 100, t = 3: [10.]</span>
-<span class="go">Option 3 payoff at x = 100, t = 4: [-inf]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;./relative/path/to/robustportfolio&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">robustportfolio.finance</span> <span class="kn">import</span> <span class="n">make_option</span>
-</pre></div>
-</div>
-<p>Let’s start with some basic options:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">option1</span> <span class="o">=</span> <span class="n">make_option</span><span class="p">(</span><span class="n">option_type</span><span class="o">=</span><span class="s1">&#39;putonmax&#39;</span><span class="p">,</span> <span class="n">strike</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span> <span class="c1"># American Put with strike 90</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">option2</span> <span class="o">=</span> <span class="n">make_option</span><span class="p">(</span><span class="n">option_type</span><span class="o">=</span><span class="s1">&#39;putonmax&#39;</span><span class="p">,</span> <span class="n">strike</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">payoff_dates</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="c1"># European Put with strike 80 and expiration date 5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">option3</span> <span class="o">=</span> <span class="n">make_option</span><span class="p">(</span><span class="n">option_type</span><span class="o">=</span><span class="s1">&#39;callonmax&#39;</span><span class="p">,</span> <span class="n">strike</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">payoff_dates</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span> <span class="c1"># Bermudan Call with strike 90 and payoff dates 3 and 5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">option4</span> <span class="o">=</span> <span class="n">make_option</span><span class="p">(</span><span class="n">option_type</span><span class="o">=</span><span class="s1">&#39;put2call1&#39;</span><span class="p">)</span> <span class="c1"># American Put2Call1 option</span>
-</pre></div>
-</div>
-<p>Let’s see how options got instantiated:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 1: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option1</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 2: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option2</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 3: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 4: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option4</span><span class="p">))</span>
-<span class="go">Option 1: &lt;robustportfolio.finance.derivatives.AmericanOption object at 0x129591a60&gt;</span>
-<span class="go">Option 2: &lt;robustportfolio.finance.derivatives.EuropeanOption object at 0x1295916d0&gt;</span>
-<span class="go">Option 3: &lt;robustportfolio.finance.derivatives.BermudanOption object at 0x129591160&gt;</span>
-<span class="go">Option 4: &lt;robustportfolio.finance.derivatives.AmericanOption object at 0x129591550&gt;</span>
+<span class="go">Option 1: &lt;robustfpm.finance.derivatives.AmericanOption object at 0x129591a60&gt;</span>
+<span class="go">Option 2: &lt;robustfpm.finance.derivatives.EuropeanOption object at 0x1295916d0&gt;</span>
+<span class="go">Option 3: &lt;robustfpm.finance.derivatives.BermudanOption object at 0x129591160&gt;</span>
+<span class="go">Option 4: &lt;robustfpm.finance.derivatives.AmericanOption object at 0x129591550&gt;</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Option 1 payoff at x = 80, 90, and 100, t = 3: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">option1</span><span class="o">.</span><span class="n">payoff</span><span class="p">([[</span><span class="mi">80</span><span class="p">],</span> <span class="p">[</span><span class="mi">90</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">]],</span> <span class="mi">3</span><span class="p">)))</span>
@@ -237,16 +207,16 @@
 </div>
 <div class="section" id="creating-solver-and-solving-some-problems">
 <h2>Creating solver and solving some problems<a class="headerlink" href="#creating-solver-and-solving-some-problems" title="Permalink to this headline">¶</a></h2>
-<p>Let’s create some basic 1D Problem with Rectangular multiplicative dynamics and no trading constraints. For that, we need <a class="reference internal" href="robustportfolio.pricing.problem.html#robustportfolio.pricing.problem.Problem" title="robustportfolio.pricing.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustportfolio.pricing.problem.Problem</span></code></a> from <a class="reference internal" href="robustportfolio.pricing.html#module-robustportfolio.pricing" title="robustportfolio.pricing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">robustportfolio.pricing</span></code></a>:</p>
+<p>Let’s create some basic 1D Problem with Rectangular multiplicative dynamics and no trading constraints. For that, we need <a class="reference internal" href="robustfpm.pricing.problem.html#robustfpm.pricing.problem.Problem" title="robustfpm.pricing.problem.Problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.problem.Problem</span></code></a> from <a class="reference internal" href="robustfpm.pricing.html#module-robustfpm.pricing" title="robustfpm.pricing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">robustfpm.pricing</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pm1</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span><span class="n">starting_price</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
-                <span class="n">price_dynamics</span><span class="o">=</span><span class="n">ConstantDynamics</span><span class="p">(</span><span class="n">support</span><span class="o">=</span><span class="n">RectangularHandler</span><span class="p">([</span><span class="o">.</span><span class="mi">9</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">]),</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;mult&#39;</span><span class="p">),</span>
-                <span class="n">trading_constraints</span><span class="o">=</span><span class="n">NoConstraints</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">option1</span><span class="p">,</span>
-                <span class="n">lattice</span><span class="o">=</span><span class="n">Lattice</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                <span class="n">time_horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+                  <span class="n">price_dynamics</span><span class="o">=</span><span class="n">ConstantDynamics</span><span class="p">(</span><span class="n">support</span><span class="o">=</span><span class="n">RectangularHandler</span><span class="p">([</span><span class="o">.</span><span class="mi">9</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">]),</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;mult&#39;</span><span class="p">),</span>
+                  <span class="n">trading_constraints</span><span class="o">=</span><span class="n">NoConstraints</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">option1</span><span class="p">,</span>
+                  <span class="n">lattice</span><span class="o">=</span><span class="n">Lattice</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                  <span class="n">time_horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We begin by instantiating solver with some parameters.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">robustportfolio.pricing</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">robustfpm.pricing</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;convex_hull_filter&#39;</span><span class="p">:</span> <span class="s1">&#39;qhull&#39;</span><span class="p">,</span> <span class="s1">&#39;convex_hull_prune_fail_count&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="s1">&#39;convex_hull_prune_success_count&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;convex_hull_prune_corner_n&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span><span class="s1">&#39;convex_hull_prune_seed&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ConvhullSolver</span><span class="p">(</span><span class="n">enable_timer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pricer_options</span><span class="o">=</span><span class="n">opts</span><span class="p">,</span> <span class="n">ignore_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">iter_tick</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
@@ -258,7 +228,7 @@
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="robustportfolio.pricing.problem.html#robustportfolio.pricing.problem.ConvhullSolver" title="robustportfolio.pricing.problem.ConvhullSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustportfolio.pricing.problem.ConvhullSolver</span></code></a></p>
+<p><a class="reference internal" href="robustfpm.pricing.problem.html#robustfpm.pricing.problem.ConvhullSolver" title="robustfpm.pricing.problem.ConvhullSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.problem.ConvhullSolver</span></code></a></p>
 </div>
 <p>Now we solve it and see the result <span class="math notranslate nohighlight">\(V_0(x_0)\)</span>:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sol1</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">pm1</span><span class="p">)</span>
@@ -412,11 +382,11 @@
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="robustportfolio.pricing.multival_map.html#module-robustportfolio.pricing.multival_map" title="robustportfolio.pricing.multival_map"><code class="xref py py-mod docutils literal notranslate"><span class="pre">robustportfolio.pricing.multival_map</span></code></a>:</dt><dd><p>Module with multivalued mappings, used for both Trading Constraints and Price Dynamics.</p>
+<dt><a class="reference internal" href="robustfpm.pricing.multival_map.html#module-robustfpm.pricing.multival_map" title="robustfpm.pricing.multival_map"><code class="xref py py-mod docutils literal notranslate"><span class="pre">robustfpm.pricing.multival_map</span></code></a>:</dt><dd><p>Module with multivalued mappings, used for both Trading Constraints and Price Dynamics.</p>
 </dd>
-<dt><a class="reference internal" href="robustportfolio.pricing.multival_map.html#robustportfolio.pricing.multival_map.IMultivalMap" title="robustportfolio.pricing.multival_map.IMultivalMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustportfolio.pricing.multival_map.IMultivalMap</span></code></a></dt><dd><p>Class for multivalued mappings, used for trading constraints</p>
+<dt><a class="reference internal" href="robustfpm.pricing.multival_map.html#robustfpm.pricing.multival_map.IMultivalMap" title="robustfpm.pricing.multival_map.IMultivalMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.multival_map.IMultivalMap</span></code></a></dt><dd><p>Class for multivalued mappings, used for trading constraints</p>
 </dd>
-<dt><a class="reference internal" href="robustportfolio.pricing.multival_map.html#robustportfolio.pricing.multival_map.PriceDynamics" title="robustportfolio.pricing.multival_map.PriceDynamics"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustportfolio.pricing.multival_map.PriceDynamics</span></code></a></dt><dd><p>Class for price dynamics</p>
+<dt><a class="reference internal" href="robustfpm.pricing.multival_map.html#robustfpm.pricing.multival_map.PriceDynamics" title="robustfpm.pricing.multival_map.PriceDynamics"><code class="xref py py-class docutils literal notranslate"><span class="pre">robustfpm.pricing.multival_map.PriceDynamics</span></code></a></dt><dd><p>Class for price dynamics</p>
 </dd>
 </dl>
 </div>

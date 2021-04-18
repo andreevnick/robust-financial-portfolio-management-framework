@@ -7,7 +7,7 @@
 Robust Financial Portfolio Management Framework 
 ===============================================
 
-This is a test version of documentation of :code:`robustportfolio` framework for solving Bellman-Isaacs equations in pricing and superhedging an option (or a portfolio) under a *guaranteed deterministic approach*.
+This is a test version of documentation of :code:`robustfpm` framework for solving Bellman-Isaacs equations in pricing and superhedging an option (or a portfolio) under a *robust financial portfolio management framework*.
 
 .. toctree::
    :maxdepth: 4
@@ -16,7 +16,7 @@ This is a test version of documentation of :code:`robustportfolio` framework for
    Installation <installation>
    How-To: Beginners' steps <examples_pt1>
    How-To: Advanced techniques <examples_pt2>
-   About Guaranteed Approach <about_gda>
+   About Robust Financial Portfolio Management Framework <about_rfpmf>
 
 
 .. toctree::
@@ -24,7 +24,7 @@ This is a test version of documentation of :code:`robustportfolio` framework for
    :caption: API Documentation:
    :hidden:
    
-   Main package <robustportfolio>
+   Main package <robustfpm>
 
 
 
