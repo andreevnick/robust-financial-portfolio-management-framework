@@ -1,5 +1,7 @@
 [![Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Documentation Status](https://readthedocs.org/projects/robust-financial-portfolio-management-framework/badge/?version=latest)](https://robust-financial-portfolio-management-framework.readthedocs.io/en/latest/?badge=latest)
+
 
 # robust-financial-portfolio-management-framework
 Robust framework for derivative pricing and portfolio evaluation
