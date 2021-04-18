@@ -15,7 +15,7 @@ This module also provides two simple instances of :class:`IMultivalMap`: `NoCons
 ease of use. They are defined as:
 
 >>> NoConstraints = IdenticalMap(RealSpaceHandler())
->>> LongOnlyConstraints = IdenticalMap(NonNegativeSpaceHandler)
+>>> LongOnlyConstraints = IdenticalMap(NonNegativeSpaceHandler())
 
 See Also
 --------
@@ -279,4 +279,4 @@ class MDAFDynamics(PriceDynamics):
 
 # Two simple constraints for ease of use
 NoConstraints = IdenticalMap(RealSpaceHandler())
-LongOnlyConstraints = IdenticalMap(NonNegativeSpaceHandler)
+LongOnlyConstraints = IdenticalMap(NonNegativeSpaceHandler())
