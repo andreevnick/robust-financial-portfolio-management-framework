@@ -142,7 +142,7 @@ class PriceDynamics(IMultivalMap):
 
     @abstractmethod
     def __call__(self, x, t=1):
-        r""" :code:`A.__call__(x,t)` `is equivalent to :code:`A(x,t)`
+        r""" :code:`A.__call__(x,t)` is equivalent to :code:`A(x,t)`
 
         Parameters
         ----------
