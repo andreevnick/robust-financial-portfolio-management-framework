@@ -31,7 +31,8 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def project(self, lattice):
-        """ Projects the set onto the lattice.
+        """
+        Project the set onto the lattice.
 
         Parameters
         ----------
@@ -49,7 +50,8 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def support_function(self, x):
-        r""" Returns value of the support function of the set at point `x`.
+        r"""
+        Return value of the support function of the set at point `x`.
 
         Parameters
         ----------
@@ -74,8 +76,8 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def iscompact(self):
-        """ Checks if the set is a `compact <https://en.wikipedia.org/wiki/Compact_space>`_
-        subset of :math:`\mathbb{R}^{n}`.
+        """
+        Check if the set is a `compact <https://en.wikipedia.org/wiki/Compact_space>`_ subset of :math:`\mathbb{R}^{n}`.
 
         Returns
         -------
@@ -88,7 +90,8 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def multiply(self, x):
-        """ Multiplies the set by a point `x` from :math:`\mathbb{R}^{n}`.
+        """
+        Multiply the set by a point `x` from :math:`\mathbb{R}^{n}`.
 
         Parameters
         ----------
@@ -106,7 +109,8 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def add(self, x):
-        """ Adds a point `x` from :math:`\mathbb{R}^{n}` to the set.
+        """
+        Add a point `x` from :math:`\mathbb{R}^{n}` to the set.
 
         Parameters
         ----------
@@ -125,7 +129,8 @@ class ISetHandler(ABC):
     @property
     @abstractmethod
     def dim(self):
-        """ Returns dimension of set (or np.inf, if set handler can be of any dimension.
+        """
+        Return dimension of set (or np.inf, if set handler can be of any dimension.
 
         Notes
         -----
@@ -137,7 +142,8 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def contains(self, x, is_interior=False):
-        """ Check that points `x` from :math:`\mathbb{R}^n` are in set
+        """
+        Check that points `x` from :math:`\mathbb{R}^n` are in set.
 
         This method checks for :math:`x \in \mathcal{X}` or for :math:`x \in int(\mathcal{X}`) (if `is_interior` is True)
 
@@ -157,7 +163,8 @@ class ISetHandler(ABC):
         raise NotImplementedError('The method must be defined in a subclass')
 
     def is_interior(self, x):
-        """ Wrapper for :code:`self.contains(x, is_interior=True)`
+        """
+        Wrapper for :code:`self.contains(x, is_interior=True)`
 
         See Also
         --------
@@ -168,7 +175,8 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def boundaries(self):
-        r""" Return smallest axis-aligned bounding box.
+        r"""
+        Return smallest axis-aligned bounding box.
 
         Returns smallest n-dimensional axis-aligned bounding box for set :math:`\mathcal{X} \subseteq \mathbb{R}^n`.
 
@@ -186,7 +194,8 @@ class ISetHandler(ABC):
 
 
 class RectangularHandler(ISetHandler):
-    """ Handler for a rectangular set.
+    """
+    Handler for a rectangular set.
 
     Such a set :math:`\mathcal{X}\subseteq \mathbb{R}^{n}` is defined as:
 
@@ -332,7 +341,8 @@ class EllipseHandler(ISetHandler):
 
 
 class RealSpaceHandler(ISetHandler):
-    """ Handler for :math:`\mathbb{R}^{n}`
+    """
+    Handler for :math:`\mathbb{R}^{n}`.
 
     """
 
@@ -369,7 +379,8 @@ class RealSpaceHandler(ISetHandler):
 
 
 class NonNegativeSpaceHandler(ISetHandler):
-    r""" Handler for closed non-negative orthant of :math:`\mathbb{R}^{n}`
+    r"""
+    Handler for closed non-negative orthant of :math:`\mathbb{R}^{n}`.
     Such an orthant is defined as
 
     .. math:: \mathbb{R}^{n}_{+} = \{(x_1,\dots,x_n) \in \mathbb{R}^n:\; x_i \geqslant 0, i = 1,2,\dots,n\}
@@ -410,7 +421,10 @@ class NonNegativeSpaceHandler(ISetHandler):
 
 
 class NonNegativeSimplex(ISetHandler):
-    """ Represents an n-simplex with vertices :math:`(0,\dots, 0), (x_i^1,\dots, x_i^j, \dots, x_i^n), \; i = 1,2,\dots, n`,
+    """
+    Handler for a non-negative n-simplex.
+
+    Represents an n-simplex with vertices :math:`(0,\dots, 0), (x_i^1,\dots, x_i^j, \dots, x_i^n), \; i = 1,2,\dots, n`,
     where
 
     .. math:: x_i^j = b_i \\cdot \delta_i^j, \; \\forall i, j = 1,\dots, n, \; b_i > 0, \; \delta_i^j \\text{ is a Kronecker delta.}
