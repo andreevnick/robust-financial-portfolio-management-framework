@@ -84,7 +84,7 @@ class IdenticalMap(IMultivalMap):
     def __init__(self, support: ISetHandler):
         self.support = support
 
-    def __call__(self, x, t):
+    def __call__(self, x=0, t=0):
         return self.support
 
     @property
