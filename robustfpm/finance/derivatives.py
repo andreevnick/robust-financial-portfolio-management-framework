@@ -24,14 +24,23 @@ __all__ = [
 
 
 class IOption(ABC):
-    """ An abstract interface for Options"""
-    def __init__(self, expiry, payoff_fcn):
+    """ An abstract interface for Options
+    """
+
+    def __init__(self, expiry, payoff_fcn, lipschitz_fcn):
+        def const1(t):
+            return 1
+
         if expiry is not None and expiry <= 0:
             raise ValueError('Expiration date must be greater, than zero!')
         if not callable(payoff_fcn):
             raise ValueError('Payoff function must be callable!')
-        
-        
+        if lipschitz_fcn is None:
+            lipschitz_fcn = const1  # defaults to constant 1
+        if not callable(lipschitz_fcn):
+            raise ValueError('Lipschitz function must be callable!')
+        self._lipschitz_fcn = lipschitz_fcn
+
     @abstractmethod
     def payoff(self, prices, t=None):
         """ Get the value of payoff function for `prices` and time `t`
@@ -56,6 +65,17 @@ class IOption(ABC):
         """ Expiration date"""
         raise Exception("The method must be defined in a subclass")
 
+    @abstractmethod
+    def get_lipschitz(self, t):
+        r""" Returns Lipschitz constant for a payoff function at time `t`
+
+        If :math:`g_t(\cdot)` is a payoff function of an option at time `t`, then its Lipschitz constant is such a number :math:`L_{g_t} \in \mathbb{R_+}`, that:
+
+        .. math:: ||g_t(x_1) - g_t(x_0)|| \leqslant L_{g_t}||x_1 - x_0||,\; \forall x_0, x_1
+
+        """
+        raise Exception("The method must be defined in a subclass")
+
 
 class EuropeanOption(IOption):
     """ Generic european-style option class
@@ -66,10 +86,12 @@ class EuropeanOption(IOption):
         An expiration date
     payoff_fcn: Callable
         Payoff function for given price(s)
+    lipschitz_fcn: Callable, default = None
+        Function that returns Lipschitz constant for payoff at time `t`, defaults to 1
     """
 
-    def __init__(self, expiry: int, payoff_fcn: Callable):
-        super().__init__(expiry, payoff_fcn)
+    def __init__(self, expiry: int, payoff_fcn: Callable, lipschitz_fcn: Callable = None):
+        super().__init__(expiry, payoff_fcn, lipschitz_fcn)
         self._expiry = expiry
         self.payoff_fcn = payoff_fcn
 
@@ -83,6 +105,11 @@ class EuropeanOption(IOption):
     def expiry(self):
         return self._expiry
 
+    def get_lipschitz(self, t):
+        if t == self.expiry:
+            return self._lipschitz_fcn(t)
+        return 0
+
 
 class AmericanOption(IOption):
     """ Generic american-style option class
@@ -93,11 +120,13 @@ class AmericanOption(IOption):
         Payoff function for given price(s)
     expiry: int, optional
         Expiration date
+    lipschitz_fcn: Callable, default = None
+        Function that returns Lipschitz constant for payoff at time `t`, defaults to 1
     """
 
-    def __init__(self, payoff_fcn: Callable, expiry=None):
+    def __init__(self, payoff_fcn: Callable, expiry=None, lipschitz_fcn: Callable = None):
         self.payoff_fcn = payoff_fcn
-        super().__init__(expiry, payoff_fcn)
+        super().__init__(expiry, payoff_fcn, lipschitz_fcn)
         self._expiry = expiry
 
     def payoff(self, prices, t=None):
@@ -107,6 +136,9 @@ class AmericanOption(IOption):
     @property
     def expiry(self):
         return np.inf if self._expiry is None else self._expiry
+
+    def get_lipschitz(self, t):
+        return self._lipschitz_fcn(t)
 
 
 class BermudanOption(IOption):
@@ -118,6 +150,8 @@ class BermudanOption(IOption):
         Payoff dates (as integers)
     payoff_fcn: Callable
         Payoff function for given price(s)
+    lipschitz_fcn: Callable, default = None
+        Function that returns Lipschitz constant for payoff at time `t`, defaults to 1
 
 
     Notes
@@ -125,11 +159,11 @@ class BermudanOption(IOption):
     Bermudan and Canary options are very much alike, so we put both styles in the same class.
     """
 
-    def __init__(self, payoff_dates, payoff_fcn: Callable):
+    def __init__(self, payoff_dates, payoff_fcn: Callable, lipschitz_fcn: Callable = None):
         payoff_dates = np.array(payoff_dates, dtype=int).flatten()
-        super().__init__(payoff_dates.max(), payoff_fcn)
+        super().__init__(payoff_dates.max(), payoff_fcn, lipschitz_fcn)
         if not np.all(payoff_dates > 0):
-            raise  ValueError('All payoff dates must be greater than zero!')
+            raise ValueError('All payoff dates must be greater than zero!')
         self.payoff_dates = payoff_dates
         self._expiry = self.payoff_dates.max()
         self.payoff_fcn = payoff_fcn
@@ -144,19 +178,25 @@ class BermudanOption(IOption):
     def expiry(self):
         return self._expiry
 
+    def get_lipschitz(self, t):
+        if t in self.payoff_dates:
+            return self._lipschitz_fcn(t)
+        return 0
 
-def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None):
+
+def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None, lipschitz_fcn=None):
     """ Create a new option
 
-    You must either give a specific `type` and `strike` or provide an option `payoff_fcn`.
+    You must either give a specific `type` and `strike` or provide an option `payoff_fcn` (and, optionally, `lipschitz_fcn`).
 
-    If `type` and `strike` are given, `payoff_fcn` is ignored.
+    If `type` and `strike` are given, `payoff_fcn` and `lipschitz_fcn` are ignored.
 
     If `type` is given, but `strike` is omitted, `strike` defaults to zero.
 
     If no `type` is given, but `strike` is provided, then `payoff_fcn` must be a wrapper, which accepts `strike` keyword argument and returns a payoff function (Callable) for a given strike.
+    The payoff function returned by the wrapper must accept 2 positional arguments, first of which are prices, and the second is time.
 
-    If both `type` and `strike` are omitted, `payoff_fcn` must be a function that accepts 1 positional argument.
+    If both `type` and `strike` are omitted, `payoff_fcn` must be a function that accepts 2 positional arguments: prices (first) and time (second).
 
     Parameters
     ----------
@@ -168,6 +208,8 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
         Payoff function of an option to be constructed.
     payoff_dates: int or list or tuple or np.ndarray, optional
         Expiration date(s). If has only 1 element (or is int), the European option is constructed. If given an array of payoff times — Bermudan. If ommited — American.
+    lipschitz_fcn: Callable, optional
+        Function that returns Lipschitz constant for `payoff_fcn` at given time. If omitted — defaults to constant 1.
 
     Returns
     -------
@@ -181,7 +223,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
 
     >>> from robustfpm.finance import *
     >>> import numpy as np
-    >>> def call_10(x):
+    >>> def call_10(x, *usused):
     ...     return np.array(np.maximum((x - 10), np.zeros_like(x)), float).squeeze()
     >>> call = make_option(payoff_fcn = call_10, payoff_dates=4)
     >>> isinstance(call, IOption)
@@ -204,7 +246,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
     >>> from robustfpm.finance import *
     >>> import numpy as np
     >>> def call_payoff(strike):
-    ...     def call_with_strike(x):
+    ...     def call_with_strike(x, *usused):
     ...         return np.array(np.maximum((x - strike), np.zeros_like(x)), float).squeeze()
     ...     return call_with_strike
     >>> call = make_option(payoff_fcn = call_payoff, strike=10, payoff_dates=4)
@@ -213,6 +255,24 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
     >>> call_5 = make_option(payoff_fcn = call_payoff, strike=5, payoff_dates=4)
     >>> call_5.payoff([4,6,10], 4)
     array([0., 1., 5.])
+
+    Portfolio of two European call options: the same as with one, but it has a Lipschitz constant equal to 2.
+
+    >>> from robustfpm.finance import *
+    >>> import numpy as np
+    >>> def call_payoff(strike, *usused):
+    ...     def call_with_strike(x):
+    ...         return np.array(np.maximum((x - strike), np.zeros_like(x)), float).squeeze()
+    ...     return call_with_strike
+    >>> def constant_2(t):
+    ...     return 2
+    >>> call = make_option(payoff_fcn = call_payoff, strike=10, payoff_dates=4, lipschitz_fcn=constant_2)
+    >>> call.payoff([[9],[11]], 4)
+    array([0., 1.])
+    >>> call.get_lipschitz(3)
+    0
+    >>> call.get_lipschitz(4)
+    2
 
     Alternatively, create the same option as call on max with 1 asset.
 
@@ -246,6 +306,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
     array([-inf, -inf, -inf])
     >>> Option2.payoff([[1,2],[5,3], [3,5]], 4)
     array([0., 2., 0.])
+
     """
 
     if option_type is None:
@@ -271,10 +332,10 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
     if isinstance(payoff_dates, (list, tuple, np.ndarray)) and len(payoff_dates) == 1:
         payoff_dates = int(payoff_dates[0])
     if isinstance(payoff_dates, (list, tuple, np.ndarray)):
-        return BermudanOption(payoff_dates, payoff_fcn=payoff_fcn)
+        return BermudanOption(payoff_dates, payoff_fcn=payoff_fcn, lipschitz_fcn=lipschitz_fcn)
     elif isinstance(payoff_dates, int):
-        return EuropeanOption(payoff_dates, payoff_fcn=payoff_fcn)
+        return EuropeanOption(payoff_dates, payoff_fcn=payoff_fcn, lipschitz_fcn=lipschitz_fcn)
     elif payoff_dates is None:
-        return AmericanOption(payoff_fcn=payoff_fcn)
+        return AmericanOption(payoff_fcn=payoff_fcn, lipschitz_fcn=lipschitz_fcn)
     else:
         raise ValueError('Wrong payoff_dates type ({tp})!'.format(tp=type(payoff_dates)))
