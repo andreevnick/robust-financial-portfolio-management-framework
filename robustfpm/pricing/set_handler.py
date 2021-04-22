@@ -373,7 +373,7 @@ class RealSpaceHandler(ISetHandler):
 
     def contains(self, x, is_interior=False):
         x = np.atleast_2d(x)
-        return np.full(shape=(x.shape[0], 1), fill_value=True)
+        return np.full(shape=(x.shape[0]), fill_value=True)
 
     def boundaries(self):
         return np.atleast_2d(np.array([-np.inf, np.inf]))
