@@ -22,7 +22,7 @@ from .multival_map import PriceDynamics, IMultivalMap
 from ..finance import IOption, AmericanOption
 from ..pricing import Lattice
 from ..util import Timer, PTimer, ProfilerData, coalesce, isin_points
-from .util import get_support_set, generate_evaluation_point_lists
+from .util import get_support_set, generate_evaluation_point_lists, get_a_star, get_constraints_lipschitz
 from ..cxhull import get_max_coordinates, in_hull
 
 __all__ = ['Problem',
@@ -89,10 +89,12 @@ class Problem:
         if (not np.isinf(self.price_dynamics.dim) and self.price_dynamics.dim != self.dim) or (
                 not np.isinf(self.trading_constraints.dim) and self.trading_constraints.dim != self.dim) or (
                 self.starting_price.shape[1] != self.dim):
-            raise ValueError('Dimensions of price_dynamics, trading_constraints, starting_price and lattice must match!')
+            raise ValueError(
+                'Dimensions of price_dynamics, trading_constraints, starting_price and lattice must match!')
 
     def get_precision(self):
-        """ Calculates the precision of given problem
+        """
+        Calculate the precision of given problem.
 
         Returns
         -------
@@ -125,7 +127,7 @@ class Problem:
 class ISolver(ABC):
 
     @abstractmethod
-    def solve(self, problem, calc_hedge=False):
+    def solve(self, problem, calc_hedge=False, calc_precision=False):
         """ Solves a given problem and calculates hedging strategy (if `calc_hedge` is True)
 
         Parameters
@@ -134,6 +136,8 @@ class ISolver(ABC):
             Problem to solve
         calc_hedge: bool, optional, default = False
             If True, also tries to return hedging strategy
+        calc_precision : bool, default = False
+            Flag to calculate precision
 
         Returns
         -------
@@ -143,6 +147,7 @@ class ISolver(ABC):
             - :code:`Solution['Vf']` is a list of values of value function
             - :code:`Solution['Vx']` is a list of points on `problem.lattice` where Vf is calculated
             - :code:`Solution['hedge']` (optional) is a hedging strategy.
+            - :code:`Solution['precision']` (optional) is a list of precisions
         """
         raise NotImplementedError('This method should be implemented!')
 
@@ -156,21 +161,21 @@ class ConvhullSolver(ISolver):
 
     Parameters
     ----------
-    debug_mode: boolean
+    debug_mode : boolean
         If True, debug information is displayed during execution. Default is False.
-    ignore_warnings: boolean
+    ignore_warnings : boolean
         If True, warnings from the linprog optimization procedures are not displayed. Default is False.
-    enable_timer: boolean
+    enable_timer : boolean
         If True, profiler information will be displayed during execution. Default is False.
-    iter_tick: int
+    iter_tick : int
         If `enable_timer` is True, then timer will tick, on average, each `iter_tick` iteration. Default is 1000.
-    profiler_data: class:'ProfilerData'
+    profiler_data : class:'ProfilerData'
         Profiler data, to which the execution timing can be appended to. If None, a new profiler data
         object will be created. Default is None.
-    calc_market_strategies: boolean
+    calc_market_strategies : boolean
         If True, adverse market strategies at every step will calculated. Not used for pricing.
         True leads to the slower execution speed. Default is False.
-    pricer_options: dict
+    pricer_options : dict
         Options for numerical methods.
 
     See also
@@ -179,11 +184,12 @@ class ConvhullSolver(ISolver):
 
     """
 
-    def solve(self, problem, calc_hedge=False):
+    def solve(self, problem, calc_hedge=False, calc_precision=False):
         self.calc_market_strategies = calc_hedge
         return self.evaluate(x0=problem.starting_price, lattice=problem.lattice, price_dynamics=problem.price_dynamics,
                              trading_constraints=problem.trading_constraints, max_time=problem.time_horizon,
-                             option=problem.option)
+                             option=problem.option,
+                             calc_precision=calc_precision)
 
     def __init__(self, debug_mode=False, ignore_warnings=False, enable_timer=False, iter_tick=1000, profiler_data=None,
                  calc_market_strategies=False, pricer_options=None):
@@ -497,8 +503,11 @@ class ConvhullSolver(ISolver):
 
         return res_u[maxind] - supp_func[maxind], convdK_x[maxind]
 
-    def evaluate(self, x0, lattice, price_dynamics, trading_constraints, max_time, option):
-        """ Calculates the option value by backward-reconstructing the value function on a lattice.
+    def evaluate(self, x0, lattice, price_dynamics, trading_constraints, max_time, option, calc_precision=False):
+        """
+        Calculate the option value.
+
+        Calculates the option value by backward-reconstructing the value function on a lattice.
         Returns all the intermediate values of the value function Vf at points Vp.
         Vf[0][0] is the option value.
 
@@ -512,11 +521,39 @@ class ConvhullSolver(ISolver):
             pdata = self.profiler_data.data[tm_total.header]
 
             with Timer('Precalculating points for value function evaluation', silent=self.silent_timer_) as tm:
-                Vp, Vf = generate_evaluation_point_lists(p0=self.p0_, lattice=lattice, price_dynamics=price_dynamics,
-                                                         N=max_time, profiler_data=pdata.data[tm.header])
+                if calc_precision:
+                    Vp, Vf, r_star = generate_evaluation_point_lists(p0=self.p0_, lattice=lattice,
+                                                                     price_dynamics=price_dynamics,
+                                                                     N=max_time, profiler_data=pdata.data[tm.header],
+                                                                     calc_r_star=True)
+                else:
+                    Vp, Vf = generate_evaluation_point_lists(p0=self.p0_, lattice=lattice,
+                                                             price_dynamics=price_dynamics,
+                                                             N=max_time, profiler_data=pdata.data[tm.header])
             # price check (negative prices)
             if np.any([np.any(lattice.map2x(Vp[i]) < 0) for i in range(max_time)]):
                 raise TypeError('Prices can become negative! The problem is badly stated.')
+
+            if calc_precision:
+                with PTimer('Computing A^* and Lipschitz constants for constraints', silent=self.silent_timer_,
+                            profiler_data=pdata) as tm:
+                    A_star = get_a_star(points=Vp, option=option, lattice=lattice, r_star=r_star, max_time=max_time,
+                                        price_dynamics=price_dynamics, trading_constraints=trading_constraints)
+                    L_D = get_constraints_lipschitz(max_time=max_time, points=Vp, lattice=lattice,
+                                                    trading_constraints=trading_constraints)
+                with PTimer('Calculating precision', silent=self.silent_timer_,
+                            profiler_data=pdata) as tm:
+                    L_V = np.empty(max_time + 1)
+                    L_V[-1] = option.get_lipschitz(max_time)
+                    for t in reversed(range(max_time)):
+                        L_V[t] = np.maximum(option.get_lipschitz(t),
+                                            L_V[t + 1] * (price_dynamics.get_lipschitz(t=t + 1) + 1) +
+                                            A_star[t] * price_dynamics.get_lipschitz(t=t + 1)
+                                            )
+                    epsilon = np.empty(max_time + 1)
+                    epsilon[-1] = 0
+                    epsilon[0:-1] = (L_V[1:] + L_D) * np.linalg.norm(lattice.delta) / 2
+                    epsilon = np.flip(np.cumsum(np.flip(epsilon)))
 
             with PTimer('Computing value function in the last point', silent=self.silent_timer_,
                         profiler_data=pdata) as tm:
@@ -569,6 +606,7 @@ class ConvhullSolver(ISolver):
                     Vf[t] = np.maximum(res, option.payoff(prices=lattice.map2x(Vp[t]), t=t))
 
         gc.collect()
-
-        return {'Vf': Vf, 'Vp': Vp}
-
+        res = {'Vf': Vf, 'Vp': Vp}
+        if calc_precision:
+            res.update({'precision': epsilon})
+        return res
