@@ -166,6 +166,22 @@ class ISetHandler(ABC):
 
         return self.contains(x, is_interior=True)
 
+    @abstractmethod
+    def boundaries(self):
+        r""" Returns n-dimensional bounds for set :math:`\mathcal{X} \subseteq \mathbb{R}^n`.
+
+        These are such numbers :math:`lb_i, ub_i,\; i = 1,2,\dots,n`, that:
+
+        .. math:: \mathcal{X} \subseteq \mathcal{R}, \text{ where} \; \mathcal{R} = \{(x_1,\dots,x_n) \in \mathbb{R}^{n}:\; lb_i \leqslant x_i \leqslant ub_i, i = 1,2,\dots,n\}
+
+        Returns
+        -------
+        np.ndarray
+            An array `bounds` such that :code:`bounds[i, 0] = lb_i`, :code:`bounds[i, 1] = ub_i`
+        """
+
+        raise NotImplementedError('The method must be defined in a subclass')
+
 
 class RectangularHandler(ISetHandler):
     """ Handler for a rectangular set.
@@ -227,6 +243,9 @@ class RectangularHandler(ISetHandler):
         x = np.atleast_2d(x)
         return np.logical_and(np.all(left(x, self.bounds.T[0, :]), axis=1),
                               np.all(right(x, self.bounds.T[1, :]), axis=1))
+
+    def boundaries(self):
+        return self.bounds
 
 
 class EllipseHandler(ISetHandler):
@@ -303,6 +322,10 @@ class EllipseHandler(ISetHandler):
         x = np.atleast_2d(x)
         return comparison(self.__r2(x), 1.0)
 
+    def boundaries(self):
+        R = np.max(np.abs(np.diagonal(self.L)))
+        return self.mu.T + np.array([-R, R], dtype=self.L.dtype)
+
 
 class RealSpaceHandler(ISetHandler):
     """ Handler for :math:`\mathbb{R}^{n}`
@@ -336,6 +359,9 @@ class RealSpaceHandler(ISetHandler):
     def contains(self, x, is_interior=False):
         x = np.atleast_2d(x)
         return np.full(shape=(x.shape[0], 1), fill_value=True)
+
+    def boundaries(self):
+        return np.atleast_2d(np.array([-np.inf, np.inf]))
 
 
 class NonNegativeSpaceHandler(ISetHandler):
@@ -374,6 +400,9 @@ class NonNegativeSpaceHandler(ISetHandler):
         x = np.atleast_2d(x)
 
         return np.all(x > 0.0 if is_interior else x >= 0.0, axis=1)
+
+    def boundaries(self):
+        return np.atleast_2d(np.array([0, np.inf]))
 
 
 class NonNegativeSimplex(ISetHandler):
@@ -421,7 +450,7 @@ class NonNegativeSimplex(ISetHandler):
 
     def support_function(self, x):
         x = np.atleast_2d(x)
-        return np.max(np.hstack((np.zeros(shape=(x.shape[0], 1)), x*self.bounds)), axis=1)
+        return np.max(np.hstack((np.zeros(shape=(x.shape[0], 1)), x * self.bounds)), axis=1)
 
     def multiply(self, x):
         x = np.asarray(x)
@@ -429,7 +458,7 @@ class NonNegativeSimplex(ISetHandler):
         if np.any(x <= 0):
             raise ValueError('X must be > 0!')
 
-        return NonNegativeSimplex(x*self.bounds, dtype=self.bounds.dtype)
+        return NonNegativeSimplex(x * self.bounds, dtype=self.bounds.dtype)
 
     def add(self, x):
         """
@@ -443,3 +472,6 @@ class NonNegativeSimplex(ISetHandler):
     @property
     def dim(self):
         return self.bounds.shape[0]
+
+    def boundaries(self):
+        return np.hstack((np.zeros(shape=(self.dim, 1)), np.atleast_2d(self.bounds).T))
