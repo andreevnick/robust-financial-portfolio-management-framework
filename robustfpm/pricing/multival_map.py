@@ -200,8 +200,15 @@ class PIDynamics(PriceDynamics):
         return self._call(t)
 
     @abstractmethod
-    def _call(self, t):
+    def _call(self, t) -> ISetHandler:
         raise NotImplementedError('The method must be defined in a subclass')
+
+    def get_lipschitz(self, t: int):
+        if self.type == 'add':
+            return 1
+        else:
+            boundaries = self._call(t).boundaries()
+            return np.linalg.norm(np.max(np.abs(boundaries - 1), axis=1), ord=2)
 
 
 class ConstantDynamics(PIDynamics):
@@ -243,10 +250,6 @@ class ConstantDynamics(PIDynamics):
         """:code:`np.inf` (since the model is time-independent)"""
         return np.inf
 
-    def get_lipschitz(self, t: int):
-        # TODO: implement this method
-        pass
-
 
 class MDAFDynamics(PriceDynamics):
     r"""Multiplicative dynamics in additive form (time-independent).
@@ -274,7 +277,7 @@ class MDAFDynamics(PriceDynamics):
         return np.inf
 
     def get_lipschitz(self, t: int):
-        pass
+        return np.linalg.norm(np.max(np.abs(self._support.boundaries() - 1), axis=1), ord=2)
 
 
 # Two simple constraints for ease of use
