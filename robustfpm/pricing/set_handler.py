@@ -296,9 +296,10 @@ class EllipseHandler(ISetHandler):
         return np.sum((x - self.mu).dot(self.sigma_inv) * (x - self.mu), axis=1)
 
     def project(self, lattice):
-        R = np.max(np.abs(np.diagonal(self.L))) + np.max(lattice.delta)
-
-        S = RectangularHandler(self.mu.T + np.array([-R, R], dtype=self.L.dtype)).project(lattice)
+        # R = np.max(np.abs(np.diagonal(self.L))) + np.max(lattice.delta)
+        max_delta = np.max(lattice.delta)
+        S = RectangularHandler(self.boundaries() + np.array([-max_delta, max_delta], dtype=self.L.dtype)).project(
+            lattice)
 
         return S[self.__r2(lattice.map2x(S)) <= 1]
 
