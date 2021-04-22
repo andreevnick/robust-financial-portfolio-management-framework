@@ -168,9 +168,11 @@ class ISetHandler(ABC):
 
     @abstractmethod
     def boundaries(self):
-        r""" Returns n-dimensional bounds for set :math:`\mathcal{X} \subseteq \mathbb{R}^n`.
+        r""" Return smallest axis-aligned bounding box.
 
-        These are such numbers :math:`lb_i, ub_i,\; i = 1,2,\dots,n`, that:
+        Returns smallest n-dimensional axis-aligned bounding box for set :math:`\mathcal{X} \subseteq \mathbb{R}^n`.
+
+        These are the smallest (in absolute value) numbers :math:`lb_i, ub_i,\; i = 1,2,\dots,n`, such that:
 
         .. math:: \mathcal{X} \subseteq \mathcal{R}, \text{ where} \; \mathcal{R} = \{(x_1,\dots,x_n) \in \mathbb{R}^{n}:\; lb_i \leqslant x_i \leqslant ub_i, i = 1,2,\dots,n\}
 
@@ -249,7 +251,8 @@ class RectangularHandler(ISetHandler):
 
 
 class EllipseHandler(ISetHandler):
-    """ Handler for an n-dimensional ellipsoid with center :math:`\mu` and matrix :math:`\Sigma`
+    """
+    Handler for an n-dimensional ellipsoid with center :math:`\mu` and matrix :math:`\Sigma`
 
     Parameters
     ----------
@@ -323,8 +326,9 @@ class EllipseHandler(ISetHandler):
         return comparison(self.__r2(x), 1.0)
 
     def boundaries(self):
-        R = np.max(np.abs(np.diagonal(self.L)))
-        return self.mu.T + np.array([-R, R], dtype=self.L.dtype)
+        max_span = np.atleast_2d(np.sqrt(np.diagonal(self.sigma_inv))).T
+        R = np.hstack((-max_span, max_span))
+        return self.mu.T + R
 
 
 class RealSpaceHandler(ISetHandler):
