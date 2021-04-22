@@ -261,7 +261,11 @@ class RectangularHandler(ISetHandler):
 
 class EllipseHandler(ISetHandler):
     """
-    Handler for an n-dimensional ellipsoid with center :math:`\mu` and matrix :math:`\Sigma`
+    Handler for an n-dimensional ellipsoid with center :math:`\mu` and matrix :math:`\Sigma^{-1}`
+
+    Such a set is defined as:
+
+    .. math:: \{x\in\mathbb{R}^n:\; (x - \mu)^T\Sigma^{-1}(x-\mu) \leqslant 1\}
 
     Parameters
     ----------
@@ -269,7 +273,7 @@ class EllipseHandler(ISetHandler):
     mu: np.ndarray, size = (n,) or (1,n)
         Coordinates of center of an ellipsoid :math:`\mu`
     sigma: np.ndarray, size = (n,n)
-        Matrix of an ellipsoid :math:`\Sigma`
+        Inverse of a matrix of an ellipsoid (that is, matrix :math:`\Sigma`).
     conf_level: np.float64, default = None
         Confidence level of a multivariate normal distribution. See also: `<https://stats.stackexchange.com/questions/64680/how-to-determine-quantiles-isolines-of-a-multivariate-normal-distribution>`_
     dtype: np.dtype, default = np.float64
@@ -336,7 +340,7 @@ class EllipseHandler(ISetHandler):
         return comparison(self.__r2(x), 1.0)
 
     def boundaries(self):
-        max_span = np.atleast_2d(np.sqrt(np.diagonal(self.sigma_inv))).T
+        max_span = np.atleast_2d(np.sqrt(np.diagonal(self.sigma))).T
         R = np.hstack((-max_span, max_span))
         return self.mu.T + R
 
