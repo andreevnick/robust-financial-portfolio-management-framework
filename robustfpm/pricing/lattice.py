@@ -181,7 +181,7 @@ class Lattice:
 
         See Also
         --------
-        :func:`robustfpm.util.util.cartesian_product` : Function used for generation of points from corner coordinates
+        :func:`~robustfpm.util.util.cartesian_product` : Function used for generation of points from corner coordinates
 
         """
 

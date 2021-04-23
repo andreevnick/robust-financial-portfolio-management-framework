@@ -183,7 +183,7 @@ class ConvhullSolver(ISolver):
 
     See also
     --------
-    :class:`robustfpm.pricing.option_pricer_RU.OptionPricer`
+    :class:`~robustfpm.pricing.option_pricer_RU.OptionPricer`
 
     """
 

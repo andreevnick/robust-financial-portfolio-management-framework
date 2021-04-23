@@ -49,7 +49,7 @@ def toc():
     
 
 def coalesce(*arg):
-    return next((a for a in arg if a is not None), None);
+    return next((a for a in arg if a is not None), None)
 
 
 class keydefaultdict(collections.defaultdict):
@@ -65,67 +65,84 @@ class keydefaultdict(collections.defaultdict):
         
         
 def cartesian_product(*arrays):
-    '''
+    """
     https://stackoverflow.com/questions/11144513/cartesian-product-of-x-and-y-array-points-into-single-array-of-2d-points
-    '''
-    
+
+    """
+
     la = len(arrays)
-    
+
     dtype = np.result_type(*arrays)
-    
+
     arr = np.empty([len(a) for a in arrays] + [la], dtype=dtype)
-    
+
     for i, a in enumerate(np.ix_(*arrays)):
         arr[...,i] = a
-        
+
     return arr.reshape(-1, la)
 
 
 def triple_product(a, b, c):
-    '''
-    a,b,c - [n x 3] numpy arrays
-    Return: [n x 1] numpy array of triple product values
-    '''
-    
+    """
+    Return a triple product of vectors.
+
+    Parameters
+    ----------
+    a : np.ndarray, size = (n,3)
+    b : np.ndarray, size = (n,3)
+    c : np.ndarray, size = (n,3)
+
+    Returns
+    -------
+    np.ndarray, size = (n,1)
+        Numpy array of triple product values
+
+    """
+
     a = np.atleast_2d(a)
     b = np.atleast_2d(b)
     c = np.atleast_2d(c)
-    
+
     return a[:,0] * (b[:,1] * c[:,2] - b[:,2] * c[:,1]) + a[:,1] * (b[:,2] * c[:,0] - b[:,0] * c[:,2]) + a[:,2] * (b[:,0] * c[:,1] - b[:,1] * c[:,0])
 
-    
+
 def __Z_to_N(x):
-    
+
     tf = x<=0
-    
+
     res = np.nan * x
-    
+
     res[tf] = 2*(-x[tf]) + 1
     res[~tf] = 2 * x[~tf]
-    
+
     return res
 
 
 def __N_to_Z(x):
-    
+
     tf = (x // 2).astype(x.dtype) == 0
-    
+
     res = np.nan * x
-    
+
     res[tf] = (x[tf] // 2).astype(x.dtype)
     res[~tf] = -((x[~tf]-1) // 2).astype(x.dtype)
-    
+
     return res
-    
+
 
 def cantor_pairing_function(x1, x2):
-    '''
+    """
+    Return cantor pairing function value for `x1` and `x2`.
+
+    See Also
+    --------
+
     https://en.wikipedia.org/wiki/Cantor_pairing_function
-    '''
-    
+    """
+
     x1 = __Z_to_N(x1)
     x2 = __Z_to_N(x2)
-    
+
     return (((x1 + x2) * (x1 + x2 + 1)) // 2 + x2).astype(x1.dtype)
 
 

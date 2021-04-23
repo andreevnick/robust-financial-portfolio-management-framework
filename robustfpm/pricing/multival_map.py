@@ -19,8 +19,8 @@ ease of use. They are defined as:
 
 See Also
 --------
-:class:`robustfpm.pricing.set_handler.RealSpaceHandler`
-:class:`robustfpm.pricing.set_handler.NonNegativeSpaceHandler`
+:class:`~robustfpm.pricing.set_handler.RealSpaceHandler`
+:class:`~robustfpm.pricing.set_handler.NonNegativeSpaceHandler`
 """
 
 import numpy as np
@@ -66,7 +66,7 @@ class IMultivalMap(ABC):
     @abstractmethod
     def dim(self):
         r"""
-            int: The dimension of image or :code:`np.inf` if return value can be of any dimension (e.g., a :class:`robustfpm.pricing.set_handler.RealSpaceHandler`)
+            int: The dimension of image or :code:`np.inf` if return value can be of any dimension (e.g., a :class:`~robustfpm.pricing.set_handler.RealSpaceHandler`)
 
         For a multivalued map :math:`\Gamma: \mathbb{R}^{n} \times  \{0, 1, \dots\} \mapsto \mathbb{R}^{n}`, returns :math:`n`.
         """
@@ -117,7 +117,7 @@ class SimplexConstraints(IMultivalMap):
     See Also
     --------
 
-    :class:`robustfpm.pricing.set_handler.NonNegativeSimplex`
+    :class:`~robustfpm.pricing.set_handler.NonNegativeSimplex`
     """
 
     def __init__(self, r: np.float64):
