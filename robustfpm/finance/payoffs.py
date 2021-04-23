@@ -15,7 +15,8 @@ __all__ = ['putonmax',
 
 
 def putonmax(strike):
-    """ Payoff of Put On Max rainbow option generator
+    """
+    Get payoff of Put On Max with given `strike`.
 
     Parameters
     ----------
@@ -53,7 +54,8 @@ def putonmax(strike):
 
 
 def callonmax(strike):
-    """ Payoff of Call On Max rainbow option generator
+    """
+    Get payoff of Call On Max with a given strike.
 
     Parameters
     ----------
@@ -91,7 +93,8 @@ def callonmax(strike):
 
 
 def put2call1(prices, *unused):
-    """ Payoff of Put 2 Call 1 rainbow option
+    """
+    Get payoff of Put 2 Call 1 with a given strike.
 
     Parameters
     ----------

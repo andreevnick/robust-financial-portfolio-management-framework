@@ -78,7 +78,9 @@ def pop_random(element_list, random_state=None):
 
 
 def get_max_coordinates(x, f, z, method='interior-point', tol=1e-8, debug_mode=False, ignore_warnings=False):
-    """ Solves the problem
+    """
+
+    Solve the problem
 
     .. math:: p_1 \cdot f_1 + ... + p_m \cdot f_m \\rightarrow \max,
     .. math:: p_1 \cdot x_1 + ... p_m \cdot x_m = z,
@@ -182,7 +184,10 @@ def in_triangle_2D(z, points, tol=1e-12):
 
 
 def in_hull(z, points, tol=1e-8):
-    """ Returns True or False depending on whether or not z is within
+    """
+    Check that `z` is in convex hull of `points`
+
+    Returns True or False depending on whether or not z is within
     the convex hull of points with the specified tolerance.
     """
 

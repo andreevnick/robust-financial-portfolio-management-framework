@@ -24,7 +24,8 @@ __all__ = [
 
 
 class IOption(ABC):
-    """ An abstract interface for Options
+    """
+    An abstract interface for Options
     """
 
     def __init__(self, expiry, payoff_fcn, lipschitz_fcn):
@@ -43,7 +44,8 @@ class IOption(ABC):
 
     @abstractmethod
     def payoff(self, prices, t=None):
-        """ Get the value of payoff function for `prices` and time `t`
+        """
+        Get the value of payoff function for `prices` and time `t`
 
         Parameters
         ----------
@@ -67,7 +69,8 @@ class IOption(ABC):
 
     @abstractmethod
     def get_lipschitz(self, t):
-        r""" Returns Lipschitz constant for a payoff function at time `t`
+        r"""
+        Return Lipschitz constant for a payoff function at time `t`
 
         If :math:`g_t(\cdot)` is a payoff function of an option at time `t`, then its Lipschitz constant is such a number :math:`L_{g_t} \in \mathbb{R_+}`, that:
 
@@ -78,7 +81,8 @@ class IOption(ABC):
 
 
 class EuropeanOption(IOption):
-    """ Generic european-style option class
+    """
+    Generic european-style option class
 
     Parameters
     ----------
@@ -112,7 +116,8 @@ class EuropeanOption(IOption):
 
 
 class AmericanOption(IOption):
-    """ Generic american-style option class
+    """
+    Generic american-style option class
 
     Parameters
     ----------
@@ -142,7 +147,8 @@ class AmericanOption(IOption):
 
 
 class BermudanOption(IOption):
-    """ Bermudan and Canary-styled option class
+    """
+    Bermudan and Canary-styled option class
 
     Parameters
     ----------
@@ -185,7 +191,8 @@ class BermudanOption(IOption):
 
 
 def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=None, lipschitz_fcn=None):
-    """ Create a new option
+    """
+    Create a new option
 
     You must either give a specific `type` and `strike` or provide an option `payoff_fcn` (and, optionally, `lipschitz_fcn`).
 

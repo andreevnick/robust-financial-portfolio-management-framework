@@ -28,7 +28,9 @@ def __transform_matrix(A):
 
 def quad_prog(x0, H, f, c, A, lb, ub, B, b, **kwargs):
     """
-    Solves the constrained quadratic programming problem using Scipy's 'trust-constr' method.
+    Solve the constrained quadratic programming problem.
+
+    Uses Scipy's 'trust-constr' method.
     The problem for :math:`x` is:
 
     .. math:: \\frac{1}{2} <x, Hx> + <f, x> + c \\rightarrow \min,

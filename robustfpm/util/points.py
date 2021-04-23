@@ -27,7 +27,8 @@ Points are represented as n-dimensional integer vectors of coordinates on the la
     
 
 def unique_points_union(points1, points2):
-    """ Returns the union of two point sets.
+    """
+    Return the union of two point sets.
     
     Parameters
     ----------
@@ -72,7 +73,8 @@ def __minksum_points(points_iter, points_sum):
 
 
 def minksum_points(points1, points2, recur_max_level=None):
-    """ Returns the Minkowski sum of two point sets.
+    """
+    Return the Minkowski sum of two point sets.
     
     Parameters
     ----------
@@ -121,7 +123,8 @@ def minksum_points(points1, points2, recur_max_level=None):
 
 
 def isin_points(points1, points2):
-    """ :code:`numpy.in1d` for sets of unique points
+    """
+    :code:`numpy.in1d` for sets of unique points
     
     Parameters
     ----------
@@ -141,7 +144,8 @@ def isin_points(points1, points2):
 
 
 def setdiff_points(pointsA, pointsB):
-    """ Set difference for sets of unique points
+    """
+    Return set difference for sets of unique points
     
     Parameters
     ----------
@@ -162,8 +166,7 @@ def setdiff_points(pointsA, pointsB):
 
 def square_neighbourhood_on_lattice(lattice_point, radius, include_center=False):
     """
-    Returns a lattice set, representing the Moore (square) neighbourhood of the
-    specified point.
+    Return a lattice set, representing the Moore (square) neighbourhood of the specified point.
 
     Square neighbourhood (denoted by ``X``) of a point (denoted by ``*``): ::
 
@@ -205,8 +208,7 @@ def square_neighbourhood_on_lattice(lattice_point, radius, include_center=False)
 
 def diamond_neighbourhood_on_lattice(lattice_point, radius, include_center=False):
     """
-    Returns a lattice set, representing the von Neumann (diamond) neighbourhood of the
-    specified point.
+    Return a lattice set, representing the von Neumann (diamond) neighbourhood of the specified point.
 
     Diamond neighbourhood (denoted by ``X``) of a point (denoted by ``*``): ::
 
@@ -242,9 +244,9 @@ def diamond_neighbourhood_on_lattice(lattice_point, radius, include_center=False
 
 
 def __minkprod_points(lattice, points, set_handler, pos):
-    '''
+    """
     set_handler should represent a non-negative set
-    '''
+    """
     
     points_ext = minksum_points(points, square_neighbourhood_on_lattice(np.zeros_like(lattice.delta), 1, include_center=True))
     
@@ -268,8 +270,8 @@ def __minkprod_points(lattice, points, set_handler, pos):
 
 
 def minkprod_points(lattice, points, set_handler, pos=False, recur_max_level=None):
-    r'''
-    Calculates the set of element-wise products of two sets.
+    r"""
+    Calculate the set of element-wise products of two sets.
     
     For the provided set handler and the set of points on the lattice calculates
     the approximation of the set of `element-wise` (Hadamard) products
@@ -297,7 +299,7 @@ def minkprod_points(lattice, points, set_handler, pos=False, recur_max_level=Non
     numpy.ndarray
         Set of element-wise products of the provided sets.
         
-    '''
+    """
     
     points = np.atleast_2d(points)
     

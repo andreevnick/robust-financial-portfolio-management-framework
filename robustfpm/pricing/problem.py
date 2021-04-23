@@ -31,7 +31,8 @@ __all__ = ['Problem',
 
 
 class Problem:
-    r""" A class representing a problem of pricing and hedging an option under a robust financial portfolio management framework.
+    r"""
+    A class representing a problem of pricing and hedging an option under a robust financial portfolio management framework.
 
     Parameters
     ----------
@@ -109,7 +110,8 @@ class Problem:
         raise NotImplementedError('This method is not yet implemented')
 
     def set_precision(self, precision):
-        """ Changes lattice to match given precision
+        """
+        Change lattice to match given precision
 
         Parameters
         ----------
@@ -128,7 +130,8 @@ class ISolver(ABC):
 
     @abstractmethod
     def solve(self, problem, calc_hedge=False, calc_precision=False):
-        """ Solves a given problem and calculates hedging strategy (if `calc_hedge` is True)
+        """
+        Solve a given problem and calculates hedging strategy (if `calc_hedge` is True).
 
         Parameters
         ----------
@@ -215,7 +218,8 @@ class ConvhullSolver(ISolver):
         }
 
     def __precalc(self, x0, lattice):
-        """ Init the required private attributes before the main pricing has started.
+        """
+        Init the required private attributes before the main pricing has started.
 
         """
 
@@ -227,7 +231,8 @@ class ConvhullSolver(ISolver):
 
     # noinspection PyPep8Naming
     def __chull_prune_points(self, xv):
-        """ Pruning for the convex hull calculation. De facto not used.
+        """
+        Pruning for the convex hull calculation. De facto not used.
 
         """
 
@@ -444,7 +449,8 @@ class ConvhullSolver(ISolver):
                 'unknown convex_hull_filter value \'{0}\''.format(self.pricer_options['convex_hull_filter']))
 
     def find_u(self, x, v, z, calc_market_strategies):
-        """ Returns u(z), see the algorithm.
+        """
+        Return u(z), see the algorithm.
 
         """
 
@@ -467,7 +473,8 @@ class ConvhullSolver(ISolver):
         return Vopt
 
     def find_rho(self, x, v, K_x, convdK_x, calc_market_strategies, constraint_set):
-        """ Returns the value function value V_t, given V_{t+1} at x_{t+1}.
+        """
+        Return the value function value V_t, given V_{t+1} at x_{t+1}.
 
         """
 

@@ -49,7 +49,6 @@ def check_point_in_set(set, value, tval, xval=None):
 
 def get_r_cur(increment, r_star):
     r"""
-
     Get current value of :math:`r^*_t`
 
     Parameters
@@ -262,7 +261,8 @@ def get_constraints_lipschitz(max_time, points, lattice, trading_constraints):
     if isinstance(trading_constraints, IdenticalMap):
         cur_D = trading_constraints()
         if cur_D.iscompact():
-            L_D = [np.max(np.apply_along_axis(np.linalg.norm, 1, lattice.map2x(cur_D.project(lattice)))) for t in range(max_time)]
+            L_D = [np.max(np.apply_along_axis(np.linalg.norm, 1, lattice.map2x(cur_D.project(lattice)))) for t in
+                   range(max_time)]
     else:
         for t in range(max_time):
             for pt in points[t]:

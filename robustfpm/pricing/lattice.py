@@ -20,8 +20,10 @@ __all__ = ['Lattice']
 
 
 class Lattice:
-    r""" Handler for the uniform or logscale n-dimensional lattice. Provides functionality
-    for mapping integer point coordinates to :math:`\mathbb{R}^{n}` and vice versa.
+    r"""
+    Handler for the uniform or logscale n-dimensional lattice.
+
+    Provides functionality for mapping integer point coordinates to :math:`\mathbb{R}^{n}` and vice versa.
     
     Parameters
     ----------
@@ -55,7 +57,8 @@ class Lattice:
 
     @property
     def dim(self):
-        """ Returns lattice's dimension
+        """
+        Return lattice's dimension
 
         Returns
         -------
@@ -66,7 +69,8 @@ class Lattice:
         return self.delta.shape[0]
 
     def _x_trans(self, x):
-        r""" Utility function for reducing logscale lattice logic to uniform lattice.
+        r"""
+        Reduce logscale lattice logic to uniform lattice.
 
         Parameters
         ----------
@@ -83,14 +87,16 @@ class Lattice:
         return x if self.logscale == False else np.log(x)
 
     def _x_trans_inv(self, x):
-        """ Inverse transform to :meth:`_x_trans()`.
+        """
+        Inverse transform to :meth:`_x_trans()`.
 
         """
 
         return x if self.logscale == False else np.exp(x)
 
     def get_projection(self, obj):
-        r""" Projects a point or :math:`\mathbb{R}^{n}`, an array of points or a predefined set to lattice coordinates.
+        r"""
+        Project a point or :math:`\mathbb{R}^{n}`, an array of points or a predefined set to lattice coordinates.
 
         Parameters
         ----------
@@ -115,7 +121,8 @@ class Lattice:
             return self._get_point(obj)
 
     def _get_point(self, x):
-        r""" Returns lattice coordinates of the array of points from :math:`\mathbb{R}^{n}`.
+        r"""
+        Return lattice coordinates of the array of points from :math:`\mathbb{R}^{n}`.
 
         Parameters
         ----------
@@ -134,7 +141,8 @@ class Lattice:
         return np.rint((x - self.center) / self.delta).astype(self.dtype_p)
 
     def map2x(self, point):
-        r""" Maps the array of lattice coordinates to points in :math:`\mathbb{R}^{n}`.
+        r"""
+        Map the array of lattice coordinates to points in :math:`\mathbb{R}^{n}`.
 
         This function acts as a sort of inverse to :meth:`get_projection()`.
 
@@ -156,8 +164,8 @@ class Lattice:
         return self._x_trans_inv(point * self.delta + self.center)
 
     def xrectangle_points(self, x_from, x_to):
-        """ Returns lattice projection for the parallelotope specified
-        via its corner points.
+        """
+        Return lattice projection for the parallelotope specified via its corner points.
 
         Parameters
         ----------

@@ -25,7 +25,8 @@ __all__ = [
 
 
 class ISetHandler(ABC):
-    """ Interface which contains the set-based operations for implementation in non-abstract SetHandlers.
+    """
+    Interface which contains the set-based operations for implementation in non-abstract SetHandlers.
     
     """
 

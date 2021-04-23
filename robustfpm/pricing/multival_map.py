@@ -45,7 +45,8 @@ class IMultivalMap(ABC):
 
     @abstractmethod
     def __call__(self, x, t):
-        r""" :code:`A.__call__(x,t)` is equivalent to :code:`A(x,t)`
+        r"""
+        :code:`A.__call__(x,t)` is equivalent to :code:`A(x,t)`
 
         Parameters
         ----------
@@ -73,7 +74,8 @@ class IMultivalMap(ABC):
 
 
 class IdenticalMap(IMultivalMap):
-    """ Identical mapping: always returns the same set (its support)
+    """
+    Identical mapping: always returns the same set (its support)
 
     Parameters
     ----------
@@ -93,7 +95,8 @@ class IdenticalMap(IMultivalMap):
 
 
 class SimplexConstraints(IMultivalMap):
-    r""" A simplex mapping that corresponds to the following trading constraints:
+    r"""
+    A simplex mapping that corresponds to the following trading constraints:
 
     - No short positions;
     - Total value of risky assets at any given time can not exceed given limit `r`
@@ -131,7 +134,8 @@ class SimplexConstraints(IMultivalMap):
 
 
 class PriceDynamics(IMultivalMap):
-    """An abstract base class for different price dynamics.
+    """
+    An abstract base class for different price dynamics.
     Differs from :class:`IMultivalMap` in that it also has to have:
 
         - type
@@ -142,7 +146,8 @@ class PriceDynamics(IMultivalMap):
 
     @abstractmethod
     def __call__(self, x, t=1):
-        r""" :code:`A.__call__(x,t)` is equivalent to :code:`A(x,t)`
+        r"""
+        :code:`A.__call__(x,t)` is equivalent to :code:`A(x,t)`
 
         Parameters
         ----------
@@ -171,12 +176,14 @@ class PriceDynamics(IMultivalMap):
     @property
     @abstractmethod
     def t_max(self):
-        """int: Time horizon"""
+        """
+        int: Time horizon"""
         raise NotImplementedError('The method must be defined in a subclass')
 
     @abstractmethod
     def get_lipschitz(self, t: int):
-        """ Get value of a Lipshitz constant for underlying multivalued mapping at time `t`.
+        """
+        Get value of a Lipshitz constant for underlying multivalued mapping at time `t`.
 
         Parameters
         ----------
@@ -192,7 +199,8 @@ class PriceDynamics(IMultivalMap):
 
 
 class PIDynamics(PriceDynamics):
-    """ Abstract class for price-independent price dynamics.
+    """
+    Abstract class for price-independent price dynamics.
     That is, increment (for additive) or multipliers (for multiplicative) is independent of x.
     """
 
@@ -212,7 +220,9 @@ class PIDynamics(PriceDynamics):
 
 
 class ConstantDynamics(PIDynamics):
-    """ Time-independent, price-independent price dynamics.
+    """
+    Time-independent, price-independent price dynamics.
+
     It is a price dynamics where increments (for additive) or multipliers (for multiplicative)
     don't depend both on previous prices and time.
 
@@ -252,7 +262,8 @@ class ConstantDynamics(PIDynamics):
 
 
 class MDAFDynamics(PriceDynamics):
-    r"""Multiplicative dynamics in additive form (time-independent).
+    r"""
+    Multiplicative dynamics in additive form (time-independent).
 
     Given as its support a set of `price-independent` multipliers :math:`K`, it returns (when called), a set of `increments` :math:`\{y = k\cdot x - x:\; k \in K\}`.
     Here, :math:`k \cdot x` denotes `element-wise` multiplication (Hadamard product) of :math:`k` and :math:`x`.
