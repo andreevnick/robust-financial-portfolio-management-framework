@@ -480,7 +480,7 @@ class OptionPricer:
         with PTimer(header='__precalc', silent=True, profiler_data=self.profiler_data) as tm:
             self.__precalc()
         
-        with Timer('Основной расчет evaluate()', flush=False, silent=self.silent_timer_) as tm_total:
+        with Timer('Основной расчет __evaluate()', flush=False, silent=self.silent_timer_) as tm_total:
 
             pdata = self.profiler_data.data[tm_total.header]
             

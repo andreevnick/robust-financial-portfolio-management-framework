@@ -59,13 +59,13 @@ class IOption(ABC):
         np.ndarray
         """
 
-        raise Exception("The method must be defined in a subclass")
+        raise NotImplementedError("The method must be defined in a subclass")
 
     @property
     @abstractmethod
     def expiry(self):
         """ Expiration date"""
-        raise Exception("The method must be defined in a subclass")
+        raise NotImplementedError("The method must be defined in a subclass")
 
     @abstractmethod
     def get_lipschitz(self, t):
@@ -226,7 +226,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
     Examples
     --------
 
-    Create a simple European call option with strike 10 and expiry 4 and evaluate its payoff at diffent points in time.
+    Create a simple European call option with strike 10 and expiry 4 and __evaluate its payoff at diffent points in time.
 
     >>> from robustfpm.finance import *
     >>> import numpy as np

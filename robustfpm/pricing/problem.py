@@ -157,7 +157,7 @@ class ISolver(ABC):
 
 # noinspection PyPep8Naming,PyBroadException
 class ConvhullSolver(ISolver):
-    """
+    r"""
     Represents the numerical solver to the option pricing problem under the robust financial portfolio management framework.
 
     This solver uses the convex hull algorithm.
@@ -187,12 +187,13 @@ class ConvhullSolver(ISolver):
 
     """
 
-    def solve(self, problem, calc_hedge=False, calc_precision=False):
+    def solve(self, problem, calc_hedge=False, calc_precision=False, do_precalc=True):
         self.calc_market_strategies = calc_hedge
-        return self.evaluate(x0=problem.starting_price, lattice=problem.lattice, price_dynamics=problem.price_dynamics,
-                             trading_constraints=problem.trading_constraints, max_time=problem.time_horizon,
-                             option=problem.option,
-                             calc_precision=calc_precision)
+        return self.__evaluate(x0=problem.starting_price, lattice=problem.lattice,
+                               price_dynamics=problem.price_dynamics,
+                               trading_constraints=problem.trading_constraints, max_time=problem.time_horizon,
+                               option=problem.option, calc_precision=calc_precision,
+                               do_precalc=do_precalc)
 
     def __init__(self, debug_mode=False, ignore_warnings=False, enable_timer=False, iter_tick=1000, profiler_data=None,
                  calc_market_strategies=False, pricer_options=None):
@@ -216,18 +217,120 @@ class ConvhullSolver(ISolver):
             'convex_hull_prune_corner_n': pricer_options.get('convex_hull_prune_corner_n', 3),
             'convex_hull_prune_seed': pricer_options.get('convex_hull_prune_seed', None)
         }
+        self._Vp = None
+        self._Vf = None
+        self._epsilon, self._A_star, self._L_V, self._L_D = (None, None, None, None)
 
-    def __precalc(self, x0, lattice):
+    def reset(self):
+        """
+        Reset internal parameters.
+
+        Resets precalculated points for value function and precision estimates.
+
+        """
+
+        self._Vp = None
+        self._Vf = None
+        self._epsilon, self._A_star, self._L_V, self._L_D = (None, None, None, None)
+
+    def __precalc(self, x0, lattice, max_time,
+                  price_dynamics, trading_constraints,
+                  option, pdata, calc_precision):
         """
         Init the required private attributes before the main pricing has started.
 
+        Also, precalculates points for value function and calculates precision.
+
+        Parameters
+        ----------
+        x0 : np.ndarray
+            Starting price
+        lattice : Lattice
+        max_time : int
+            Maximum time horizon
+        price_dynamics : PriceDynamics
+        trading_constraints : IMultivalMap
+        option : IOption
+        pdata : ProfilerData
+            Profiler data (for logging)
+        calc_precision : bool
+            Flag to calculate precision and Lipschitz estimates
+
         """
 
-        self.p0_ = lattice.get_projection(x0)  # map x0
-
         self.silent_timer_ = not self.enable_timer
-
+        self.p0_ = lattice.get_projection(x0)  # map x0
         self.pruning_random_state_ = check_random_state(self.pricer_options['convex_hull_prune_seed'])
+
+        with Timer('Precalculating points for value function evaluation', silent=self.silent_timer_) as tm:
+            if calc_precision:
+                self._Vp, self._Vf, r_star = generate_evaluation_point_lists(p0=self.p0_, lattice=lattice,
+                                                                             price_dynamics=price_dynamics,
+                                                                             N=max_time,
+                                                                             profiler_data=pdata.data[tm.header],
+                                                                             calc_r_star=True)
+            else:
+                self._Vp, self._Vf = generate_evaluation_point_lists(p0=self.p0_, lattice=lattice,
+                                                                     price_dynamics=price_dynamics,
+                                                                     N=max_time, profiler_data=pdata.data[tm.header])
+        # price check (negative prices)
+        if np.any([np.any(lattice.map2x(self._Vp[i]) < 0) for i in range(max_time)]):
+            self.reset()
+            raise TypeError('Prices can become negative! The problem is badly stated.')
+
+        if calc_precision:
+            with PTimer('Computing A^* and Lipschitz constants for constraints', silent=self.silent_timer_,
+                        profiler_data=pdata) as tm:
+                A_star = get_a_star(points=self._Vp, option=option, lattice=lattice, r_star=r_star, max_time=max_time,
+                                    price_dynamics=price_dynamics, trading_constraints=trading_constraints)
+                L_D = get_constraints_lipschitz(max_time=max_time, points=self._Vp, lattice=lattice,
+                                                trading_constraints=trading_constraints)
+            with PTimer('Calculating precision', silent=self.silent_timer_,
+                        profiler_data=pdata) as tm:
+                L_V = np.empty(max_time + 1)
+                L_V[-1] = option.get_lipschitz(max_time)
+                for t in reversed(range(max_time)):
+                    L_V[t] = np.maximum(option.get_lipschitz(t),
+                                        L_V[t + 1] * (price_dynamics.get_lipschitz(t=t + 1) + 1) +
+                                        A_star[t] * price_dynamics.get_lipschitz(t=t + 1)
+                                        )
+                epsilon = np.empty(max_time + 1)
+                epsilon[-1] = 0
+                epsilon[0:-1] = (L_V[1:] + L_D) * np.linalg.norm(lattice.delta) / 2
+                epsilon = np.flip(np.cumsum(np.flip(epsilon)))
+            self._epsilon, self._A_star, self._L_V, self._L_D = (epsilon, A_star, L_V, L_D)
+
+    def get_precision(self, problem: Problem = None, verbose=False):
+        r"""
+        Get precision for a given problem.
+
+        Also precalculates points for value function evaluation.
+
+        Parameters
+        ----------
+        problem : Problem
+            Problem to calculate precision for.
+        verbose : bool, default = False
+            Flag for verbose output (with more parameters).
+
+        Returns
+        -------
+        Union[np.ndarray, dict]
+            If `verbose` is True, returns a dictionary with additional estimation constants.
+
+            Otherwise, simply returns :math:`\varepsilon_t` — *guaranteed* upper bound on value function error at time `t`
+        """
+        if self._epsilon is None:
+            if problem is None:
+                raise ValueError('The precision is not set! You should provide a Problem for precision calculation.')
+            self.__precalc(x0=problem.starting_price, lattice=problem.lattice,
+                           max_time=problem.time_horizon, price_dynamics=problem.price_dynamics,
+                           trading_constraints=problem.trading_constraints, option=problem.option,
+                           pdata=self.profiler_data, calc_precision=True)
+        if verbose:
+            return {'epsilon': self._epsilon, 'A^*': self._A_star,
+                    'L_D': self._L_D, 'L_V': self._L_V}
+        return self._epsilon
 
     # noinspection PyPep8Naming
     def __chull_prune_points(self, xv):
@@ -510,7 +613,8 @@ class ConvhullSolver(ISolver):
 
         return res_u[maxind] - supp_func[maxind], convdK_x[maxind]
 
-    def evaluate(self, x0, lattice, price_dynamics, trading_constraints, max_time, option, calc_precision=False):
+    def __evaluate(self, x0, lattice, price_dynamics, trading_constraints,
+                   max_time, option, calc_precision=False, do_precalc=True):
         """
         Calculate the option value.
 
@@ -520,47 +624,18 @@ class ConvhullSolver(ISolver):
 
         """
 
-        with PTimer(header='__precalc', silent=True, profiler_data=self.profiler_data) as tm:
-            self.__precalc(x0=x0, lattice=lattice)
+        self.silent_timer_ = not self.enable_timer
 
         with Timer('Solving the problem', flush=False, silent=self.silent_timer_) as tm_total:
-
             pdata = self.profiler_data.data[tm_total.header]
-
-            with Timer('Precalculating points for value function evaluation', silent=self.silent_timer_) as tm:
-                if calc_precision:
-                    Vp, Vf, r_star = generate_evaluation_point_lists(p0=self.p0_, lattice=lattice,
-                                                                     price_dynamics=price_dynamics,
-                                                                     N=max_time, profiler_data=pdata.data[tm.header],
-                                                                     calc_r_star=True)
-                else:
-                    Vp, Vf = generate_evaluation_point_lists(p0=self.p0_, lattice=lattice,
-                                                             price_dynamics=price_dynamics,
-                                                             N=max_time, profiler_data=pdata.data[tm.header])
-            # price check (negative prices)
-            if np.any([np.any(lattice.map2x(Vp[i]) < 0) for i in range(max_time)]):
-                raise TypeError('Prices can become negative! The problem is badly stated.')
-
-            if calc_precision:
-                with PTimer('Computing A^* and Lipschitz constants for constraints', silent=self.silent_timer_,
-                            profiler_data=pdata) as tm:
-                    A_star = get_a_star(points=Vp, option=option, lattice=lattice, r_star=r_star, max_time=max_time,
-                                        price_dynamics=price_dynamics, trading_constraints=trading_constraints)
-                    L_D = get_constraints_lipschitz(max_time=max_time, points=Vp, lattice=lattice,
-                                                    trading_constraints=trading_constraints)
-                with PTimer('Calculating precision', silent=self.silent_timer_,
-                            profiler_data=pdata) as tm:
-                    L_V = np.empty(max_time + 1)
-                    L_V[-1] = option.get_lipschitz(max_time)
-                    for t in reversed(range(max_time)):
-                        L_V[t] = np.maximum(option.get_lipschitz(t),
-                                            L_V[t + 1] * (price_dynamics.get_lipschitz(t=t + 1) + 1) +
-                                            A_star[t] * price_dynamics.get_lipschitz(t=t + 1)
-                                            )
-                    epsilon = np.empty(max_time + 1)
-                    epsilon[-1] = 0
-                    epsilon[0:-1] = (L_V[1:] + L_D) * np.linalg.norm(lattice.delta) / 2
-                    epsilon = np.flip(np.cumsum(np.flip(epsilon)))
+            if do_precalc or (self._Vp is None) or (calc_precision and self._epsilon is None):
+                self.__precalc(x0=x0, lattice=lattice, max_time=max_time,
+                               price_dynamics=price_dynamics,
+                               trading_constraints=trading_constraints,
+                               option=option, pdata=pdata,
+                               calc_precision=calc_precision)
+            Vp = self._Vp
+            Vf = self._Vf
 
             with PTimer('Computing value function in the last point', silent=self.silent_timer_,
                         profiler_data=pdata) as tm:
@@ -615,5 +690,5 @@ class ConvhullSolver(ISolver):
         gc.collect()
         res = {'Vf': Vf, 'Vp': Vp}
         if calc_precision:
-            res.update({'precision': epsilon})
+            res.update({'precision': self._epsilon})
         return res

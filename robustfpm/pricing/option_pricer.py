@@ -332,10 +332,10 @@ class OptionPricer:
     
     def evaluate(self):
         
-        with PTimer(header='Init stage of evaluate()', silent=True, profiler_data=self.profiler_data) as tm:
+        with PTimer(header='Init stage of __evaluate()', silent=True, profiler_data=self.profiler_data) as tm:
             self.__precalc()
         
-        with Timer('Main stage of evaluate()', flush=False, silent=self.silent_timer_) as tm_total:
+        with Timer('Main stage of __evaluate()', flush=False, silent=self.silent_timer_) as tm_total:
 
             pdata = self.profiler_data.data[tm_total.header]
             

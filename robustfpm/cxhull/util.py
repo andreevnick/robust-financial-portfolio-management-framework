@@ -78,7 +78,7 @@ def pop_random(element_list, random_state=None):
 
 
 def get_max_coordinates(x, f, z, method='interior-point', tol=1e-8, debug_mode=False, ignore_warnings=False):
-    """
+    r"""
 
     Solve the problem
 
@@ -96,7 +96,7 @@ def get_max_coordinates(x, f, z, method='interior-point', tol=1e-8, debug_mode=F
     x, f : numpy.ndarray
         Points and function values of the graph.
     z : numpy.ndarray.
-        Point with the same dimansion as points in x. Must be in the convex hull of x.
+        Point with the same dimension as points in x. Must be in the convex hull of x.
         
     Returns
     -------

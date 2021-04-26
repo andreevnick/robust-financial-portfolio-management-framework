@@ -40,7 +40,7 @@ Option 3 payoff at x = 100, t = 4: [-inf]
 Creating solver and solving some problems
 -----------------------------------------
 
-Let's create some basic 1D Problem with Rectangular multiplicative dynamics and no trading constraints. For that, we need :class:`robustfpm.pricing.problem.Problem` from :mod:`robustfpm.pricing`:
+Let's create some basic 1D Problem with Rectangular multiplicative dynamics and no trading constraints. For that, we need :class:`~robustfpm.pricing.problem.Problem` from :mod:`robustfpm.pricing`:
 ::
 
   pm1 = Problem(starting_price=np.array(100),
@@ -57,7 +57,7 @@ We begin by instantiating solver with some parameters.
 >>> solver = ConvhullSolver(enable_timer=True, pricer_options=opts, ignore_warnings=True, iter_tick=50)
 
 .. note:: Most of the time, there is no point in tweaking *all* of these parameters, only some, namely :code:`enable_timer` and :code:`iter_tick`.
-.. seealso:: :class:`robustfpm.pricing.problem.ConvhullSolver` 
+.. seealso:: :class:`~robustfpm.pricing.problem.ConvhullSolver` 
 
 
                 
@@ -209,11 +209,16 @@ Value: 2.244970331346091
 
 .. note:: :code:`NoConstraints` is just an alias for :code:`IdenticalMap(RealSpaceHandler())`. There is also another alias: :code:`LongOnlyConstraints`, which is just :code:`IdenticalMap(NonNegativeSpaceHandler)`
 
+Calculating estimates for precision
+-----------------------------------
+
+We can also leverage the internal logic of :class:`~robustfpm.pricing.problem.ConvhullSolver` to estimate precision (or, rather, *guaranteed upper bounds* for error) *before* getting into long and hard calculations. For that
+
 .. seealso:: 
 
-  :mod:`robustfpm.pricing.multival_map`:
+  :mod:`~robustfpm.pricing.multival_map`:
     Module with multivalued mappings, used for both Trading Constraints and Price Dynamics.
-  :class:`robustfpm.pricing.multival_map.IMultivalMap`
+  :class:`~robustfpm.pricing.multival_map.IMultivalMap`
     Class for multivalued mappings, used for trading constraints
-  :class:`robustfpm.pricing.multival_map.PriceDynamics`
+  :class:`~robustfpm.pricing.multival_map.PriceDynamics`
     Class for price dynamics
