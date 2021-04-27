@@ -446,7 +446,7 @@ class NonNegativeSimplex(ISetHandler):
     """
 
     def __init__(self, bounds, dtype=np.float64):
-        bounds = np.asarray(bounds, dtype=dtype).squeeze()
+        bounds = np.atleast_1d(np.asarray(bounds, dtype=dtype).squeeze())
         if bounds.ndim > 1:
             raise ValueError('Bounds for NonNegativeSimplex must be given as 1d array!')
         if np.any(bounds <= 0):
