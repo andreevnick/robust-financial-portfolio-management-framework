@@ -3,7 +3,10 @@ import numpy as np
 
 __all__ = ['coalesce',
            'cartesian_product',
-           'pairing_function'
+           'pairing_function',
+           'is3D',
+           'XY_to_grid',
+           'XYZ_to_grid_interp'
           ]
 
 
@@ -69,4 +72,36 @@ def pairing_function(x):
     
     else:
         return __cantor_pairing_function(x_[:,0], x_[:,1])
+    
+    
+def is3D(ax):
+    return hasattr(ax, 'get_zlim')
+
+
+def XYZ_to_grid_interp(X, Y, Z, Xgrid=None, Ygrid=None):
+    
+    if (Xgrid is None) or (Ygrid is None):
+        
+        Xgrid, Ygrid = XY_to_grid(X, Y)
+    
+    Zgrid = Xgrid + np.nan
+    
+    for i, x in enumerate(np.vstack( (np.asarray(X).flatten(), np.asarray(Y).flatten()) ).T):
+        Zgrid[np.argmin(np.abs(Xgrid[0,:]-x[0])), np.argmin(np.abs(Ygrid[:,0]-x[1]))] = Z[i]
+        
+    return (Xgrid, Ygrid, Zgrid)
+
+
+def XY_to_grid(X, Y=None):
+    
+    X = np.asarray(X)
+    
+    if Y is None:
+        Y = X[:,1]
+        X = X[:,0]
+        
+    X = X.flatten()
+    Y = Y.flatten()
+    
+    return np.meshgrid(np.unique(X), np.unique(Y))
     

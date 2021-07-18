@@ -2,46 +2,41 @@ import json
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
 import seaborn as sns
 
+from mpl_toolkits.mplot3d import Axes3D
+
 from os import path
+import copy as cp
 
-from .grid import Grid
-from .scatter import ScatterObject
-from .patch import PatchObject
-from .line import LineObject
-from .scene_object import SceneObject
-
-from .util import cartesian_product
+from .util import *
     
     
 __all__ = [
             'Scene',
-            'SceneObjectFactory'
+            'SceneGrid',
+            'IsometricSceneGrid'
           ]
 
     
 class Scene:
     
-    def __init__(self, **kwargs):
+    def __init__(self, axes3D=False, ax=None, scene_objects=None, **kwargs):
         
-        conf = self.__read_conf(kwargs.get('template', path.join(path.dirname(__file__), './scene_templates/default.json')))
-        override_conf = kwargs.get('override_conf', {})
-            
-        self.conf = conf['scene2D']
-        
-        for k, v in override_conf.items():
+        self.conf = self.__read_conf(kwargs.get('template', path.join(path.dirname(__file__), './scene_templates/default.json')))
+#         self.conf = self.__read_conf(kwargs.pop('template', 'default.json'))
+    
+        for k, v in kwargs.items():
             self.conf[k] = v
+            
+        self.axes3D = axes3D
         
-        self.xlabel = kwargs.get('xlabel', '')
-        self.ylabel = kwargs.get('ylabel', '')
+        self.ax = ax
+        self.fig = None
         
-        self.title = kwargs.get('title', '')
+        self.scene_objects = coalesce(scene_objects, [])
         
-        self.xlim = kwargs.get('xlim', '')
-        self.ylim = kwargs.get('ylim', '')
-        
-        self.legend_loc = kwargs.get('legend_loc', 'best')
         
         self.init()
         
@@ -63,130 +58,262 @@ class Scene:
         return conf
     
     
+    def clone(self, deep=False):
+        
+        if not deep:
+            return cp.copy(self)
+        else:
+            return Scene(axes3D=self.axes3D, ax=self.ax, scene_objects=self.scene_objects, **self.conf)
+        
+    
     def init(self):
         
-        matplotlib.rc('font', size=self.conf['font'])
+        if 'font' in self.conf.keys():
+            matplotlib.rc('font', size=self.conf['font'])
         
-        self.scene_objects = []
+        if self.ax is None:
+            
+            self.fig = plt.figure(figsize=self.conf.get('figsize'))
+            
+            self.ax = Axes3D(self.fig) if self.axes3D else self.fig.gca()
         
-        self.fig = plt.figure(figsize=self.conf['figsize'])
+        if 'grid' in self.conf.keys():
+            self.ax.grid(b=self.conf['grid'], which='major')
+        if 'minor_grid' in self.conf.keys():
+            self.ax.grid(b=self.conf['minor_grid'], which='minor')
         
-        self.ax = self.fig.gca()
+        if 'xlim' in self.conf.keys():
+            self.ax.set_xlim(self.conf['xlim'][0], self.conf['xlim'][1])
         
-        self.ax.grid(b=self.conf['grid'], which='major')
-        self.ax.grid(b=self.conf['minor_grid'], which='minor')
+        if 'ylim' in self.conf.keys():
+            self.ax.set_ylim(self.conf['ylim'][0], self.conf['ylim'][1])
+            
+        if self.axes3D and 'zlim' in self.conf.keys():
+            self.ax.set_zlim(self.conf['zlim'][0], self.conf['zlim'][1])
         
-        self.ax.set_xlim(self.xlim[0], self.xlim[1])
-        self.ax.set_ylim(self.ylim[0], self.ylim[1])
+        if 'title' in self.conf.keys():
+            self.ax.set_title(self.conf['title'])
+            
+        if 'xlabel' in self.conf.keys():
+            self.ax.set_xlabel(self.conf['xlabel'])
         
-        self.ax.set_title(self.title)
+        if 'ylabel' in self.conf.keys():
+            self.ax.set_ylabel(self.conf['ylabel'])
         
-        self.ax.set_xlabel(self.xlabel)
-        self.ax.set_ylabel(self.ylabel)
+        if self.axes3D and 'zlabel' in self.conf.keys():
+            self.ax.set_zlabel(self.conf['zlabel'])
         
         if 'background' in self.conf.keys():
             self.ax.set_facecolor(self.conf['background'])
         
+        if self.axes3D:
+            self.ax.view_init(elev=self.conf.get('elevation', None), azim=self.conf.get('azimuth', None))
+
+
+    def append(self, obj):
         
-    def append(self, obj, **kwargs):
-        
-        self.scene_objects.append(SceneObjectFactory.build(obj, **kwargs))
-        
-        
-    def draw_scatter_object(self, obj):
-        
-        self.ax.scatter(obj.points[:,0], obj.points[:,1], **obj.opts)
+        self.scene_objects.append(obj)
         
         
-    def draw_patch_object(self, obj):
+    def set_xticks(self):
         
-        self.ax.add_patch(obj.patch)
-        
-        
-    def draw_line_object(self, obj):
-        
-        self.ax.plot(obj.points[:,0], obj.points[:,1], **obj.opts)
-        
-        
-    def draw_scene_object(self, obj):
-                    
-        if isinstance(obj, ScatterObject):
+        if 'xticks' in self.conf.keys():
             
-            self.draw_scatter_object(obj)
-            
-        elif isinstance(obj, PatchObject):
-            
-            self.draw_patch_object(obj)
-            
-        elif isinstance(obj, LineObject):
-            
-            self.draw_line_object(obj)
+            if np.isscalar(self.conf['xticks']):
+                lim = self.ax.get_xlim()
+                tck = np.linspace(lim[0], lim[1], self.conf['xticks'])
+            else:
+                tck = self.conf['xticks']
+                
+            self.ax.set_xticks(tck)
             
         else:
+            tck = self.ax.get_xticks()
             
-            print('Cannot draw a \'{0}\' object'.format(type(obj)))
+            
+        if 'xticklabels' in self.conf.keys():
+            
+            if isinstance(self.conf['xticklabels'], str):
+                labels = [('{0:'+self.conf['xticklabels']+'}').format(s) for s in tck]
+            else:
+                labels = self.conf['xticklabels']
+        
+            self.ax.set_xticklabels(labels)
+            
+            
+    def set_yticks(self):
+        
+        if 'yticks' in self.conf.keys():
+            
+            if np.isscalar(self.conf['yticks']):
+                lim = self.ax.get_ylim()
+                tck = np.linspace(lim[0], lim[1], self.conf['yticks'])
+            else:
+                tck = self.conf['yticks']
+                
+            self.ax.set_yticks(tck)
+            
+        else:
+            tck = self.ax.get_yticks()
+            
+            
+        if 'yticklabels' in self.conf.keys():
+            
+            if isinstance(self.conf['yticklabels'], str):
+                labels = [('{0:'+self.conf['yticklabels']+'}').format(s) for s in tck]
+            else:
+                labels = self.conf['yticklabels']
+        
+            self.ax.set_yticklabels(labels)
+            
+            
+    def set_zticks(self):
+        
+        if 'zticks' in self.conf.keys():
+            
+            if np.isscalar(self.conf['zticks']):
+                lim = self.ax.get_zlim()
+                tck = np.linspace(lim[0], lim[1], self.conf['zticks'])
+            else:
+                tck = self.conf['zticks']
+                
+            self.ax.set_zticks(tck)
+            
+        else:
+            tck = self.ax.get_zticks()
+            
+            
+        if 'zticklabels' in self.conf.keys():
+            
+            if isinstance(self.conf['zticklabels'], str):
+                labels = [('{0:'+self.conf['zticklabels']+'}').format(s) for s in tck]
+            else:
+                labels = self.conf['zticklabels']
+        
+            self.ax.set_zticklabels(labels)
+        
+        
+    def plot(self):
+        
+        for obj in sorted(self.scene_objects, key=lambda obj: obj.plot_last):
+            
+            if obj.visible: obj.draw_in_axes(self.ax)
+                     
+        self.set_xticks()
+        self.set_yticks()
+        if self.axes3D: self.set_zticks()
+            
+        labels = [None if not obj.visible else obj.opts.get('label', None) for obj in self.scene_objects]
+            
+        if any([l is not None for l in labels]) and not self.axes3D:
+            self.ax.legend(loc=self.conf.get('legend_loc', 'best'))
     
     
     def show(self):
         
-        for obj in self.scene_objects:
-            
-            if not obj.visible:
-                obj.opts.pop('label', None)
-                
-            self.draw_scene_object(obj)
-            
-        if np.any([o.opts.get('label', None) is not None for o in self.scene_objects]):
-            self.ax.legend(loc=self.legend_loc)
+        self.plot()
+        
+        if 'tight_layout' in self.conf.keys():
+            plt.tight_layout()
         
         plt.show()
         
-            
         
         
-class SceneObjectFactory:
+class SceneGrid:
     
-    @staticmethod
-    def build(obj, **kwargs):
+    def __init__(self, nrows, ncols, **kwargs):
         
-        if isinstance(obj, Grid):
-            
-            return SceneObjectFactory.__construct_from_grid(obj, xlim=kwargs.pop('xlim'), ylim=kwargs.pop('ylim'), **kwargs)
+        self.conf = kwargs.copy()
         
-        elif isinstance(obj, SceneObject):
-            
-            return SceneObjectFactory.__construct_from_sceneobj(obj, **kwargs)
-            
-        elif isinstance(obj, np.ndarray):
-            
-            return SceneObjectFactory.__construct_from_points(obj, **kwargs)
+        self.nrows = nrows
+        self.ncols = ncols
         
+        self.gs = GridSpec(nrows, ncols)
+        
+        self.scenes = {}
+        
+        self.init()
+        
+        
+    def init(self):
+        
+        self.fig = plt.figure(figsize=self.conf.get('figsize'))
+        
+        if 'title' in self.conf.keys():
+            self.fig.suptitle(self.conf['title'])
+        
+    
+    def add_scene(self, gspos, scene, **kwargs):
+        
+        if scene.axes3D:
+            ax = self.fig.add_subplot(gspos, projection='3d')
         else:
+            ax = self.fig.add_subplot(gspos)
             
-            raise TypeError('Cannot build from a \'{0}\' object'.format(type(obj)))
+        if scene.fig is not None:
+            scene.fig.clear()
             
+        s = scene.clone(deep=True)
+        
+        for k, v in kwargs.items():
+            s.conf[k] = v
             
-    @staticmethod
-    def __construct_from_grid(grid, xlim, ylim, **kwargs):
+        s.ax = ax
+        s.init()
         
-        p0 = grid.get_point([xlim[0], ylim[0]])
-        p1 = grid.get_point([xlim[1], ylim[1]])
+        self.scenes[gspos] = s
         
-        points = cartesian_product(np.arange(p0[0], p1[0]+1), np.arange(p0[1], p1[1]+1))
-        
-        return ScatterObject(points=grid.map2x(points), **kwargs)
     
-    
-    @staticmethod
-    def __construct_from_points(points, **kwargs):
+    def plot(self):
         
-        return ScatterObject(points=points, **kwargs)
-    
-    
-    @staticmethod
-    def __construct_from_sceneobj(obj, **kwargs):
+        for scene in self.scenes.values():
+            scene.plot()
         
-        return obj  
+        
+    def show(self):
+        
+        self.plot()
+            
+        if 'tight_layout' in self.conf.keys():
+            plt.tight_layout()
+        
+        plt.show()
+        
+        
+        
+class IsometricSceneGrid:
+    
+    def __init__(self, elevation, azimuth, scene, **kwargs):
+        
+        self.elevation = np.atleast_1d(elevation)
+        self.azimuth = np.atleast_1d(azimuth)
+        
+        conf = kwargs.copy()
+        
+        if ('figsize' not in kwargs.keys()) and ('figsize' in scene.conf.keys()):
+            conf['figsize'] = (len(self.elevation) * scene.conf['figsize'][0], len(self.azimuth) * scene.conf['figsize'][1])
+        
+        self.scene_grid = SceneGrid(len(self.elevation), len(self.azimuth), **conf)
+        
+        self.scene = scene
+        
+        for i, el in enumerate(self.elevation):
+            for j, az in enumerate(self.azimuth):
+                
+                self.scene_grid.add_scene(self.scene_grid.gs[i,j], self.scene, elevation=el, azimuth=az)
+        
+    
+    def plot(self):
+        
+        self.scene_grid.plot()
+        
+        
+    def show(self):
+        
+        self.plot()
+        
+        plt.show()
 
         
         
