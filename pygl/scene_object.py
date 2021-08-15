@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.pyplot as plt
 
 from scipy.spatial import ConvexHull
 
@@ -16,6 +18,7 @@ __all__ = ['ASceneObject',
            'LineObject',
            'LevelLineObject',
            'SurfaceObject',
+           'HeightMapObject',
            'APatchObject',
            'EllipsePatchObject',
            'RectanglePatchObject',
@@ -226,6 +229,42 @@ class SurfaceObject(ASceneObject):
             
             
             
+class HeightMapObject(ASceneObject):
+    
+    def __init__(self, Zgrid, **kwargs):
+        
+        ASceneObject.__init__(self, **kwargs)
+        
+        self.Zgrid = Zgrid
+        
+        if 'vmin' not in self.opts.keys():
+            self.opts['vmin'] = np.min(Zgrid)
+            
+        if 'vmax' not in self.opts.keys():
+            self.opts['vmax'] = np.max(Zgrid)
+        
+        self.colorbar_pad = self.opts.pop('colorbar_pad', 0.2)
+        
+        
+    def draw_in_axes(self, ax):
+        
+        if is3D(ax):
+        
+            raise Exception('HeightMapObject must be placed in 2D axes.')
+            
+        else:
+            
+            p = ax.imshow(self.Zgrid, **self.opts)
+            ax.set_xlim([0, self.Zgrid.shape[1]-1])
+            ax.set_ylim([0, self.Zgrid.shape[0]-1])
+            
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad=self.colorbar_pad)
+
+            plt.colorbar(p, cax=cax)
+
+
+
 class APatchObject(ASceneObject):
     
     def __init__(self, patch=None, **kwargs):

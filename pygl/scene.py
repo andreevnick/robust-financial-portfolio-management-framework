@@ -11,6 +11,7 @@ from os import path
 import copy as cp
 
 from .util import *
+from .scene_object import HeightMapObject
     
     
 __all__ = [
@@ -115,7 +116,7 @@ class Scene:
         self.scene_objects.append(obj)
         
         
-    def set_xticks(self):
+    def set_xticks(self, scene_limits=False):
         
         if 'xticks' in self.conf.keys():
             
@@ -131,17 +132,23 @@ class Scene:
             tck = self.ax.get_xticks()
             
             
+        if scene_limits:
+            tck_ = np.linspace(self.conf['xlim'][0], self.conf['xlim'][1], len(tck))
+        else:
+            tck_ = tck
+            
+            
         if 'xticklabels' in self.conf.keys():
             
             if isinstance(self.conf['xticklabels'], str):
-                labels = [('{0:'+self.conf['xticklabels']+'}').format(s) for s in tck]
+                labels = [('{0:'+self.conf['xticklabels']+'}').format(s) for s in tck_]
             else:
                 labels = self.conf['xticklabels']
         
             self.ax.set_xticklabels(labels)
             
             
-    def set_yticks(self):
+    def set_yticks(self, scene_limits=False):
         
         if 'yticks' in self.conf.keys():
             
@@ -157,17 +164,23 @@ class Scene:
             tck = self.ax.get_yticks()
             
             
+        if scene_limits:
+            tck_ = np.linspace(self.conf['ylim'][0], self.conf['ylim'][1], len(tck))
+        else:
+            tck_ = tck
+            
+            
         if 'yticklabels' in self.conf.keys():
             
             if isinstance(self.conf['yticklabels'], str):
-                labels = [('{0:'+self.conf['yticklabels']+'}').format(s) for s in tck]
+                labels = [('{0:'+self.conf['yticklabels']+'}').format(s) for s in tck_]
             else:
                 labels = self.conf['yticklabels']
         
             self.ax.set_yticklabels(labels)
             
             
-    def set_zticks(self):
+    def set_zticks(self, scene_limits=False):
         
         if 'zticks' in self.conf.keys():
             
@@ -183,10 +196,16 @@ class Scene:
             tck = self.ax.get_zticks()
             
             
+        if scene_limits:
+            tck_ = np.linspace(self.conf['zlim'][0], self.conf['zlim'][1], len(tck))
+        else:
+            tck_ = tck
+            
+            
         if 'zticklabels' in self.conf.keys():
             
             if isinstance(self.conf['zticklabels'], str):
-                labels = [('{0:'+self.conf['zticklabels']+'}').format(s) for s in tck]
+                labels = [('{0:'+self.conf['zticklabels']+'}').format(s) for s in tck_]
             else:
                 labels = self.conf['zticklabels']
         
@@ -195,13 +214,18 @@ class Scene:
         
     def plot(self):
         
+        scene_lim = False
+        
         for obj in sorted(self.scene_objects, key=lambda obj: obj.plot_last):
             
-            if obj.visible: obj.draw_in_axes(self.ax)
+            if obj.visible:
+                
+                obj.draw_in_axes(self.ax)
+                if isinstance(obj, HeightMapObject): scene_lim = True
                      
-        self.set_xticks()
-        self.set_yticks()
-        if self.axes3D: self.set_zticks()
+        self.set_xticks(scene_limits=scene_lim)
+        self.set_yticks(scene_limits=scene_lim)
+        if self.axes3D: self.set_zticks(scene_limits=scene_lim)
             
         labels = [None if not obj.visible else obj.opts.get('label', None) for obj in self.scene_objects]
             
