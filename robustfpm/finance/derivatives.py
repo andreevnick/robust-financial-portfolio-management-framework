@@ -12,6 +12,7 @@ Also provides option-generating method :func:`make_option` for seamless construc
 import numpy as np
 from abc import ABC, abstractmethod
 from typing import Callable
+from collections.abc import Sequence
 from .payoffs import *
 
 __all__ = [
@@ -213,7 +214,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
         Strike price.
     payoff_fcn: Callable, optional
         Payoff function of an option to be constructed.
-    payoff_dates: int or list or tuple or np.ndarray, optional
+    payoff_dates: int or Sequence, optional
         Expiration date(s). If has only 1 element (or is int), the European option is constructed. If given an array of payoff times — Bermudan. If ommited — American.
     lipschitz_fcn: Callable, optional
         Function that returns Lipschitz constant for `payoff_fcn` at given time. If omitted — defaults to constant 1.
@@ -230,7 +231,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
 
     >>> from robustfpm.finance import *
     >>> import numpy as np
-    >>> def call_10(x, *usused):
+    >>> def call_10(x, **_):
     ...     return np.array(np.maximum((x - 10), np.zeros_like(x)), float).squeeze()
     >>> call = make_option(payoff_fcn = call_10, payoff_dates=4)
     >>> isinstance(call, IOption)
@@ -253,7 +254,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
     >>> from robustfpm.finance import *
     >>> import numpy as np
     >>> def call_payoff(strike):
-    ...     def call_with_strike(x, *usused):
+    ...     def call_with_strike(x, **_):
     ...         return np.array(np.maximum((x - strike), np.zeros_like(x)), float).squeeze()
     ...     return call_with_strike
     >>> call = make_option(payoff_fcn = call_payoff, strike=10, payoff_dates=4)
@@ -267,7 +268,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
 
     >>> from robustfpm.finance import *
     >>> import numpy as np
-    >>> def call_payoff(strike, *usused):
+    >>> def call_payoff(strike, **_):
     ...     def call_with_strike(x):
     ...         return np.array(np.maximum((x - strike), np.zeros_like(x)), float).squeeze()
     ...     return call_with_strike
@@ -336,9 +337,9 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
         else:
             raise ValueError('Unknown option type: {tp}'.format(tp=option_type))
     # now determine option style
-    if isinstance(payoff_dates, (list, tuple, np.ndarray)) and len(payoff_dates) == 1:
+    if isinstance(payoff_dates, Sequence) and len(payoff_dates) == 1:
         payoff_dates = int(payoff_dates[0])
-    if isinstance(payoff_dates, (list, tuple, np.ndarray)):
+    if isinstance(payoff_dates, Sequence):
         return BermudanOption(payoff_dates, payoff_fcn=payoff_fcn, lipschitz_fcn=lipschitz_fcn)
     elif isinstance(payoff_dates, int):
         return EuropeanOption(payoff_dates, payoff_fcn=payoff_fcn, lipschitz_fcn=lipschitz_fcn)
