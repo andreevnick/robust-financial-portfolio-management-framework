@@ -201,10 +201,9 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
 
     If `type` is given, but `strike` is omitted, `strike` defaults to zero.
 
-    If no `type` is given, but `strike` is provided, then `payoff_fcn` must be a wrapper, which accepts `strike` keyword argument and returns a payoff function (Callable) for a given strike.
-    The payoff function returned by the wrapper must accept 2 positional arguments, first of which are prices, and the second is time.
+    If no `type` is given, but `strike` is provided, then `payoff_fcn` must be a wrapper, which accepts `strike` keyword argument and returns a payoff function (Callable) for a given strike. This function must accept two positional arguments: assets' prices and time.
 
-    If both `type` and `strike` are omitted, `payoff_fcn` must be a function that accepts 2 positional arguments: prices (first) and time (second).
+    If both `type` and `strike` are omitted, `payoff_fcn` must be a function that accepts 2 positional arguments.
 
     Parameters
     ----------
@@ -231,7 +230,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
 
     >>> from robustfpm.finance import *
     >>> import numpy as np
-    >>> def call_10(x, **_):
+    >>> def call_10(x, *_):
     ...     return np.array(np.maximum((x - 10), np.zeros_like(x)), float).squeeze()
     >>> call = make_option(payoff_fcn = call_10, payoff_dates=4)
     >>> isinstance(call, IOption)
@@ -254,7 +253,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
     >>> from robustfpm.finance import *
     >>> import numpy as np
     >>> def call_payoff(strike):
-    ...     def call_with_strike(x, **_):
+    ...     def call_with_strike(x, *_):
     ...         return np.array(np.maximum((x - strike), np.zeros_like(x)), float).squeeze()
     ...     return call_with_strike
     >>> call = make_option(payoff_fcn = call_payoff, strike=10, payoff_dates=4)
