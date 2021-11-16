@@ -269,7 +269,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
     >>> from robustfpm.finance import *
     >>> import numpy as np
     >>> def call_payoff(strike, **_):
-    ...     def call_with_strike(x):
+    ...     def call_with_strike(x, *_):
     ...         return np.array(np.maximum((x - strike), np.zeros_like(x)), float).squeeze()
     ...     return call_with_strike
     >>> def constant_2(t):
