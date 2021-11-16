@@ -214,7 +214,7 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
         Strike price.
     payoff_fcn: Callable, optional
         Payoff function of an option to be constructed.
-    payoff_dates: int or Sequence, optional
+    payoff_dates: int or np.ndarray or Sequence, optional
         Expiration date(s). If has only 1 element (or is int), the European option is constructed. If given an array of payoff times — Bermudan. If ommited — American.
     lipschitz_fcn: Callable, optional
         Function that returns Lipschitz constant for `payoff_fcn` at given time. If omitted — defaults to constant 1.
@@ -337,10 +337,10 @@ def make_option(option_type=None, strike=None, payoff_fcn=None, payoff_dates=Non
         else:
             raise ValueError('Unknown option type: {tp}'.format(tp=option_type))
     # now determine option style
-    if isinstance(payoff_dates, Sequence) and len(payoff_dates) == 1:
+    if (isinstance(payoff_dates, Sequence) or isinstance(payoff_dates, np.ndarray)) and len(payoff_dates) == 1:
         payoff_dates = int(payoff_dates[0])
-    if isinstance(payoff_dates, Sequence):
-        return BermudanOption(payoff_dates, payoff_fcn=payoff_fcn, lipschitz_fcn=lipschitz_fcn)
+    if isinstance(payoff_dates, Sequence) or isinstance(payoff_dates, np.ndarray):
+        return BermudanOption(payoff_dates, payoff_fcn=payoff_fcn,  lipschitz_fcn=lipschitz_fcn)
     elif isinstance(payoff_dates, int):
         return EuropeanOption(payoff_dates, payoff_fcn=payoff_fcn, lipschitz_fcn=lipschitz_fcn)
     elif payoff_dates is None:
