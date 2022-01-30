@@ -125,20 +125,25 @@ class LineObject(ASceneObject):
     
     def __init__(self, points=[], **kwargs):
         
-        ASceneObject.__init__(self, **kwargs)
+        self.closed = kwargs.pop('closed', False)
         
         self.points = np.asarray(points)
+        
+        ASceneObject.__init__(self, **kwargs)
+        
+        self.points_ = self.points if not (self.closed or (self.points.shape[0] == 0)) else np.vstack((self.points, self.points[0]))
+        
         
         
     def draw_in_axes(self, ax):
         
-        if self.points.shape[1] == 2:
+        if self.points_.shape[1] == 2:
         
-            ax.plot(self.points[:,0], self.points[:,1], **self.opts)
+            ax.plot(self.points_[:,0], self.points_[:,1], **self.opts)
             
         else:
             
-            ax.plot(self.points[:,0], self.points[:,1], self.points[:,2], **self.opts)
+            ax.plot(self.points_[:,0], self.points_[:,1], self.points_[:,2], **self.opts)
             
 
             
@@ -238,10 +243,10 @@ class HeightMapObject(ASceneObject):
         self.Zgrid = Zgrid
         
         if 'vmin' not in self.opts.keys():
-            self.opts['vmin'] = np.min(Zgrid)
+            self.opts['vmin'] = np.min(np.where(np.isnan(Zgrid), np.Inf, Zgrid))
             
         if 'vmax' not in self.opts.keys():
-            self.opts['vmax'] = np.max(Zgrid)
+            self.opts['vmax'] = np.max(np.where(np.isnan(Zgrid), -np.Inf, Zgrid))
         
         self.colorbar_pad = self.opts.pop('colorbar_pad', 0.2)
         
