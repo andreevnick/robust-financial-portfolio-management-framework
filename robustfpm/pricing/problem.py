@@ -171,7 +171,7 @@ class ConvhullSolver(ISolver):
         If True, adverse market strategies at every step will calculated. Not used for pricing.
         True leads to the slower execution speed. Default is False.
     pricer_options: dict
-        Options for numerical methods.
+        Additional numerical method options. Reserved for future versions.
 
     See also
     --------
@@ -197,16 +197,10 @@ class ConvhullSolver(ISolver):
 
         self.calc_market_strategies = calc_market_strategies
 
+        self.pricer_options = coalesce(pricer_options, {})
+        
         if not isinstance(pricer_options, dict):
             pricer_options = {}
-
-        self.pricer_options = {
-            'convex_hull_filter': pricer_options.get('convex_hull_filter', 'qhull'),
-            'convex_hull_prune_fail_count': pricer_options.get('convex_hull_prune_fail_count', 0),
-            'convex_hull_prune_success_count': pricer_options.get('convex_hull_prune_success_count', 0),
-            'convex_hull_prune_corner_n': pricer_options.get('convex_hull_prune_corner_n', 3),
-            'convex_hull_prune_seed': pricer_options.get('convex_hull_prune_seed', None)
-        }
 
     def __precalc(self, x0, lattice):
         """ Init the required private attributes before the main pricing has started.
@@ -217,122 +211,12 @@ class ConvhullSolver(ISolver):
 
         self.silent_timer_ = not self.enable_timer
 
-        self.pruning_random_state_ = check_random_state(self.pricer_options['convex_hull_prune_seed'])
-
-    # noinspection PyPep8Naming
-    def __chull_prune_points(self, xv):
-        """ Pruning for the convex hull calculation. De facto not used.
-
-        """
-
-        fail_cnt = 0
-        success_cnt = 0
-        eps = 1e-8
-
-        n = xv.shape[1]
-
-        res_ind = np.arange(xv.shape[0])
-
-        it = 0
-        it_max = self.pricer_options['convex_hull_prune_fail_count'] * self.pricer_options[
-            'convex_hull_prune_success_count']
-
-        while (xv.shape[0] > n) and (fail_cnt < self.pricer_options['convex_hull_prune_fail_count']) and (
-                success_cnt < self.pricer_options['convex_hull_prune_success_count']):
-
-            xv_size = xv.shape[0]
-
-            ind_tf = np.ndarray((res_ind.shape[0], 2 * n), dtype=np.bool)
-
-            for i in range(n):
-                ind_tf[:, 2 * i] = (xv[:, i] == np.amax(xv[:, i]))
-                ind_tf[:, 2 * i + 1] = (xv[:, i] == np.amin(xv[:, i]))
-
-            ind = np.arange(xv.shape[0])[np.sum(ind_tf, axis=1) >= self.pricer_options['convex_hull_prune_corner_n']]
-
-            if ind.shape[0] < n:
-                print('few corner points')
-                break
-
-            ind_c = np.random.choice(ind, size=n, replace=False)
-
-            xc = np.vstack((np.ones(n, dtype=xv.dtype),
-                            xv[ind_c, :-1].T))
-
-            vc = xv[ind_c, -1]
-
-            if np.linalg.matrix_rank(xc) != xc.shape[0]:
-                fail_cnt += 1
-                #                 print('fail, rank')
-                #         print('xc = ', xc)
-                #         print('xv[ind] = ', xv[ind])
-                continue
-
-            ind_rest = np.arange(xv.shape[0])
-            ind_rest = ind_rest[np.in1d(ind_rest, ind_c, assume_unique=True, invert=True)]
-
-            x_rest = xv[ind_rest, :-1]
-            v_rest = xv[ind_rest, -1]
-
-            E = np.hstack((np.zeros((x_rest.shape[0], 1)), x_rest))
-
-            A = xc - E[..., np.newaxis]
-
-            if n == 3:
-
-                d12 = A[:, 1, 1] * A[:, 2, 2] - A[:, 1, 2] * A[:, 2, 1]
-                d02 = A[:, 2, 0] * A[:, 1, 2] - A[:, 1, 0] * A[:, 2, 2]
-                d01 = A[:, 1, 0] * A[:, 2, 1] - A[:, 2, 0] * A[:, 1, 1]
-
-                detA = d12 + d02 + d01
-
-                lmb = np.vstack((d12, d02, d01)).T / detA.reshape(-1, 1)
-
-            else:
-                raise ValueError('n <> 3 is not supported')
-
-            ind_remove = ind_rest[np.bitwise_and(np.all(lmb >= 0, axis=1), v_rest <= lmb @ vc + eps)]
-
-            if ind_remove.shape[0] == 0:
-                #                 print('fail, not found')
-                #                 print('xv[ind_c] = ', xv[ind_c])
-                fail_cnt += 1
-            else:
-                #                 print('success')
-                success_cnt += 1
-                fail_cnt = 0
-
-            # if (ind_remove.shape[0] > 0) and np.any(np.max(np.abs(xv[ind_remove] - np.array([[0.5, 0.9, 0.0]],
-            # dtype=xv.dtype)), axis=1) <= 0.001): print('x_rest, lmb, v, v_thresh') tmp = lmb @ vc for i in range(
-            # x_rest.shape[0]): print(x_rest[i,:], lmb[i,:], v_rest[i], tmp[i])
-
-            #         print('xc = ', xc)
-            #         print('vc = ', vc)
-            #         print('xv[ind_remove] = ', xv[ind_remove])
-
-            tf = np.in1d(np.arange(xv.shape[0]), ind_remove, assume_unique=True, invert=True)
-            xv = xv[tf]
-            res_ind = res_ind[tf]
-
-            #     print('xv_size = ', xv_size)
-            #     print('xv.shape[0] = ', xv.shape[0])
-
-            it += 1
-            if it > it_max:
-                print('unexpected eternal loop')
-                break
-
-        return res_ind
-
     # noinspection PyUnboundLocalVariable
     def __get_cxhull_value(self, x, v, z, calc_market_strategies, tol=1e-8):
         """ Returns the baricentric coordinates of base points x which
         correspond to the concave hull of {(x,v)} at z.
 
         """
-
-        if self.pricer_options['convex_hull_filter'] is None:
-            raise ValueError('convex_hull_filter is not specified')
 
         # short circuit for constant surface
         if np.abs(np.max(v) - np.min(v)) <= tol:
@@ -344,98 +228,88 @@ class ConvhullSolver(ISolver):
 
         points = np.hstack((x, v))
 
-        try:
-            pruned_ind = self.__chull_prune_points(points)
-            points = points[pruned_ind]
-
-        except:
-            pruned_ind = np.arange(points.shape[0])
+        # TODO: get rid off pruned_ind below
+        pruned_ind = np.arange(points.shape[0])
 
         points_zero = points[points[:, -1] > 0]
         points_zero[:, -1] = 0.0
 
         points = np.vstack((points, points_zero))
 
-        if self.pricer_options['convex_hull_filter'] == 'qhull':
+        ch = ConvexHull(points)
 
-            ch = ConvexHull(points)
+        if calc_market_strategies:
 
-            if calc_market_strategies:
+            # find simplices whose projection contains z
 
-                # find simplices whose projection contains z
+            tf = [np.all(simplex < len(pruned_ind)) and in_hull(z, points[simplex, :-1], tol=tol) \
+                  for i, simplex in enumerate(ch.simplices)]
 
-                tf = [np.all(simplex < len(pruned_ind)) and in_hull(z, points[simplex, :-1], tol=tol) \
-                      for i, simplex in enumerate(ch.simplices)]
+            #                 plt.figure(figsize=(10,10))
+            #                 plt.scatter(points[pruned_ind,0], points[pruned_ind,1])
+            #                 plt.show()
 
-                #                 plt.figure(figsize=(10,10))
-                #                 plt.scatter(points[pruned_ind,0], points[pruned_ind,1])
-                #                 plt.show()
+            #                 for i, simplex in enumerate(ch.simplices):
+            #                     if np.all(simplex < len(pruned_ind)):
+            #                         print('--- {0} ---'.format(i))
+            #                         print('points[simplex,:-1] = ', points[simplex,:-1])
+            #                         print('z = ', z)
 
-                #                 for i, simplex in enumerate(ch.simplices):
-                #                     if np.all(simplex < len(pruned_ind)):
-                #                         print('--- {0} ---'.format(i))
-                #                         print('points[simplex,:-1] = ', points[simplex,:-1])
-                #                         print('z = ', z)
+            opt_simplices = ch.simplices[tf]
 
-                opt_simplices = ch.simplices[tf]
+            # find the convex hull value at z
 
-                # find the convex hull value at z
+            f = np.empty(len(opt_simplices), dtype=np.float64)
 
-                f = np.empty(len(opt_simplices), dtype=np.float64)
+            for i, simplex in enumerate(opt_simplices):
+                f[i] = get_max_coordinates(points[simplex][:, :-1], points[simplex][:, -1], z, tol=tol,
+                                           debug_mode=self.debug_mode, ignore_warnings=self.ignore_warnings) @ \
+                       points[simplex][:, -1]
 
-                for i, simplex in enumerate(opt_simplices):
-                    f[i] = get_max_coordinates(points[simplex][:, :-1], points[simplex][:, -1], z, tol=tol,
-                                               debug_mode=self.debug_mode, ignore_warnings=self.ignore_warnings) @ \
-                           points[simplex][:, -1]
+            f = np.mean(f)
 
-                f = np.mean(f)
+            # find the adversarial market strategies
 
-                # find the adversarial market strategies
+            for dim in range(len(z) + 1):
 
-                for dim in range(len(z) + 1):
+                # for ind in combinations(ch.vertices, dim+1): if (max(ind) < len(pruned_ind)) and in_hull(z,
+                # points[ind,:-1])\ and (get_max_coordinates(points[ind, :-1], points[ind, -1], z, tol=tol,
+                # ignore_warnings=True) @ points[ind, -1] >= f - tol): print('pruned_ind = ', pruned_ind) print(
+                # 'pruned_ind.shape =', pruned_ind.shape) print('ind = ', ind)
 
-                    # for ind in combinations(ch.vertices, dim+1): if (max(ind) < len(pruned_ind)) and in_hull(z,
-                    # points[ind,:-1])\ and (get_max_coordinates(points[ind, :-1], points[ind, -1], z, tol=tol,
-                    # ignore_warnings=True) @ points[ind, -1] >= f - tol): print('pruned_ind = ', pruned_ind) print(
-                    # 'pruned_ind.shape =', pruned_ind.shape) print('ind = ', ind)
+                strategies = np.array([pruned_ind[list(ind)] for ind in combinations(ch.vertices, dim + 1) \
+                                       if (max(ind) < len(pruned_ind)) and in_hull(z, points[list(ind), :-1]) \
+                                       and (get_max_coordinates(points[list(ind), :-1], points[list(ind), -1], z,
+                                                                tol=tol, debug_mode=self.debug_mode,
+                                                                ignore_warnings=self.ignore_warnings) @ points[
+                                                list(ind), -1] >= f - tol)
+                                       ])
 
-                    strategies = np.array([pruned_ind[list(ind)] for ind in combinations(ch.vertices, dim + 1) \
-                                           if (max(ind) < len(pruned_ind)) and in_hull(z, points[list(ind), :-1]) \
-                                           and (get_max_coordinates(points[list(ind), :-1], points[list(ind), -1], z,
-                                                                    tol=tol, debug_mode=self.debug_mode,
-                                                                    ignore_warnings=self.ignore_warnings) @ points[
-                                                    list(ind), -1] >= f - tol)
-                                           ])
+                if len(strategies) > 0:
+                    break
 
-                    if len(strategies) > 0:
-                        break
-
-                return f, strategies
-
-            else:
-
-                #                 with Timer('Convex hull', flush=True):
-                cv_point_indices = ch.vertices
-                # print('result = {0}/{1}'.format(cv_point_indices[cv_point_indices < x.shape[0]].shape[0],
-                # points.shape[0]))
-
-                #                 raise Exception('stopped')
-
-                #                 print('x.shape[0] = ', x.shape[0])
-                #                 print('cv_point_indices = ', cv_point_indices)
-                #                 print('pruned_ind', pruned_ind)
-
-                res_ind = pruned_ind[cv_point_indices[cv_point_indices < len(pruned_ind)]]
-
-                f = get_max_coordinates(x[res_ind], v[res_ind], z, debug_mode=self.debug_mode,
-                                        ignore_warnings=self.ignore_warnings) @ v[res_ind]
-
-                return f, None
+            return f, strategies
 
         else:
 
-            raise ValueError(
-                'unknown convex_hull_filter value \'{0}\''.format(self.pricer_options['convex_hull_filter']))
+            #                 with Timer('Convex hull', flush=True):
+            cv_point_indices = ch.vertices
+            # print('result = {0}/{1}'.format(cv_point_indices[cv_point_indices < x.shape[0]].shape[0],
+            # points.shape[0]))
+
+            #                 raise Exception('stopped')
+
+            #                 print('x.shape[0] = ', x.shape[0])
+            #                 print('cv_point_indices = ', cv_point_indices)
+            #                 print('pruned_ind', pruned_ind)
+
+            res_ind = pruned_ind[cv_point_indices[cv_point_indices < len(pruned_ind)]]
+
+            f = get_max_coordinates(x[res_ind], v[res_ind], z, debug_mode=self.debug_mode,
+                                    ignore_warnings=self.ignore_warnings) @ v[res_ind]
+
+            return f, None
+        
 
     def find_u(self, x, v, z, calc_market_strategies):
         """ Returns u(z), see the algorithm.
