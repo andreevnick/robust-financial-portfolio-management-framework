@@ -9,6 +9,7 @@ import sys
 import numpy as np
 
 from .util import pairing_function, cartesian_product
+from .fast import unique_points_union_fast
 
 
 __all__ = [
@@ -66,7 +67,7 @@ def __minksum_points(points_iter, points_sum):
         
     for point in points_iter:
     
-        res = unique_points_union(res, point + points_sum)
+        res = unique_points_union_fast(res, point + points_sum)
         
     return res
 
@@ -258,7 +259,7 @@ def __minkprod_points(lattice, points, set_handler, pos):
         
         s = set_handler.multiply(lattice.map2x(p)).project(lattice)
         
-        set_sum = unique_points_union(set_sum, s)
+        set_sum = unique_points_union_fast(set_sum, s)
         
     if pos:
         x = lattice.map2x(set_sum)
