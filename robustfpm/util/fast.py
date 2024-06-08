@@ -2,9 +2,21 @@ import numpy as np
 import numba as nb
 
 def rowsort(a):
+    if rowsorted(a):
+        return a
     a = a[np.argsort(a[:,1])]
     a = a[np.argsort(a[:,0], kind='stable')]
     return a
+
+@nb.njit()
+def rowsorted(a):
+    n, m = a.shape
+    assert m == 2
+    for i in range(1, n):
+        if (merge_gt(a[i - 1], a[i])):
+            return False
+    return True
+
 
 @nb.njit()
 def merge_gt(a, b):
