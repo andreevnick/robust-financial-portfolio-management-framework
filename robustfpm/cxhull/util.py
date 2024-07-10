@@ -77,7 +77,7 @@ def pop_random(element_list, random_state=None):
     return element_list.pop(np.random.randint(n))
 
 
-def get_max_coordinates(x, f, z, method='interior-point', tol=1e-8, debug_mode=False, ignore_warnings=False):
+def get_max_coordinates(x, f, z, method='highs', tol=1e-8, debug_mode=False, ignore_warnings=False):
     """ Solves the problem
 
     .. math:: p_1 \cdot f_1 + ... + p_m \cdot f_m \\rightarrow \max,
