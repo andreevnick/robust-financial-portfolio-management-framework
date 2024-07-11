@@ -71,7 +71,7 @@ def __minksum_points(points_iter, points_sum):
     return res
 
 
-def minksum_points(points1, points2, recur_max_level=None):
+def minksum_points(points1, points2, recur_max_level=0):
     """ Returns the Minkowski sum of two point sets.
     
     Parameters
@@ -267,7 +267,7 @@ def __minkprod_points(lattice, points, set_handler, pos):
     return set_sum
 
 
-def minkprod_points(lattice, points, set_handler, pos=False, recur_max_level=None):
+def minkprod_points(lattice, points, set_handler, pos=False, recur_max_level=0):
     r'''
     Calculates the set of element-wise products of two sets.
     
